@@ -343,7 +343,7 @@ export default function ReportsPage() {
                     borderRadius: "8px",
                     fontSize: "12px",
                   }}
-                  formatter={(v: number) => [v, "Respuestas"]}
+                  formatter={(v: number | undefined) => [v ?? 0, "Respuestas"] as [number, string]}
                 />
                 <Bar
                   dataKey="respuestas"
@@ -615,7 +615,7 @@ function SurveyDetailModal({
                         className="text-gray-500 dark:text-gray-400"
                       />
                       <Tooltip
-                        formatter={(v: number) => [v, "Respuestas"]}
+                        formatter={(v: number | undefined) => [v ?? 0, "Respuestas"] as [number, string]}
                         labelFormatter={(d: string) =>
                           format(parseISO(d), "dd/MM/yyyy", { locale: es })
                         }
