@@ -131,6 +131,8 @@ export default function ReportsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   // Modal state
   const [selectedSurvey, setSelectedSurvey] = useState<SurveySummary | null>(
@@ -220,14 +222,23 @@ export default function ReportsPage() {
     }
   };
 
-  const totalResponses = summaries.reduce((s, r) => s + r.total_responses, 0);
-  const surveysWithResponses = summaries.filter(
+  // Apply date range filter based on last_response_at
+  const filteredSummaries = summaries.filter((s) => {
+    if (!s.last_response_at) return !dateFrom && !dateTo ? true : false;
+    const d = s.last_response_at.slice(0, 10);
+    if (dateFrom && d < dateFrom) return false;
+    if (dateTo && d > dateTo) return false;
+    return true;
+  });
+
+  const totalResponses = filteredSummaries.reduce((s, r) => s + r.total_responses, 0);
+  const surveysWithResponses = filteredSummaries.filter(
     (s) => s.total_responses > 0,
   ).length;
-  const activeSurveys = summaries.filter((s) => s.is_active).length;
+  const activeSurveys = filteredSummaries.filter((s) => s.is_active).length;
 
   // Chart data for overview bar chart
-  const chartData = summaries
+  const chartData = filteredSummaries
     .filter((s) => s.total_responses > 0)
     .sort((a, b) => b.total_responses - a.total_responses)
     .slice(0, 10)
@@ -254,7 +265,35 @@ export default function ReportsPage() {
               Resumen de respuestas por encuesta
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Date range filter */}
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="px-2 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                title="Desde"
+              />
+              <span className="text-gray-400 text-sm">–</span>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="px-2 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                title="Hasta"
+              />
+              {(dateFrom || dateTo) && (
+                <button
+                  onClick={() => { setDateFrom(""); setDateTo(""); }}
+                  className="p-1 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  title="Limpiar filtro"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
@@ -267,7 +306,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={handleExportSummaryCSV}
-              disabled={summaries.length === 0}
+              disabled={filteredSummaries.length === 0}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors disabled:opacity-50"
             >
               <FileDown className="w-4 h-4" />
@@ -376,9 +415,9 @@ export default function ReportsPage() {
                 </div>
               ))}
             </div>
-          ) : summaries.length === 0 ? (
+          ) : filteredSummaries.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-              No hay encuestas registradas aún
+              {summaries.length === 0 ? "No hay encuestas registradas aún" : "Sin resultados para el rango de fechas seleccionado"}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -403,7 +442,7 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {summaries.map((s) => (
+                  {filteredSummaries.map((s) => (
                     <tr
                       key={s.survey_id}
                       className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
