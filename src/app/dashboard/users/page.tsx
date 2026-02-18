@@ -28,7 +28,16 @@ const PAGE_SIZE = 10;
 
 function exportUsersCSV(users: User[]) {
   if (users.length === 0) return;
-  const headers = ["ID", "Nombre", "Apellido", "Email", "Rol", "Estado", "Telefono", "Creado"];
+  const headers = [
+    "ID",
+    "Nombre",
+    "Apellido",
+    "Email",
+    "Rol",
+    "Estado",
+    "Telefono",
+    "Creado",
+  ];
   const rows = users.map((u) => [
     u.id,
     `"${(u.nombre || "").replace(/"/g, '""')}"`,
@@ -37,7 +46,9 @@ function exportUsersCSV(users: User[]) {
     u.rol,
     u.activo ? "Activo" : "Inactivo",
     u.telefono || "",
-    new Intl.DateTimeFormat("es-MX", { dateStyle: "medium" }).format(new Date(u.created_at)),
+    new Intl.DateTimeFormat("es-MX", { dateStyle: "medium" }).format(
+      new Date(u.created_at),
+    ),
   ]);
   const csv = "\uFEFF" + [headers, ...rows].map((r) => r.join(",")).join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });

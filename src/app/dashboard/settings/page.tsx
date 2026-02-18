@@ -179,261 +179,261 @@ export default function SettingsPage() {
 
   return (
     <div className="p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Configuración
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Administra tu perfil, contraseña y preferencias del sistema
-          </p>
-        </div>
-
-        {/* Alerts */}
-        {successMessage && (
-          <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 p-4 border border-green-200">
-            <CheckCircle2 className="w-5 h-5 text-green-600" />
-            <p className="text-green-800">{successMessage}</p>
-          </div>
-        )}
-
-        {errorMessage && (
-          <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
-            <AlertCircle className="w-5 h-5 text-red-600" />
-            <p className="text-red-800">{errorMessage}</p>
-          </div>
-        )}
-
-        {/* Tabs Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
-                activeTab === "profile"
-                  ? "border-primary-600 text-primary-600"
-                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Perfil
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab("password")}
-              className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
-                activeTab === "password"
-                  ? "border-primary-600 text-primary-600"
-                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4" />
-                Contraseña
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab("system")}
-              className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
-                activeTab === "system"
-                  ? "border-primary-600 text-primary-600"
-                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Preferencias
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Profile Tab */}
-        {activeTab === "profile" && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nombre
-                </label>
-                <Input
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleFormChange}
-                  placeholder="Tu nombre"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Apellido
-                </label>
-                <Input
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleFormChange}
-                  placeholder="Tu apellido"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleFormChange}
-                  placeholder="correo@example.com"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Rol
-                </label>
-                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white">
-                  {currentUser?.rol === "admin" && "Administrador"}
-                  {currentUser?.rol === "encargado" && "Encargado"}
-                  {currentUser?.rol === "brigadista" && "Brigadista"}
-                </div>
-              </div>
-
-              <Button
-                onClick={handleSaveProfile}
-                disabled={isSaving}
-                className="w-full sm:w-auto"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Guardando..." : "Guardar cambios"}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Password Tab */}
-        {activeTab === "password" && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
-            <div className="space-y-6">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
-                  Utiliza una contraseña fuerte con al menos 8 caracteres,
-                  incluyendo mayúsculas, minúsculas y números.
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Contraseña actual
-                </label>
-                <Input
-                  type="password"
-                  name="currentPassword"
-                  value={passwordForm.currentPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Ingresa tu contraseña actual"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nueva contraseña
-                </label>
-                <Input
-                  type="password"
-                  name="newPassword"
-                  value={passwordForm.newPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Ingresa una nueva contraseña"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Confirmar contraseña
-                </label>
-                <Input
-                  type="password"
-                  name="confirmPassword"
-                  value={passwordForm.confirmPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Confirma tu nueva contraseña"
-                  disabled={isSaving}
-                />
-              </div>
-
-              <Button
-                onClick={handleChangePassword}
-                disabled={isSaving}
-                className="w-full sm:w-auto"
-              >
-                <Lock className="w-4 h-4 mr-2" />
-                {isSaving ? "Cambiando..." : "Cambiar contraseña"}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* System Preferences Tab */}
-        {activeTab === "system" && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Tema
-                </label>
-                <Select
-                  value={formData.theme}
-                  onChange={(e) => handleSelectChange("theme", e.target.value)}
-                  disabled={isSaving}
-                >
-                  <option value="system">Sistema</option>
-                  <option value="light">Claro</option>
-                  <option value="dark">Oscuro</option>
-                </Select>
-              </div>
-
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-                  Notificaciones por correo
-                </h3>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.emailNotifications}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        emailNotifications: e.target.checked,
-                      }))
-                    }
-                    disabled={isSaving}
-                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    Recibir notificaciones por correo
-                  </span>
-                </label>
-              </div>
-
-              <Button
-                onClick={handleSaveProfile}
-                disabled={isSaving}
-                className="w-full sm:w-auto"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Guardando..." : "Guardar preferencias"}
-              </Button>
-            </div>
-          </div>
-        )}
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Configuración
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Administra tu perfil, contraseña y preferencias del sistema
+        </p>
       </div>
+
+      {/* Alerts */}
+      {successMessage && (
+        <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 p-4 border border-green-200">
+          <CheckCircle2 className="w-5 h-5 text-green-600" />
+          <p className="text-green-800">{successMessage}</p>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
+          <AlertCircle className="w-5 h-5 text-red-600" />
+          <p className="text-red-800">{errorMessage}</p>
+        </div>
+      )}
+
+      {/* Tabs Navigation */}
+      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <div className="flex gap-6">
+          <button
+            onClick={() => setActiveTab("profile")}
+            className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+              activeTab === "profile"
+                ? "border-primary-600 text-primary-600"
+                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Perfil
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("password")}
+            className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+              activeTab === "password"
+                ? "border-primary-600 text-primary-600"
+                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4" />
+              Contraseña
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("system")}
+            className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
+              activeTab === "system"
+                ? "border-primary-600 text-primary-600"
+                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              Preferencias
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Profile Tab */}
+      {activeTab === "profile" && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Nombre
+              </label>
+              <Input
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleFormChange}
+                placeholder="Tu nombre"
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Apellido
+              </label>
+              <Input
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleFormChange}
+                placeholder="Tu apellido"
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Email
+              </label>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleFormChange}
+                placeholder="correo@example.com"
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Rol
+              </label>
+              <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white">
+                {currentUser?.rol === "admin" && "Administrador"}
+                {currentUser?.rol === "encargado" && "Encargado"}
+                {currentUser?.rol === "brigadista" && "Brigadista"}
+              </div>
+            </div>
+
+            <Button
+              onClick={handleSaveProfile}
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isSaving ? "Guardando..." : "Guardar cambios"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Password Tab */}
+      {activeTab === "password" && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+          <div className="space-y-6">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                Utiliza una contraseña fuerte con al menos 8 caracteres,
+                incluyendo mayúsculas, minúsculas y números.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Contraseña actual
+              </label>
+              <Input
+                type="password"
+                name="currentPassword"
+                value={passwordForm.currentPassword}
+                onChange={handlePasswordChange}
+                placeholder="Ingresa tu contraseña actual"
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Nueva contraseña
+              </label>
+              <Input
+                type="password"
+                name="newPassword"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordChange}
+                placeholder="Ingresa una nueva contraseña"
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Confirmar contraseña
+              </label>
+              <Input
+                type="password"
+                name="confirmPassword"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordChange}
+                placeholder="Confirma tu nueva contraseña"
+                disabled={isSaving}
+              />
+            </div>
+
+            <Button
+              onClick={handleChangePassword}
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
+              <Lock className="w-4 h-4 mr-2" />
+              {isSaving ? "Cambiando..." : "Cambiar contraseña"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* System Preferences Tab */}
+      {activeTab === "system" && (
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tema
+              </label>
+              <Select
+                value={formData.theme}
+                onChange={(e) => handleSelectChange("theme", e.target.value)}
+                disabled={isSaving}
+              >
+                <option value="system">Sistema</option>
+                <option value="light">Claro</option>
+                <option value="dark">Oscuro</option>
+              </Select>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-medium text-gray-900 dark:text-white mb-4">
+                Notificaciones por correo
+              </h3>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.emailNotifications}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      emailNotifications: e.target.checked,
+                    }))
+                  }
+                  disabled={isSaving}
+                  className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
+                />
+                <span className="text-gray-700 dark:text-gray-300">
+                  Recibir notificaciones por correo
+                </span>
+              </label>
+            </div>
+
+            <Button
+              onClick={handleSaveProfile}
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isSaving ? "Guardando..." : "Guardar preferencias"}
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

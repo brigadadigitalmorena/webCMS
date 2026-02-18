@@ -20,7 +20,15 @@ import {
 } from "@/components/ui/table";
 import { CreateCodeModal } from "@/components/activation/create-code-modal";
 import { CodeGeneratedModal } from "@/components/activation/code-generated-modal";
-import { Plus, Search, Mail, RefreshCw, Trash2, Clock4, Download } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Mail,
+  RefreshCw,
+  Trash2,
+  Clock4,
+  Download,
+} from "lucide-react";
 
 export default function WhitelistPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -68,7 +76,15 @@ export default function WhitelistPage() {
 
   const exportWhitelistCSV = () => {
     if (entries.length === 0) return;
-    const headers = ["ID", "Identificador", "Tipo", "Nombre completo", "Rol asignado", "Estado", "Codigo activo"];
+    const headers = [
+      "ID",
+      "Identificador",
+      "Tipo",
+      "Nombre completo",
+      "Rol asignado",
+      "Estado",
+      "Codigo activo",
+    ];
     const rows = entries.map((e) => [
       e.id,
       e.identifier,
@@ -78,7 +94,8 @@ export default function WhitelistPage() {
       e.is_activated ? "Activado" : "Pendiente",
       e.has_active_code ? "S\u00ed" : "No",
     ]);
-    const csv = "\uFEFF" + [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const csv =
+      "\uFEFF" + [headers, ...rows].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
