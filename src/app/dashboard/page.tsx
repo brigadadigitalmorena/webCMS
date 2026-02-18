@@ -51,6 +51,8 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchStats();
+    const interval = setInterval(fetchStats, 60_000);
+    return () => clearInterval(interval);
   }, []);
 
   const statCards = [

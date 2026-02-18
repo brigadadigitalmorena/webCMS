@@ -16,6 +16,7 @@ const routeMap: Record<string, string> = {
   surveys: "Encuestas",
   assignments: "Asignaciones",
   reports: "Reportes",
+  notifications: "Notificaciones",
 
   settings: "Configuración",
 };
