@@ -29,20 +29,15 @@ const statusConfig: Record<
   AssignmentStatus,
   { label: string; className: string; Icon: any }
 > = {
-  pending: {
-    label: "Pendiente",
-    className: "bg-yellow-100 text-yellow-800",
-    Icon: Clock,
-  },
-  in_progress: {
-    label: "En progreso",
-    className: "bg-blue-100 text-blue-800",
-    Icon: PlayCircle,
-  },
-  completed: {
-    label: "Completada",
+  active: {
+    label: "Activo",
     className: "bg-green-100 text-green-800",
     Icon: CheckCircle,
+  },
+  inactive: {
+    label: "Inactivo",
+    className: "bg-gray-100 text-gray-600",
+    Icon: Clock,
   },
 };
 
@@ -70,7 +65,7 @@ function RoleBadge({ role }: { role?: string }) {
 }
 
 function StatusBadge({ status }: { status: AssignmentStatus }) {
-  const cfg = statusConfig[status] ?? statusConfig.pending;
+  const cfg = statusConfig[status] ?? statusConfig.active;
   const { Icon } = cfg;
   return (
     <span
@@ -94,7 +89,7 @@ function ActionsMenu({
   const [open, setOpen] = useState(false);
 
   const nextStatuses: AssignmentStatus[] = (
-    ["pending", "in_progress", "completed"] as AssignmentStatus[]
+    ["active", "inactive"] as AssignmentStatus[]
   ).filter((s) => s !== assignment.status);
 
   return (
