@@ -34,7 +34,7 @@ function StatusBadge({ status }: { status: AssignmentStatus }) {
     <span className="relative inline-flex">
       <span
         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium cursor-help select-none transition-colors ${
-          isActive ? "bg-green-100 text-green-700" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500"
+          isActive ? "bg-green-100 text-green-700" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
         }`}
         onMouseEnter={() => setShowTip(true)}
         onMouseLeave={() => setShowTip(false)}
@@ -51,7 +51,7 @@ function StatusBadge({ status }: { status: AssignmentStatus }) {
           <span className="block font-semibold mb-1">
             {isActive ? "Asignacion activa" : "Asignacion inactiva"}
           </span>
-          <span className="block text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 leading-relaxed">
+          <span className="block text-gray-300 dark:text-gray-600 leading-relaxed">
             {isActive
               ? "El usuario puede ver y llenar esta encuesta en la app movil."
               : "El usuario ya no puede acceder a esta encuesta. Sus respuestas previas se conservan."}
@@ -65,7 +65,7 @@ function StatusBadge({ status }: { status: AssignmentStatus }) {
 function ResponseCountBadge({ count }: { count: number }) {
   if (count === 0)
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+      <span className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
         <FileText className="h-3 w-3" />
         Sin respuestas
       </span>
@@ -110,7 +110,7 @@ function AssignedUserCard({
           className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
             isActive
               ? "bg-primary-100 text-primary-700"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
           }`}
         >
           {initials}
@@ -121,7 +121,7 @@ function AssignedUserCard({
           </p>
           <div className="flex items-center gap-2 flex-wrap">
             {assignment.location && (
-              <span className="text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 truncate">
+              <span className="text-xs text-gray-400 dark:text-gray-500 truncate">
                 {assignment.location}
               </span>
             )}
@@ -135,8 +135,8 @@ function AssignedUserCard({
           onClick={() => onToggleStatus(assignment.id, assignment.status)}
           className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${
             isActive
-              ? "text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:text-orange-500 hover:bg-orange-50"
-              : "text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:text-green-600 hover:bg-green-50"
+              ? "text-gray-300 dark:text-gray-600 hover:text-orange-500 hover:bg-orange-50"
+              : "text-gray-300 dark:text-gray-600 hover:text-green-600 hover:bg-green-50"
           }`}
           title={isActive ? "Desactivar asignacion" : "Reactivar asignacion"}
         >
@@ -148,7 +148,7 @@ function AssignedUserCard({
         </button>
         <button
           onClick={() => onDelete(assignment.id)}
-          className="p-1 rounded text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+          className="p-1 rounded text-gray-300 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
           title="Eliminar asignacion"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -188,7 +188,7 @@ function SurveyCard({
             <h3 className="font-semibold text-gray-900 dark:text-white truncate">
               {group.surveyTitle}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 flex items-center gap-2 flex-wrap">
+            <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-wrap">
               <span>
                 {all.length} asignado{all.length !== 1 ? "s" : ""}
               </span>
@@ -206,7 +206,7 @@ function SurveyCard({
             </p>
           </div>
           <ChevronDown
-            className={`h-4 w-4 text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 ml-2 flex-shrink-0 transition-transform duration-200 ${
+            className={`h-4 w-4 text-gray-400 dark:text-gray-500 ml-2 flex-shrink-0 transition-transform duration-200 ${
               open ? "rotate-180" : ""
             }`}
           />
@@ -224,12 +224,12 @@ function SurveyCard({
           <div>
             <div className="flex items-center gap-2 mb-2.5">
               <UserCheck className="h-4 w-4 text-indigo-500" />
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Encargados ({group.encargados.length})
               </span>
             </div>
             {group.encargados.length === 0 ? (
-              <p className="text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 italic px-1">
+              <p className="text-xs text-gray-400 dark:text-gray-500 italic px-1">
                 Sin encargado asignado
               </p>
             ) : (
@@ -248,12 +248,12 @@ function SurveyCard({
           <div>
             <div className="flex items-center gap-2 mb-2.5">
               <Users className="h-4 w-4 text-purple-500" />
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Brigadistas ({group.brigadistas.length})
               </span>
             </div>
             {group.brigadistas.length === 0 ? (
-              <p className="text-xs text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 italic px-1">
+              <p className="text-xs text-gray-400 dark:text-gray-500 italic px-1">
                 Sin brigadistas asignados
               </p>
             ) : (
@@ -331,7 +331,7 @@ export default function AssignmentsPage() {
     {
       label: "Personas asignadas",
       value: assignments.length,
-      color: "text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500",
+      color: "text-gray-700 dark:text-gray-300",
     },
     {
       label: "Activos",
@@ -400,7 +400,7 @@ export default function AssignmentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Asignaciones</h1>
-          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
             Asigna encargados y brigadistas a cada encuesta
           </p>
         </div>
@@ -408,7 +408,7 @@ export default function AssignmentsPage() {
           <button
             onClick={loadAssignments}
             disabled={isLoading}
-            className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 transition-colors"
+            className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 transition-colors"
             title="Recargar"
           >
             <RefreshCw
@@ -425,7 +425,7 @@ export default function AssignmentsPage() {
         </div>
       </div>
 
-      <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+      <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
         <Info className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-blue-700">
           Una asignacion <span className="font-medium">activa</span> permite al
@@ -442,7 +442,7 @@ export default function AssignmentsPage() {
             key={s.label}
             className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
           >
-            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">{s.label}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
             <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
           </div>
         ))}
@@ -451,15 +451,15 @@ export default function AssignmentsPage() {
       {isLoading ? (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-16 text-center">
           <div className="animate-spin h-10 w-10 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Cargando...</p>
+          <p className="text-gray-500 dark:text-gray-400">Cargando...</p>
         </div>
       ) : groups.length === 0 ? (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-16 text-center">
-          <ClipboardList className="mx-auto h-14 w-14 text-gray-200 mb-4" />
+          <ClipboardList className="mx-auto h-14 w-14 text-gray-200 dark:text-gray-700 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
             Sin asignaciones
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-6 max-w-sm mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
             Empieza asignando un encargado a una encuesta. Luego agrega los
             brigadistas que la llevaran a cabo.
           </p>

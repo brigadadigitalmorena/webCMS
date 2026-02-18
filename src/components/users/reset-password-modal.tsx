@@ -73,9 +73,9 @@ export function ResetPasswordModal({
       <div className="space-y-4">
         {!temporaryPassword && !error && (
           <>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Se generara una contrasena temporal para{" "}
-              <span className="font-semibold text-gray-900">{userName}</span>.
+              <span className="font-semibold text-gray-900 dark:text-white">{userName}</span>.
             </p>
             <Card className="border-amber-200 bg-amber-50/70 text-amber-800">
               <p className="text-sm font-medium">
@@ -102,7 +102,7 @@ export function ResetPasswordModal({
             </Card>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Contrasena temporal
               </label>
               <div className="flex gap-2">
@@ -110,7 +110,7 @@ export function ResetPasswordModal({
                   type="text"
                   readOnly
                   value={temporaryPassword}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/40 text-gray-900 dark:text-white font-mono text-sm"
                 />
                 <Button
                   variant="outline"
@@ -125,7 +125,7 @@ export function ResetPasswordModal({
                   )}
                 </Button>
               </div>
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 El usuario debera cambiar esta contrasena en su primer inicio de
                 sesion.
               </p>

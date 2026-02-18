@@ -37,7 +37,7 @@ export function Pagination({
       {/* Item count */}
       {showItemCount && totalItems && startItem && endItem && (
         <div className="flex-1 hidden sm:block">
-          <p className="text-sm text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
             Mostrando <span className="font-medium">{startItem}</span> a{" "}
             <span className="font-medium">{endItem}</span> de{" "}
             <span className="font-medium">{totalItems}</span> resultados
@@ -71,7 +71,7 @@ export function Pagination({
             page === "..." ? (
               <span
                 key={`ellipsis-${index}`}
-                className="px-3 py-1 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500"
+                className="px-3 py-1 text-gray-500 dark:text-gray-400"
               >
                 ...
               </span>
@@ -88,7 +88,7 @@ export function Pagination({
         </div>
 
         {/* Mobile current page indicator */}
-        <div className="sm:hidden px-3 py-1 text-sm text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <div className="sm:hidden px-3 py-1 text-sm text-gray-700 dark:text-gray-300">
           {currentPage} / {totalPages}
         </div>
 
@@ -138,7 +138,7 @@ function PaginationButton({
         "px-3 py-1 text-sm font-medium rounded-lg transition-colors",
         isActive
           ? "bg-primary-600 text-white"
-          : "text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:bg-gray-800",
+          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700",
         disabled && "opacity-50 cursor-not-allowed hover:bg-transparent",
       )}
     >

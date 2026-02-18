@@ -62,9 +62,9 @@ export default function DashboardPage() {
       icon: Users,
       color: "from-blue-500 to-blue-600",
       lightColor: "from-blue-50 to-blue-100",
-      darkColor: "dark:from-blue-900/20 dark:to-blue-800/20",
-      textColor: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-50 dark:bg-blue-900/10",
+      darkColor: "dark:from-blue-900/20",
+      textColor: "text-blue-600",
+      bgColor: "bg-blue-50 dark:bg-blue-900/20",
     },
     {
       title: "Encuestas Activas",
@@ -72,9 +72,9 @@ export default function DashboardPage() {
       icon: ClipboardList,
       color: "from-purple-500 to-purple-600",
       lightColor: "from-purple-50 to-purple-100",
-      darkColor: "dark:from-purple-900/20 dark:to-purple-800/20",
-      textColor: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-50 dark:bg-purple-900/10",
+      darkColor: "dark:from-purple-900/20",
+      textColor: "text-purple-600",
+      bgColor: "bg-purple-50",
     },
     {
       title: "Asignaciones Completadas",
@@ -82,9 +82,9 @@ export default function DashboardPage() {
       icon: CheckCircle2,
       color: "from-emerald-500 to-emerald-600",
       lightColor: "from-emerald-50 to-emerald-100",
-      darkColor: "dark:from-emerald-900/20 dark:to-emerald-800/20",
-      textColor: "text-emerald-600 dark:text-emerald-400",
-      bgColor: "bg-emerald-50 dark:bg-emerald-900/10",
+      darkColor: "dark:from-emerald-900/20",
+      textColor: "text-emerald-600",
+      bgColor: "bg-emerald-50",
     },
     {
       title: "Respuestas Totales",
@@ -92,9 +92,9 @@ export default function DashboardPage() {
       icon: TrendingUp,
       color: "from-orange-500 to-orange-600",
       lightColor: "from-orange-50 to-orange-100",
-      darkColor: "dark:from-orange-900/20 dark:to-orange-800/20",
-      textColor: "text-orange-600 dark:text-orange-400",
-      bgColor: "bg-orange-50 dark:bg-orange-900/10",
+      darkColor: "dark:from-orange-900/20",
+      textColor: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
   ];
 
@@ -103,48 +103,48 @@ export default function DashboardPage() {
       title: "Asignaciones Pendientes",
       value: stats.pendingAssignments,
       icon: Clock,
-      color: "text-amber-600 dark:text-amber-400",
-      bgColor: "bg-amber-50 dark:bg-amber-900/10",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
     },
     {
       title: "Brigadistas Activos",
       value: stats.activeBrigadistas,
       icon: Activity,
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-50 dark:bg-green-900/10",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
       title: "Tasa de Respuesta",
       value: `${stats.responseRate}%`,
       icon: BarChart3,
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-900/10",
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50",
     },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header con gradiente */}
-      <div className="relative overflow-hidden rounded-2xl border border-primary-200/60 dark:border-gray-800 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/40 dark:via-primary-800/30 dark:to-primary-900/50 p-8 shadow-sm dark:shadow-lg">
-        <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-primary-200/20 dark:bg-white dark:bg-gray-900/10 blur-3xl" />
-        <div className="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-primary-100/20 dark:bg-white dark:bg-gray-900/5 blur-2xl" />
+      <div className="relative overflow-hidden rounded-2xl border border-primary-200/60 bg-gradient-to-br from-primary-50 to-primary-100/50 p-8 shadow-sm">
+        <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-primary-200/20 blur-3xl" />
+        <div className="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-primary-100/20 blur-2xl" />
 
         <div className="relative z-10 flex items-start justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-primary-900 dark:text-white mb-2">
+            <h1 className="text-4xl font-bold text-primary-900 mb-2">
               Dashboard
             </h1>
-            <p className="text-primary-700 dark:text-primary-100 text-lg">
+            <p className="text-primary-700 text-lg">
               Bienvenido a tu panel de control de Brigada
             </p>
-            <p className="text-primary-600 dark:text-primary-200 text-sm mt-2">
+            <p className="text-primary-600 text-sm mt-2">
               Actualizado: {stats.lastUpdated}
             </p>
           </div>
           <button
             onClick={fetchStats}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-900/60 dark:bg-white dark:bg-gray-900/10 hover:bg-white dark:bg-gray-900/80 dark:hover:bg-white dark:bg-gray-900/20 text-primary-700 dark:text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-900 hover:bg-white text-primary-700 text-sm font-medium transition-colors disabled:opacity-50"
           >
             <RefreshCw
               className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
@@ -156,9 +156,9 @@ export default function DashboardPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
-          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
-          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+        <div className="flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+          <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
 
@@ -169,11 +169,11 @@ export default function DashboardPage() {
           return (
             <div
               key={index}
-              className="relative overflow-hidden rounded-xl border border-white/60 bg-white dark:bg-gray-900/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-all duration-300"
+              className="relative overflow-hidden rounded-xl border border-white/60 bg-white dark:bg-gray-900 backdrop-blur shadow-sm hover:shadow-md transition-all duration-300"
             >
               {/* Gradient Background */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${card.lightColor} dark:opacity-0 transition-opacity`}
+                className={`absolute inset-0 bg-gradient-to-br ${card.lightColor} transition-opacity`}
               />
 
               <div className="relative p-6">
@@ -185,7 +185,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   {card.title}
                 </h3>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -213,11 +213,11 @@ export default function DashboardPage() {
           return (
             <Card
               key={index}
-              className="border-white/60 dark:border-gray-700 dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-all"
+              className="border-white/60 shadow-sm hover:shadow-md transition-all"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     {card.title}
                   </h3>
                   <div className={`inline-flex p-2 rounded-lg ${card.bgColor}`}>
@@ -237,34 +237,34 @@ export default function DashboardPage() {
       {/* Quick Actions / Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quick Stats */}
-        <Card className="border-white/60 dark:border-gray-700 dark:bg-gray-900/50">
+        <Card className="border-white/60">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              <BarChart3 className="h-5 w-5 text-primary-600" />
               Resumen Rápido
             </h3>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/40">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Encuestas en Progreso
                 </span>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {stats.activeSurveys}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/40">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Tasa de Respuesta
                 </span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="font-semibold text-emerald-600">
                   {stats.responseRate}%
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/40">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Promedio Completado
                 </span>
-                <span className="font-semibold text-primary-600 dark:text-primary-400">
+                <span className="font-semibold text-primary-600">
                   {stats.completedAssignments > 0
                     ? (
                         stats.totalResponses / stats.completedAssignments
@@ -277,42 +277,42 @@ export default function DashboardPage() {
         </Card>
 
         {/* System Status */}
-        <Card className="border-white/60 dark:border-gray-700 dark:bg-gray-900/50">
+        <Card className="border-white/60">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <Activity className="h-5 w-5 text-emerald-600" />
               Estado del Sistema
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   API Backend
                 </span>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="text-xs font-medium text-emerald-600">
                     Activo
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Base de Datos
                 </span>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="text-xs font-medium text-emerald-600">
                     Conectado
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Infraestructura
                 </span>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="text-xs font-medium text-emerald-600">
                     Óptimo
                   </span>
                 </div>

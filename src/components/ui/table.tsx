@@ -17,7 +17,7 @@ export function Table({ children, className }: TableProps) {
 
 export function TableHeader({ children }: { children: React.ReactNode }) {
   return (
-    <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800/40 border-b border-gray-200 dark:border-gray-700">
       {children}
     </thead>
   );
@@ -45,7 +45,7 @@ export function TableRow({
       onClick={onClick}
       className={cn(
         onClick &&
-          "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
+          "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
         className,
       )}
     >
@@ -79,7 +79,7 @@ export function TableCell({
   className?: string;
 }) {
   return (
-    <td className={cn("px-6 py-4 text-gray-900 dark:text-gray-100", className)}>
+    <td className={cn("px-6 py-4 text-gray-900 dark:text-white", className)}>
       {children}
     </td>
   );
@@ -97,9 +97,9 @@ export function TableEmpty({
     <tr>
       <td colSpan={100} className="px-6 py-12">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 text-gray-400 dark:text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -112,9 +112,9 @@ export function TableEmpty({
               />
             </svg>
           </div>
-          <p className="text-gray-900 font-medium">{message}</p>
+          <p className="text-gray-900 dark:text-white font-medium">{message}</p>
           {description && (
-            <p className="text-sm text-gray-500 mt-1">{description}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>
           )}
         </div>
       </td>

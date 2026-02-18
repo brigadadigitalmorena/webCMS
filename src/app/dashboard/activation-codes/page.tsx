@@ -73,43 +73,43 @@ export default function ActivationCodesPage() {
       title: "Codigos generados",
       value: stats?.codes.total_generated || 0,
       icon: TrendingUp,
-      color: "text-blue-600 dark:text-blue-400",
+      color: "text-blue-600",
     },
     {
       title: "Codigos activos",
       value: stats?.codes.active_codes || 0,
       icon: CheckCircle2,
-      color: "text-emerald-600 dark:text-emerald-400",
+      color: "text-emerald-600",
     },
     {
       title: "Usados hoy",
       value: stats?.codes.used_codes || 0,
       icon: Clock,
-      color: "text-amber-600 dark:text-amber-400",
+      color: "text-amber-600",
     },
     {
       title: "Intentos fallidos (24h)",
       value: stats?.security.failed_attempts_24h || 0,
       icon: AlertTriangle,
-      color: "text-orange-600 dark:text-orange-400",
+      color: "text-orange-600",
     },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
+      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900 p-6 shadow-sm backdrop-blur">
         <div className="absolute -left-10 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
         <div className="absolute bottom-0 right-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
         <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Seguridad y acceso
             </p>
             <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
               Codigos de activacion
             </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Crea codigos temporales para usuarios preautorizados y monitorea
               intentos.
             </p>
@@ -125,17 +125,17 @@ export default function ActivationCodesPage() {
 
       {/* Error Alert */}
       {error && (
-        <Card className="p-4 bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800">
+        <Card className="p-4 bg-red-50 border-red-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+              <AlertTriangle className="w-5 h-5 text-red-600" />
+              <p className="text-sm text-red-800">{error}</p>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={clearError}
-              className="text-red-600 dark:text-red-400"
+              className="text-red-600"
             >
               Cerrar
             </Button>

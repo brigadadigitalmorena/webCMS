@@ -29,33 +29,33 @@ const typeConfig: Record<
   survey_created: {
     icon: ClipboardList,
     bgColor: "bg-blue-50 dark:bg-blue-900/20",
-    iconColor: "text-blue-600 dark:text-blue-400",
+    iconColor: "text-blue-600",
   },
   survey_deleted: {
     icon: Trash2,
-    bgColor: "bg-red-50 dark:bg-red-900/20",
-    iconColor: "text-red-600 dark:text-red-400",
+    bgColor: "bg-red-50",
+    iconColor: "text-red-600",
   },
   version_published: {
     icon: BookOpen,
-    bgColor: "bg-green-50 dark:bg-green-900/20",
-    iconColor: "text-green-600 dark:text-green-400",
+    bgColor: "bg-green-50",
+    iconColor: "text-green-600",
   },
   assignment_created: {
     icon: Bell,
-    bgColor: "bg-purple-50 dark:bg-purple-900/20",
-    iconColor: "text-purple-600 dark:text-purple-400",
+    bgColor: "bg-purple-50",
+    iconColor: "text-purple-600",
   },
   user_registered: {
     icon: UserPlus,
-    bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
-    iconColor: "text-yellow-600 dark:text-yellow-400",
+    bgColor: "bg-yellow-50",
+    iconColor: "text-yellow-600",
   },
 };
 
 const fallbackConfig = {
   icon: Info,
-  bgColor: "bg-gray-50 dark:bg-gray-800",
+  bgColor: "bg-gray-50 dark:bg-gray-800/40",
   iconColor: "text-gray-500 dark:text-gray-400",
 };
 
@@ -86,11 +86,11 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
       <div className="fixed inset-0 z-40" onClick={onClose} />
 
       {/* Notifications panel */}
-      <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-[600px] flex flex-col">
+      <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-[600px] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Notificaciones
             </h3>
             {unreadCount > 0 && (
@@ -112,7 +112,7 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
           <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
             <button
               onClick={markAllRead}
-              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
             >
               Marcar todas como leídas
             </button>
@@ -136,10 +136,10 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
             </div>
           ) : notifications.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
                 <CheckCircle className="w-8 h-8 text-gray-400 dark:text-gray-500" />
               </div>
-              <p className="text-gray-600 dark:text-gray-300 font-medium">
+              <p className="text-gray-600 dark:text-gray-400 font-medium">
                 Sin notificaciones
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -147,7 +147,7 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="divide-y divide-gray-100 dark:divide-gray-800">
               {notifications.map((notif) => {
                 const config = typeConfig[notif.type] ?? fallbackConfig;
                 const Icon = config.icon;
@@ -156,8 +156,8 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
                   <div
                     key={notif.id}
                     className={cn(
-                      "p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer group",
-                      !notif.read && "bg-primary-50/30 dark:bg-primary-900/10",
+                      "p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group",
+                      !notif.read && "bg-primary-50/30",
                     )}
                     onClick={() =>
                       handleClickNotification(notif.id, notif.action_url)
@@ -177,7 +177,7 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
                         <div className="flex items-start justify-between gap-2">
                           <h4
                             className={cn(
-                              "text-sm text-gray-900 dark:text-gray-100",
+                              "text-sm text-gray-900 dark:text-white",
                               !notif.read ? "font-semibold" : "font-medium",
                             )}
                           >
@@ -185,14 +185,14 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
                           </h4>
                           <div className="flex items-center gap-1 flex-shrink-0">
                             {!notif.read && (
-                              <div className="w-2 h-2 bg-primary-600 dark:bg-primary-400 rounded-full" />
+                              <div className="w-2 h-2 bg-primary-600 rounded-full" />
                             )}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 deleteOne(notif.id);
                               }}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:text-red-600 dark:hover:text-red-400 text-gray-400"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:text-red-600 text-gray-400 dark:text-gray-500"
                               title="Eliminar"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -205,11 +205,11 @@ export function SystemAlerts({ isOpen, onClose }: SystemAlertsProps) {
                         </p>
 
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-500 dark:text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {formatDateTime(notif.created_at)}
                           </span>
                           {notif.action_url && (
-                            <span className="text-xs text-primary-600 dark:text-primary-400 font-medium">
+                            <span className="text-xs text-primary-600 font-medium">
                               Ver →
                             </span>
                           )}

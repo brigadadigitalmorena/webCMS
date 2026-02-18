@@ -111,18 +111,18 @@ export default function UsersPage() {
   return (
     <AdminGuard>
       <div className="space-y-6">
-        <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
+        <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900 p-6 shadow-sm backdrop-blur">
           <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
           <div className="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
           <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Administracion
               </p>
               <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
                 Usuarios
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Gestiona accesos, roles y estado de actividad del equipo.
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function UsersPage() {
           <Card className="relative overflow-hidden">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Total usuarios
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
@@ -168,7 +168,7 @@ export default function UsersPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Activos
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
@@ -183,7 +183,7 @@ export default function UsersPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Inactivos
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
@@ -198,7 +198,7 @@ export default function UsersPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Administradores
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
@@ -215,7 +215,7 @@ export default function UsersPage() {
         <Card>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="md:col-span-2 relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <Input
                 type="text"
                 placeholder="Buscar por nombre, email o telefono"
@@ -279,11 +279,11 @@ export default function UsersPage() {
                           <p className="font-medium text-gray-900 dark:text-white">
                             {user.nombre} {user.apellido}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">{user.email}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                        <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 text-xs font-semibold text-blue-700">
                           {user.rol}
                         </span>
                       </TableCell>
@@ -299,12 +299,12 @@ export default function UsersPage() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
                           {user.telefono || "-"}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
                           {new Intl.DateTimeFormat("es-MX", {
                             dateStyle: "medium",
                           }).format(new Date(user.created_at))}

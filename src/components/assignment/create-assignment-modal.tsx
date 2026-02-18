@@ -99,13 +99,13 @@ export default function CreateAssignmentModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full shadow-xl">
+      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Nueva Asignación</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nueva Asignación</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             disabled={isLoading}
           >
             <X className="h-5 w-5" />
@@ -122,7 +122,7 @@ export default function CreateAssignmentModal({
           )}
 
           {loadingData ? (
-            <div className="py-8 text-center text-gray-500">
+            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
               <div className="animate-spin h-7 w-7 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-3" />
               Cargando usuarios y encuestas...
             </div>
@@ -130,8 +130,8 @@ export default function CreateAssignmentModal({
             <>
               {/* Usuario (brigadista o encargado) */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
-                  <UserIcon className="h-4 w-4 text-gray-400" />
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <UserIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   Asignar a *
                 </label>
                 <div className="relative">
@@ -140,7 +140,7 @@ export default function CreateAssignmentModal({
                     onChange={(e) =>
                       setUserId(e.target.value ? Number(e.target.value) : "")
                     }
-                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white appearance-none"
+                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 appearance-none"
                     required
                     disabled={isLoading}
                   >
@@ -152,22 +152,22 @@ export default function CreateAssignmentModal({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                 </div>
                 {users.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
                     No hay usuarios activos disponibles.
                   </p>
                 )}
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   Puedes asignar a brigadistas o encargados.
                 </p>
               </div>
 
               {/* Encuesta */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
-                  <ClipboardList className="h-4 w-4 text-gray-400" />
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <ClipboardList className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   Encuesta *
                 </label>
                 <div className="relative">
@@ -176,7 +176,7 @@ export default function CreateAssignmentModal({
                     onChange={(e) =>
                       setSurveyId(e.target.value ? Number(e.target.value) : "")
                     }
-                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white appearance-none"
+                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 appearance-none"
                     required
                     disabled={isLoading}
                   >
@@ -187,7 +187,7 @@ export default function CreateAssignmentModal({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                 </div>
                 {surveys.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
@@ -198,34 +198,34 @@ export default function CreateAssignmentModal({
 
               {/* Zona / Ubicación */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
-                  <MapPin className="h-4 w-4 text-gray-400" />
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <MapPin className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   Zona / Ubicación
-                  <span className="text-gray-400 font-normal">(opcional)</span>
+                  <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
                 </label>
                 <input
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Ej: Colonia Centro, Cuadra 3"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
 
               {/* Instrucciones / Notas */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
-                  <FileText className="h-4 w-4 text-gray-400" />
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <FileText className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   Instrucciones para el usuario
-                  <span className="text-gray-400 font-normal">(opcional)</span>
+                  <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Ej: Visitar en horario matutino. Priorizar adultos mayores."
                   rows={3}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                   disabled={isLoading}
                 />
               </div>
@@ -238,7 +238,7 @@ export default function CreateAssignmentModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
             disabled={isLoading}
           >
             Cancelar

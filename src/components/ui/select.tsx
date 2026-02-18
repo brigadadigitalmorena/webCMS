@@ -23,7 +23,7 @@ export function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
         >
           {label}
         </label>
@@ -31,7 +31,7 @@ export function Select({
       <select
         id={selectId}
         className={cn(
-          "w-full px-4 py-2 border rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white dark:bg-gray-900 disabled:bg-gray-50 dark:bg-gray-800/40 disabled:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500",
+          "w-full px-4 py-2 border rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white dark:bg-gray-900 disabled:bg-gray-50 disabled:text-gray-500",
           error ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-gray-600",
           className,
         )}

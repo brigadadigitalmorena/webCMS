@@ -171,11 +171,11 @@ export default function UserDetailPage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Administracion</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Administracion</p>
             <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
               Editar usuario
             </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Actualiza los datos de contacto, rol y estado.
             </p>
           </div>
@@ -263,7 +263,7 @@ export default function UserDetailPage() {
               </Select>
             </div>
             {currentUser?.id === user?.id && (
-              <p className="mt-3 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
                 Tu cuenta no puede desactivarse desde aqui.
               </p>
             )}
@@ -289,7 +289,7 @@ export default function UserDetailPage() {
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
                   Restablecer contrasena
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Genera una contrasena temporal para el usuario
                 </p>
               </div>

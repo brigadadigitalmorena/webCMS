@@ -189,25 +189,25 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Configuración
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+          <p className="text-gray-600 dark:text-gray-400">
             Administra tu perfil, contraseña y preferencias del sistema
           </p>
         </div>
 
         {/* Alerts */}
         {successMessage && (
-          <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800">
-            <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
-            <p className="text-green-800 dark:text-green-200">
+          <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 p-4 border border-green-200">
+            <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <p className="text-green-800">
               {successMessage}
             </p>
           </div>
         )}
 
         {errorMessage && (
-          <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-            <p className="text-red-800 dark:text-red-200">{errorMessage}</p>
+          <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
+            <AlertCircle className="w-5 h-5 text-red-600" />
+            <p className="text-red-800">{errorMessage}</p>
           </div>
         )}
 
@@ -218,8 +218,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab("profile")}
               className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
                 activeTab === "profile"
-                  ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                  : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                  ? "border-primary-600 text-primary-600"
+                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -231,8 +231,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab("password")}
               className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
                 activeTab === "password"
-                  ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                  : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                  ? "border-primary-600 text-primary-600"
+                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -244,8 +244,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab("system")}
               className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
                 activeTab === "system"
-                  ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                  : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                  ? "border-primary-600 text-primary-600"
+                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -257,8 +257,8 @@ export default function SettingsPage() {
               onClick={() => setActiveTab("services")}
               className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
                 activeTab === "services"
-                  ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                  : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                  ? "border-primary-600 text-primary-600"
+                  : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -274,7 +274,7 @@ export default function SettingsPage() {
           <Card className="p-6 max-w-2xl">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Nombre
                 </label>
                 <Input
@@ -287,7 +287,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Apellido
                 </label>
                 <Input
@@ -300,7 +300,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email
                 </label>
                 <Input
@@ -314,10 +314,10 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Rol
                 </label>
-                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-gray-100">
+                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white">
                   {currentUser?.rol === "admin" && "Administrador"}
                   {currentUser?.rol === "encargado" && "Encargado"}
                   {currentUser?.rol === "brigadista" && "Brigadista"}
@@ -341,14 +341,14 @@ export default function SettingsPage() {
           <Card className="p-6 max-w-2xl">
             <div className="space-y-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
+                <p className="text-sm text-blue-800">
                   Utiliza una contraseña fuerte con al menos 8 caracteres,
                   incluyendo mayúsculas, minúsculas y números.
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Contraseña actual
                 </label>
                 <Input
@@ -362,7 +362,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Nueva contraseña
                 </label>
                 <Input
@@ -376,7 +376,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Confirmar contraseña
                 </label>
                 <Input
@@ -406,7 +406,7 @@ export default function SettingsPage() {
           <Card className="p-6 max-w-2xl">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Tema
                 </label>
                 <Select
@@ -437,7 +437,7 @@ export default function SettingsPage() {
                     disabled={isSaving}
                     className="w-4 h-4 rounded border-gray-300 dark:border-gray-600"
                   />
-                  <span className="text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <span className="text-gray-700 dark:text-gray-300">
                     Recibir notificaciones por correo
                   </span>
                 </label>

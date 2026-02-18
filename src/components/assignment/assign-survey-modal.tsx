@@ -97,12 +97,12 @@ export default function AssignSurveyModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-md w-full shadow-xl">
+      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full shadow-xl">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Nueva asignacion</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nueva asignacion</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             disabled={isLoading}
           >
             <X className="h-5 w-5" />
@@ -117,7 +117,7 @@ export default function AssignSurveyModal({
           )}
 
           {loadingData ? (
-            <div className="py-8 text-center text-gray-500">
+            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
               <div className="animate-spin h-7 w-7 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-3" />
               Cargando...
             </div>
@@ -125,7 +125,7 @@ export default function AssignSurveyModal({
             <>
               {/* Step 1 */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-1.5">
+                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                   <span className="w-5 h-5 rounded-full bg-primary-600 text-white text-xs flex items-center justify-center font-bold">
                     1
                   </span>
@@ -145,7 +145,7 @@ export default function AssignSurveyModal({
                       onChange={(e) =>
                         setSurveyId(e.target.value ? Number(e.target.value) : "")
                       }
-                      className="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white appearance-none"
+                      className="w-full pl-3 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 appearance-none"
                       required
                       disabled={isLoading}
                     >
@@ -156,14 +156,14 @@ export default function AssignSurveyModal({
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                   </div>
                 )}
               </div>
 
               {/* Step 2 */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
+                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   <span className="w-5 h-5 rounded-full bg-primary-600 text-white text-xs flex items-center justify-center font-bold">
                     2
                   </span>
@@ -176,7 +176,7 @@ export default function AssignSurveyModal({
                     className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                       roleTab === "encargado"
                         ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                        : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
+                        : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     }`}
                   >
                     <UserCheck className="h-4 w-4" />
@@ -188,14 +188,14 @@ export default function AssignSurveyModal({
                     className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                       roleTab === "brigadista"
                         ? "bg-purple-50 border-purple-300 text-purple-700"
-                        : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
+                        : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     }`}
                   >
                     <Users className="h-4 w-4" />
                     Brigadista
                   </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5">
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
                   {roleTab === "encargado"
                     ? "El encargado supervisa y coordina esta encuesta."
                     : "El brigadista la aplica en campo."}
@@ -204,7 +204,7 @@ export default function AssignSurveyModal({
 
               {/* Step 3 */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-1.5">
+                <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                   <span className="w-5 h-5 rounded-full bg-primary-600 text-white text-xs flex items-center justify-center font-bold">
                     3
                   </span>
@@ -216,7 +216,7 @@ export default function AssignSurveyModal({
                     onChange={(e) =>
                       setUserId(e.target.value ? Number(e.target.value) : "")
                     }
-                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white appearance-none"
+                    className="w-full pl-3 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 appearance-none"
                     required
                     disabled={isLoading}
                   >
@@ -231,7 +231,7 @@ export default function AssignSurveyModal({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                 </div>
                 {activeUsers.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
@@ -244,17 +244,17 @@ export default function AssignSurveyModal({
 
               {/* Zona */}
               <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-1">
-                  <MapPin className="h-4 w-4 text-gray-400" />
+                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <MapPin className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                   Zona / Sector
-                  <span className="text-gray-400 font-normal ml-1">(opcional)</span>
+                  <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">(opcional)</span>
                 </label>
                 <input
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Ej: Colonia Centro, Sector Norte"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
@@ -266,7 +266,7 @@ export default function AssignSurveyModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
             disabled={isLoading}
           >
             Cancelar

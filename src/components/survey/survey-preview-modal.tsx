@@ -69,12 +69,12 @@ export default function SurveyPreviewModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-gray-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-50 to-primary-100">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {surveyTitle}
               </h2>
               <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-primary-600 text-white">
@@ -82,22 +82,22 @@ export default function SurveyPreviewModal({
               </span>
             </div>
             {surveyDescription && (
-              <p className="text-gray-600">{surveyDescription}</p>
+              <p className="text-gray-600 dark:text-gray-400">{surveyDescription}</p>
             )}
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               Vista previa - Así se verá en la app móvil
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-white/50 transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-2 rounded-full hover:bg-white/50 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-800/40">
           <div className="max-w-2xl mx-auto space-y-6">
             {sortedQuestions.map((question, index) => {
               const Icon = questionTypeIcons[question.question_type] || Type;
@@ -105,7 +105,7 @@ export default function SurveyPreviewModal({
               return (
                 <div
                   key={question.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-5"
+                  className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5"
                 >
                   {/* Question Header */}
                   <div className="flex items-start gap-3 mb-4">
@@ -114,15 +114,15 @@ export default function SurveyPreviewModal({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start gap-2">
-                        <Icon className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <h3 className="text-lg font-medium text-gray-900">
+                        <Icon className="h-5 w-5 text-gray-400 dark:text-gray-500 mt-0.5 flex-shrink-0" />
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                           {question.question_text}
                           {question.is_required && (
                             <span className="text-red-500 ml-1">*</span>
                           )}
                         </h3>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1 ml-7">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">
                         {getQuestionTypeLabel(question.question_type)}
                       </p>
                     </div>
@@ -137,8 +137,8 @@ export default function SurveyPreviewModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center p-6 border-t bg-gray-50">
-          <div className="text-sm text-gray-600">
+        <div className="flex justify-between items-center p-6 border-t bg-gray-50 dark:bg-gray-800/40">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             {version.questions.length}{" "}
             {version.questions.length === 1 ? "pregunta" : "preguntas"} •{" "}
             {version.questions.filter((q) => q.is_required).length} requeridas
@@ -162,7 +162,7 @@ function renderQuestionInput(question: Question) {
         <input
           type="text"
           placeholder="Respuesta de texto..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -172,7 +172,7 @@ function renderQuestionInput(question: Question) {
         <textarea
           placeholder="Respuesta larga..."
           rows={3}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 resize-none"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40 resize-none"
           disabled
         />
       );
@@ -182,7 +182,7 @@ function renderQuestionInput(question: Question) {
         <input
           type="email"
           placeholder="ejemplo@correo.com"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -192,7 +192,7 @@ function renderQuestionInput(question: Question) {
         <input
           type="tel"
           placeholder="+52 55 1234 5678"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -202,7 +202,7 @@ function renderQuestionInput(question: Question) {
         <input
           type="number"
           placeholder="0"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -221,7 +221,7 @@ function renderQuestionInput(question: Question) {
             className="w-full accent-primary-600"
             disabled
           />
-          <div className="flex justify-between text-xs text-gray-500">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
             <span>{min}</span>
             <span>{max}</span>
           </div>
@@ -239,7 +239,7 @@ function renderQuestionInput(question: Question) {
             <button
               key={n}
               disabled
-              className="w-9 h-9 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-primary-50"
+              className="w-9 h-9 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 hover:bg-primary-50"
             >
               {n}
             </button>
@@ -253,7 +253,7 @@ function renderQuestionInput(question: Question) {
       return (
         <div className="flex gap-1">
           {Array.from({ length: stars }).map((_, i) => (
-            <Star key={i} className="h-8 w-8 text-gray-300" />
+            <Star key={i} className="h-8 w-8 text-gray-300 dark:text-gray-600" />
           ))}
         </div>
       );
@@ -264,13 +264,13 @@ function renderQuestionInput(question: Question) {
         <div className="flex gap-3">
           <button
             disabled
-            className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50"
+            className="flex-1 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40"
           >
             ✅ Sí
           </button>
           <button
             disabled
-            className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50"
+            className="flex-1 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40"
           >
             ❌ No
           </button>
@@ -281,7 +281,7 @@ function renderQuestionInput(question: Question) {
       return (
         <input
           type="date"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -290,7 +290,7 @@ function renderQuestionInput(question: Question) {
       return (
         <input
           type="time"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -299,7 +299,7 @@ function renderQuestionInput(question: Question) {
       return (
         <input
           type="datetime-local"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-gray-800/40"
           disabled
         />
       );
@@ -313,7 +313,7 @@ function renderQuestionInput(question: Question) {
               .map((option) => (
                 <label
                   key={option.id}
-                  className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center gap-3 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                 >
                   <input
                     type="radio"
@@ -321,11 +321,11 @@ function renderQuestionInput(question: Question) {
                     className="w-4 h-4 text-primary-600"
                     disabled
                   />
-                  <span className="text-gray-700">{option.option_text}</span>
+                  <span className="text-gray-700 dark:text-gray-300">{option.option_text}</span>
                 </label>
               ))
           ) : (
-            <p className="text-sm text-gray-500 italic">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
               No hay opciones definidas
             </p>
           )}
@@ -341,18 +341,18 @@ function renderQuestionInput(question: Question) {
               .map((option) => (
                 <label
                   key={option.id}
-                  className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center gap-3 p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
                 >
                   <input
                     type="checkbox"
                     className="w-4 h-4 text-primary-600 rounded"
                     disabled
                   />
-                  <span className="text-gray-700">{option.option_text}</span>
+                  <span className="text-gray-700 dark:text-gray-300">{option.option_text}</span>
                 </label>
               ))
           ) : (
-            <p className="text-sm text-gray-500 italic">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
               No hay opciones definidas
             </p>
           )}
@@ -361,9 +361,9 @@ function renderQuestionInput(question: Question) {
 
     case "location":
       return (
-        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
-          <MapPin className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600">
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40 text-center">
+          <MapPin className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-2" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             El usuario capturará su ubicación actual
           </p>
         </div>
@@ -371,9 +371,9 @@ function renderQuestionInput(question: Question) {
 
     case "photo":
       return (
-        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
-          <Camera className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600">
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40 text-center">
+          <Camera className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-2" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             El usuario tomará una foto con la cámara
           </p>
         </div>
@@ -381,9 +381,9 @@ function renderQuestionInput(question: Question) {
 
     case "file":
       return (
-        <div className="border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
-          <FileUp className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600">
+        <div className="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40 text-center">
+          <FileUp className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-2" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             El usuario adjuntará un archivo o documento
           </p>
         </div>
@@ -391,9 +391,9 @@ function renderQuestionInput(question: Question) {
 
     case "signature":
       return (
-        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
-          <PenTool className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600">
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40 text-center">
+          <PenTool className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-2" />
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             El usuario firmará con el dedo o stylus
           </p>
         </div>
@@ -401,7 +401,7 @@ function renderQuestionInput(question: Question) {
 
     case "ine_ocr":
       return (
-        <div className="border border-gray-300 rounded-lg p-4 bg-blue-50 text-center">
+        <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20 text-center">
           <ScanLine className="mx-auto h-12 w-12 text-blue-400 mb-2" />
           <p className="text-sm font-medium text-blue-700">
             Captura de INE con OCR
@@ -414,7 +414,7 @@ function renderQuestionInput(question: Question) {
 
     default:
       return (
-        <div className="text-sm text-gray-500 italic">
+        <div className="text-sm text-gray-500 dark:text-gray-400 italic">
           Tipo de pregunta no soportado: {question.question_type}
         </div>
       );

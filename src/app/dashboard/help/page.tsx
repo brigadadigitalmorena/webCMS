@@ -89,7 +89,7 @@ export default function HelpPage() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Ayuda y Soporte
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+        <p className="text-gray-600 dark:text-gray-400">
           Encuentra respuestas a preguntas comunes, reporta problemas y accede a
           documentación
         </p>
@@ -102,8 +102,8 @@ export default function HelpPage() {
             onClick={() => setActiveTab("faq")}
             className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
               activeTab === "faq"
-                ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                ? "border-primary-600 text-primary-600"
+                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -115,8 +115,8 @@ export default function HelpPage() {
             onClick={() => setActiveTab("report")}
             className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
               activeTab === "report"
-                ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                ? "border-primary-600 text-primary-600"
+                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -154,12 +154,12 @@ export default function HelpPage() {
           ].map((item, index) => (
             <Card key={index} className="p-6">
               <div className="flex gap-4">
-                <HelpCircle className="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-1" />
+                <HelpCircle className="w-5 h-5 text-primary-600 flex-shrink-0 mt-1" />
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                     {item.q}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">{item.a}</p>
+                  <p className="text-gray-600 dark:text-gray-400">{item.a}</p>
                 </div>
               </div>
             </Card>
@@ -171,9 +171,9 @@ export default function HelpPage() {
       {activeTab === "report" && (
         <div className="max-w-3xl">
           {submitSuccess && (
-            <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800">
-              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
-              <p className="text-green-800 dark:text-green-200">
+            <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 p-4 border border-green-200">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+              <p className="text-green-800">
                 Tu reporte ha sido enviado exitosamente. Nuestro equipo lo
                 revisará pronto.
               </p>
@@ -181,17 +181,17 @@ export default function HelpPage() {
           )}
 
           {submitError && (
-            <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-              <p className="text-red-800 dark:text-red-200">{submitError}</p>
+            <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              <p className="text-red-800">{submitError}</p>
             </div>
           )}
 
           <Card className="p-6 mb-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
               <div className="flex gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                <p className="text-sm text-blue-800 dark:text-blue-200">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                <p className="text-sm text-blue-800">
                   Por favor, describe el problema de manera clara y detallada.
                   Incluye pasos para reproducirlo si es posible.
                 </p>
@@ -200,7 +200,7 @@ export default function HelpPage() {
 
             <form onSubmit={handleSubmitIssue} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Tu Email
                 </label>
                 <Input
@@ -215,7 +215,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Título del problema
                 </label>
                 <Input
@@ -229,7 +229,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Severidad
                 </label>
                 <select
@@ -237,7 +237,7 @@ export default function HelpPage() {
                   value={formData.severity}
                   onChange={handleFormChange}
                   disabled={isSubmitting}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                 >
                   <option value="low">Baja - Inconveniente menor</option>
                   <option value="medium">Media - Funcionalidad afectada</option>
@@ -249,7 +249,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Descripción del problema
                 </label>
                 <textarea
@@ -260,7 +260,7 @@ export default function HelpPage() {
                   required
                   disabled={isSubmitting}
                   rows={6}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400"
                 />
               </div>
 
@@ -275,17 +275,17 @@ export default function HelpPage() {
             </form>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-primary-200 dark:border-primary-800">
+          <Card className="p-6 bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Información de contacto
             </h3>
-            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
               <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                <Mail className="w-4 h-4 text-primary-600" />
                 <span>brigadadigitalmorena@gmail.com</span>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+                <Clock className="w-4 h-4 text-primary-600" />
                 <span>Tiempo de respuesta: 24-48 horas</span>
               </div>
             </div>

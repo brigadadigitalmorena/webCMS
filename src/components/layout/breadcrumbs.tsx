@@ -47,7 +47,7 @@ export function Breadcrumbs() {
       {/* Home link */}
       <Link
         href="/dashboard"
-        className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
         title="Inicio"
       >
         <Home className="w-4 h-4" />
@@ -58,17 +58,17 @@ export function Breadcrumbs() {
 
         return (
           <div key={item.label} className="flex items-center min-w-0">
-            <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-600 flex-shrink-0" />
+            <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
 
             {item.href && !isLast ? (
               <Link
                 href={item.href}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 truncate"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 transition-colors px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 truncate"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-gray-900 dark:text-gray-100 font-medium px-2 py-1 truncate">
+              <span className="text-gray-900 dark:text-white font-medium px-2 py-1 truncate">
                 {item.label}
               </span>
             )}

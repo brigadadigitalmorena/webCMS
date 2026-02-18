@@ -130,7 +130,7 @@ export function CreateUserModal({
     >
       {!activationCode ? (
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Completa los datos del usuario. Se generará un código de activación
             que el usuario usará para crear su cuenta.
           </p>
@@ -188,7 +188,7 @@ export function CreateUserModal({
             />
           </div>
 
-          <Card className="border-blue-200 bg-blue-50/70 text-blue-800">
+          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20/70 text-blue-800">
             <p className="text-sm">
               ℹ️ Se enviará un email automáticamente con el código de
               activación. El código expirará en 72 horas.
@@ -221,7 +221,7 @@ export function CreateUserModal({
           </Card>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Código de activación
             </label>
             <div className="flex gap-2">
@@ -229,7 +229,7 @@ export function CreateUserModal({
                 type="text"
                 readOnly
                 value={activationCode}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-lg text-center tracking-wider"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/40 text-gray-900 dark:text-white font-mono text-lg text-center tracking-wider"
               />
               <Button
                 variant="outline"
@@ -244,7 +244,7 @@ export function CreateUserModal({
                 )}
               </Button>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
               El usuario recibirá un email con este código. También puedes
               compartirlo manualmente de forma segura.
             </p>

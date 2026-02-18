@@ -60,10 +60,10 @@ export function Header({ onMenuClick }: HeaderProps) {
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <button
           onClick={onMenuClick}
-          className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           aria-label="Toggle menu"
         >
-          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
 
         <Breadcrumbs />
@@ -75,7 +75,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         <div className="relative">
           <button
             onClick={handleOpenAlerts}
-            className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title="Notificaciones"
           >
             <Bell className="w-5 h-5" />
@@ -96,7 +96,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         {mounted ? (
           <button
             onClick={toggleTheme}
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title={
               theme === "light" ? "Activar modo oscuro" : "Activar modo claro"
             }
@@ -114,7 +114,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         {/* Help */}
         <Link
           href="/dashboard/help"
-          className="hidden md:block p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="hidden md:block p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           title="Ayuda"
         >
           <HelpCircle className="w-5 h-5" />
@@ -128,13 +128,13 @@ export function Header({ onMenuClick }: HeaderProps) {
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                <User className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+              <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                <User className="w-4 h-4 text-primary-600" />
               </div>
               <div className="hidden lg:block text-left">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
                   {user.nombre} {user.apellido}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -151,17 +151,17 @@ export function Header({ onMenuClick }: HeaderProps) {
                   className="fixed inset-0 z-40"
                   onClick={() => setShowUserMenu(false)}
                 />
-                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                   {/* User info */}
                   <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {user.nombre} {user.apellido}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       {user.email}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-700">
                         {formatRoleName(user.rol)}
                       </span>
                     </p>
@@ -188,7 +188,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                         setShowUserMenu(false);
                         await handleLogout();
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Cerrar sesión</span>

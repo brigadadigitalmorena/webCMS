@@ -242,11 +242,11 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
       <div className="space-y-4">
         {/* Server Error Alert */}
         {serverError && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
                 <svg
-                  className="w-5 h-5 text-red-600 dark:text-red-400"
+                  className="w-5 h-5 text-red-600"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -258,16 +258,16 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                <h3 className="text-sm font-medium text-red-800">
                   Error
                 </h3>
-                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                <p className="text-sm text-red-700 mt-1">
                   {serverError}
                 </p>
               </div>
               <button
                 onClick={() => setServerError(null)}
-                className="flex-shrink-0 text-red-400 hover:text-red-600 dark:hover:text-red-200"
+                className="flex-shrink-0 text-red-400 hover:text-red-600"
               >
                 <svg
                   className="w-5 h-5"
@@ -288,7 +288,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
         {/* Name Fields */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
               Nombre <span className="text-red-500">*</span>
             </label>
             <Input
@@ -298,14 +298,14 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
               disabled={isSubmitting}
             />
             {errors.nombre && (
-              <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+              <p className="text-sm text-red-600 mt-1">
                 {errors.nombre}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
               Apellido <span className="text-red-500">*</span>
             </label>
             <Input
@@ -315,7 +315,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
               disabled={isSubmitting}
             />
             {errors.apellido && (
-              <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+              <p className="text-sm text-red-600 mt-1">
                 {errors.apellido}
               </p>
             )}
@@ -324,7 +324,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
             Email <span className="text-red-500">*</span>
           </label>
           <Input
@@ -335,7 +335,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
             disabled={isSubmitting}
           />
           {errors.email && (
-            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+            <p className="text-sm text-red-600 mt-1">
               {errors.email}
             </p>
           )}
@@ -346,7 +346,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
 
         {/* Phone */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
             Teléfono (Opcional)
           </label>
           <Input
@@ -357,7 +357,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
             disabled={isSubmitting}
           />
           {errors.phone && (
-            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+            <p className="text-sm text-red-600 mt-1">
               {errors.phone}
             </p>
           )}
@@ -365,7 +365,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
 
         {/* Role */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
             Rol Asignado <span className="text-red-500">*</span>
           </label>
           <Select
@@ -384,7 +384,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
         {/* Supervisor (Only for Brigadista) */}
         {formData.assigned_role === "brigadista" && (
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+            <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
               Supervisor <span className="text-red-500">*</span>
             </label>
             <Select
@@ -410,7 +410,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
               ))}
             </Select>
             {errors.supervisor_id && (
-              <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+              <p className="text-sm text-red-600 mt-1">
                 {errors.supervisor_id}
               </p>
             )}
@@ -422,7 +422,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
 
         {/* Expiration */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
             Expira en (Horas) <span className="text-red-500">*</span>
           </label>
           <Input
@@ -436,7 +436,7 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
             disabled={isSubmitting}
           />
           {errors.expires_in_hours && (
-            <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+            <p className="text-sm text-red-600 mt-1">
               {errors.expires_in_hours}
             </p>
           )}
@@ -447,14 +447,14 @@ export function CreateCodeModal({ isOpen, onClose }: CreateCodeModalProps) {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-gray-100">
+          <label className="block text-sm font-medium mb-1 text-gray-900 dark:text-white">
             Notas (Opcional)
           </label>
           <textarea
             value={formData.notes}
             onChange={(e) => handleChange("notes", e.target.value)}
             placeholder="Notas internas sobre esta activación..."
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={3}
             disabled={isSubmitting}
           />

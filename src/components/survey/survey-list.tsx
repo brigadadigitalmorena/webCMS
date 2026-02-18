@@ -36,12 +36,12 @@ export default function SurveyList({
 
   if (surveys.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-12 text-center">
-        <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-12 text-center">
+        <FileText className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
           No hay encuestas
         </h3>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           Crea tu primera encuesta para comenzar a recopilar datos.
         </p>
       </div>
@@ -49,32 +49,32 @@ export default function SurveyList({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800/40">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[28%]">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[28%]">
                 Encuesta
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[15%]">
                 Versiones
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[17%]">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[17%]">
                 Estado
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[22%] whitespace-nowrap">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[22%] whitespace-nowrap">
                 Vigencia
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%] whitespace-nowrap">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[10%] whitespace-nowrap">
                 Creada
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-[8%]">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[8%]">
                 Acciones
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
             {surveys.map((survey) => {
               const publishedVersion = survey.versions?.find(
                 (v) => v.is_published,
@@ -91,17 +91,17 @@ export default function SurveyList({
               return (
                 <tr
                   key={survey.id}
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
                   onClick={() => onView(survey)}
                 >
                   {/* ENCUESTA */}
                   <td className="px-6 py-4">
                     <div className="max-w-xs">
-                      <div className="text-sm font-medium text-gray-900 truncate">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                         {survey.title}
                       </div>
                       {survey.description && (
-                        <div className="text-xs text-gray-500 truncate mt-0.5">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
                           {survey.description}
                         </div>
                       )}
@@ -110,8 +110,8 @@ export default function SurveyList({
 
                   {/* VERSIONES */}
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5 text-sm text-gray-700">
-                      <GitBranch className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <div className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
+                      <GitBranch className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                       <span>
                         {totalVersions}{" "}
                         {totalVersions === 1 ? "versión" : "versiones"}
@@ -130,7 +130,7 @@ export default function SurveyList({
                         </span>
                       )}
                       {totalVersions === 0 && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-gray-400 dark:text-gray-500">
                           Sin versiones
                         </span>
                       )}
@@ -144,7 +144,7 @@ export default function SurveyList({
                         className={`self-start px-2 py-0.5 text-xs font-semibold rounded-full ${
                           survey.is_active
                             ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-600"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
                         }`}
                       >
                         {survey.is_active ? "Activa" : "Inactiva"}
@@ -163,10 +163,10 @@ export default function SurveyList({
                   </td>
 
                   {/* VIGENCIA */}
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                     {survey.starts_at || survey.ends_at ? (
                       <div className="flex items-start gap-1.5">
-                        <CalendarRange className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                        <CalendarRange className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5" />
                         <div>
                           {survey.starts_at && (
                             <div className="whitespace-nowrap">
@@ -199,16 +199,16 @@ export default function SurveyList({
                         </div>
                       </div>
                     ) : (
-                      <span className="text-gray-400 italic text-xs">
+                      <span className="text-gray-400 dark:text-gray-500 italic text-xs">
                         Sin límite
                       </span>
                     )}
                   </td>
 
                   {/* FECHA CREACIÓN */}
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
                       {format(new Date(survey.created_at), "dd MMM yy", {
                         locale: es,
                       })}
@@ -225,14 +225,14 @@ export default function SurveyList({
                             openMenuId === survey.id ? null : survey.id,
                           );
                         }}
-                        className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100"
+                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         <MoreVertical className="h-5 w-5" />
                       </button>
 
                       {openMenuId === survey.id && (
                         <div
-                          className="origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+                          className="origin-top-right absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 z-10"
                           onMouseLeave={() => setOpenMenuId(null)}
                         >
                           <div className="py-1">
@@ -242,7 +242,7 @@ export default function SurveyList({
                                 onView(survey);
                                 setOpenMenuId(null);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <Eye className="h-4 w-4" />
                               Ver versiones
@@ -253,12 +253,12 @@ export default function SurveyList({
                                 onEdit(survey);
                                 setOpenMenuId(null);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <Pencil className="h-4 w-4" />
                               <span>
                                 Editar
-                                <span className="block text-xs text-gray-400 leading-none mt-0.5">
+                                <span className="block text-xs text-gray-400 dark:text-gray-500 leading-none mt-0.5">
                                   (crea nueva versión)
                                 </span>
                               </span>
@@ -269,12 +269,12 @@ export default function SurveyList({
                                 onToggleStatus(survey);
                                 setOpenMenuId(null);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <Power className="h-4 w-4" />
                               {survey.is_active ? "Desactivar" : "Activar"}
                             </button>
-                            <div className="border-t border-gray-100 my-1" />
+                            <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();

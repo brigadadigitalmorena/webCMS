@@ -60,7 +60,7 @@ export function QuotaDisplay() {
       return (
         <Card key={title} className="p-6">
           <div className="flex items-start gap-4">
-            <Icon className="w-6 h-6 text-gray-400 flex-shrink-0 mt-1" />
+            <Icon className="w-6 h-6 text-gray-400 dark:text-gray-500 flex-shrink-0 mt-1" />
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 {title}
@@ -75,13 +75,13 @@ export function QuotaDisplay() {
     const isSuccess = info.status === "success";
     const StatusIcon = isSuccess ? CheckCircle2 : AlertCircle;
     const statusColor = isSuccess
-      ? "text-green-600 dark:text-green-400"
-      : "text-red-600 dark:text-red-400";
+      ? "text-green-600"
+      : "text-red-600";
 
     return (
       <Card key={title} className="p-6">
         <div className="flex items-start gap-4">
-          <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-1" />
+          <Icon className="w-6 h-6 text-primary-600 flex-shrink-0 mt-1" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h3 className="font-semibold text-gray-900 dark:text-white">
@@ -119,7 +119,7 @@ export function QuotaDisplay() {
                       <strong>Región:</strong> {info.data.region}
                     </p>
                     {info.lastUpdated && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                         Actualizado:{" "}
                         {new Date(info.lastUpdated).toLocaleTimeString()}
                       </p>
@@ -142,7 +142,7 @@ export function QuotaDisplay() {
                       <strong>Assets:</strong> {info.data.mediaAssets}
                     </p>
                     {info.lastUpdated && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                         Actualizado:{" "}
                         {new Date(info.lastUpdated).toLocaleTimeString()}
                       </p>
@@ -151,7 +151,7 @@ export function QuotaDisplay() {
                 )}
               </div>
             ) : (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-red-600">
                 {info.error || "Error desconocido"}
               </p>
             )}
@@ -200,9 +200,9 @@ export function QuotaDisplay() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
-          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-          <p className="text-red-800 dark:text-red-200">{error}</p>
+        <div className="flex items-center gap-2 rounded-lg bg-red-50 p-4 border border-red-200">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <p className="text-red-800">{error}</p>
         </div>
       )}
 

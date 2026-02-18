@@ -272,15 +272,15 @@ export default function CreateSurveyModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {initialData ? "Editar Encuesta" : "Nueva Encuesta"}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600"
             disabled={isLoading}
           >
             <X className="h-6 w-6" />
@@ -292,14 +292,14 @@ export default function CreateSurveyModal({
           {/* Basic Info */}
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Título de la Encuesta *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="Ej: Encuesta de Satisfacción"
                 required
                 disabled={isLoading}
@@ -307,13 +307,13 @@ export default function CreateSurveyModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Descripción
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 rows={3}
                 placeholder="Descripción opcional de la encuesta"
                 disabled={isLoading}
@@ -323,29 +323,29 @@ export default function CreateSurveyModal({
             {/* Vigencia */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Fecha de inicio
-                  <span className="ml-1 text-xs text-gray-400">(opcional)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(opcional)</span>
                 </label>
                 <input
                   type="date"
                   value={startsAt}
                   onChange={(e) => setStartsAt(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Fecha de cierre
-                  <span className="ml-1 text-xs text-gray-400">(opcional)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(opcional)</span>
                 </label>
                 <input
                   type="date"
                   value={endsAt}
                   min={startsAt || undefined}
                   onChange={(e) => setEndsAt(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
@@ -359,9 +359,9 @@ export default function CreateSurveyModal({
             {/* Configuración adicional */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Duración estimada
-                  <span className="ml-1 text-xs text-gray-400">(minutos)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(minutos)</span>
                 </label>
                 <input
                   type="number"
@@ -370,14 +370,14 @@ export default function CreateSurveyModal({
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(e.target.value)}
                   placeholder="Ej: 15"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Máximo de respuestas
-                  <span className="ml-1 text-xs text-gray-400">
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
                     (vacío = sin límite)
                   </span>
                 </label>
@@ -387,7 +387,7 @@ export default function CreateSurveyModal({
                   value={maxResponses}
                   onChange={(e) => setMaxResponses(e.target.value)}
                   placeholder="Ej: 500"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
@@ -407,14 +407,14 @@ export default function CreateSurveyModal({
                   className={`w-10 h-6 rounded-full transition-colors ${allowAnonymous ? "bg-primary-600" : "bg-gray-300"}`}
                 />
                 <div
-                  className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${allowAnonymous ? "translate-x-4" : ""}`}
+                  className={`absolute top-1 left-1 w-4 h-4 bg-white dark:bg-gray-900 rounded-full shadow transition-transform ${allowAnonymous ? "translate-x-4" : ""}`}
                 />
               </div>
               <div>
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Permitir respuestas anónimas
                 </span>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 dark:text-gray-500">
                   La encuesta podrá responderse sin asignación de brigadista
                 </p>
               </div>
@@ -424,7 +424,7 @@ export default function CreateSurveyModal({
           {/* Questions */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Preguntas</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Preguntas</h3>
               <button
                 type="button"
                 onClick={addQuestion}
@@ -437,8 +437,8 @@ export default function CreateSurveyModal({
             </div>
 
             {questions.length === 0 && (
-              <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                <p className="text-gray-500">
+              <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                <p className="text-gray-500 dark:text-gray-400">
                   No hay preguntas. Haz clic en "Agregar Pregunta" para
                   comenzar.
                 </p>
@@ -458,10 +458,10 @@ export default function CreateSurveyModal({
               return (
                 <div
                   key={qIndex}
-                  className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40"
                 >
                   <div className="flex items-start gap-3">
-                    <GripVertical className="h-5 w-5 text-gray-400 mt-2 flex-shrink-0" />
+                    <GripVertical className="h-5 w-5 text-gray-400 dark:text-gray-500 mt-2 flex-shrink-0" />
 
                     <div className="flex-1 space-y-3">
                       {/* Question text */}
@@ -476,7 +476,7 @@ export default function CreateSurveyModal({
                               e.target.value,
                             )
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
                           placeholder={`Pregunta ${qIndex + 1}`}
                           required
                           disabled={isLoading}
@@ -495,7 +495,7 @@ export default function CreateSurveyModal({
                                 e.target.value as QuestionType,
                               )
                             }
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
                             disabled={isLoading}
                           >
                             {questionTypeGroups.map((group) => (
@@ -510,7 +510,7 @@ export default function CreateSurveyModal({
                           </select>
                         </div>
 
-                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md bg-white cursor-pointer">
+                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={question.is_required}
@@ -521,10 +521,10 @@ export default function CreateSurveyModal({
                                 e.target.checked,
                               )
                             }
-                            className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                            className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded"
                             disabled={isLoading}
                           />
-                          <span className="text-sm text-gray-700">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
                             Requerida
                           </span>
                         </label>
@@ -535,7 +535,7 @@ export default function CreateSurveyModal({
                         <div className="grid grid-cols-3 gap-2 mt-3">
                           {question.question_type !== "rating" && (
                             <div>
-                              <label className="text-xs font-medium text-gray-600 mb-1 block">
+                              <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
                                 Mínimo
                               </label>
                               <input
@@ -550,13 +550,13 @@ export default function CreateSurveyModal({
                                     min: Number(e.target.value),
                                   })
                                 }
-                                className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm bg-white"
+                                className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
                                 disabled={isLoading}
                               />
                             </div>
                           )}
                           <div>
-                            <label className="text-xs font-medium text-gray-600 mb-1 block">
+                            <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
                               {question.question_type === "rating"
                                 ? "Estrellas"
                                 : "Máximo"}
@@ -577,13 +577,13 @@ export default function CreateSurveyModal({
                                   max: Number(e.target.value),
                                 })
                               }
-                              className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm bg-white"
+                              className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
                               disabled={isLoading}
                             />
                           </div>
                           {question.question_type === "slider" && (
                             <div>
-                              <label className="text-xs font-medium text-gray-600 mb-1 block">
+                              <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
                                 Paso
                               </label>
                               <input
@@ -595,7 +595,7 @@ export default function CreateSurveyModal({
                                     step: Number(e.target.value),
                                   })
                                 }
-                                className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm bg-white"
+                                className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
                                 disabled={isLoading}
                               />
                             </div>
@@ -607,7 +607,7 @@ export default function CreateSurveyModal({
                       {needsOptions && (
                         <div className="space-y-2 mt-3">
                           <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-gray-700">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                               Opciones
                             </label>
                             <button
@@ -628,7 +628,7 @@ export default function CreateSurveyModal({
                                 onChange={(e) =>
                                   updateOption(qIndex, oIndex, e.target.value)
                                 }
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-sm"
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 text-sm"
                                 placeholder={`Opción ${oIndex + 1}`}
                                 required
                                 disabled={isLoading}
@@ -646,7 +646,7 @@ export default function CreateSurveyModal({
 
                           {(!question.options ||
                             question.options.length === 0) && (
-                            <p className="text-xs text-gray-500 italic">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 italic">
                               Agrega al menos una opción
                             </p>
                           )}
@@ -670,11 +670,11 @@ export default function CreateSurveyModal({
         </form>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
+        <div className="flex justify-end gap-3 p-6 border-t bg-gray-50 dark:bg-gray-800/40">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50"
             disabled={isLoading}
           >
             Cancelar

@@ -159,25 +159,25 @@ export function Sidebar({
           {/* Logo */}
           <div className="flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-700 px-4">
             {!isDesktopCollapsed && (
-              <h1 className="text-xl font-bold text-primary-600 dark:text-primary-400 transition-opacity duration-200">
+              <h1 className="text-xl font-bold text-primary-600 transition-opacity duration-200">
                 Brigada CMS
               </h1>
             )}
             {isDesktopCollapsed && (
-              <div className="w-8 h-8 rounded-lg bg-primary-600 dark:bg-primary-500 flex items-center justify-center mx-auto">
+              <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center mx-auto">
                 <span className="text-white font-bold text-sm">B</span>
               </div>
             )}
             {/* Desktop collapse button */}
             <button
               onClick={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-              className="hidden lg:flex items-center justify-center p-2 hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 dark:hover:from-primary-900/30 dark:hover:to-blue-900/30 rounded-lg transition-all duration-200 hover:shadow-sm"
+              className="hidden lg:flex items-center justify-center p-2 hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
               title={isDesktopCollapsed ? "Expandir" : "Contraer"}
             >
               {isDesktopCollapsed ? (
-                <ChevronRight className="w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
+                <ChevronRight className="w-5 h-5 text-primary-600 transition-transform duration-200" />
               ) : (
-                <ChevronLeft className="w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
+                <ChevronLeft className="w-5 h-5 text-primary-600 transition-transform duration-200" />
               )}
             </button>
           </div>
@@ -217,8 +217,8 @@ export function Sidebar({
                               className={cn(
                                 "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 group relative",
                                 isActive
-                                  ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 font-medium"
-                                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100",
+                                  ? "bg-primary-50 text-primary-700 font-medium"
+                                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900",
                                 isDesktopCollapsed && "justify-center px-2",
                               )}
                               title={
@@ -229,20 +229,20 @@ export function Sidebar({
                                 className={cn(
                                   "w-5 h-5 flex-shrink-0",
                                   isActive &&
-                                    "text-primary-600 dark:text-primary-400",
+                                    "text-primary-600",
                                 )}
                               />
                               {!isDesktopCollapsed && (
                                 <span className="flex-1">{item.label}</span>
                               )}
                               {!isDesktopCollapsed && item.badge && (
-                                <span className="px-2 py-0.5 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full">
+                                <span className="px-2 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 rounded-full">
                                   {item.badge}
                                 </span>
                               )}
                               {/* Tooltip for collapsed state */}
                               {isDesktopCollapsed && (
-                                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
                                   {item.label}
                                 </div>
                               )}
@@ -284,7 +284,7 @@ export function Sidebar({
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-30"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

@@ -193,7 +193,7 @@ export default function SurveysPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Encuestas</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             Gestiona las encuestas para recopilar información
           </p>
         </div>
@@ -214,7 +214,7 @@ export default function SurveysPage() {
       <div className="flex flex-col md:flex-row gap-4">
         {/* Search */}
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Buscar encuestas..."
@@ -233,7 +233,7 @@ export default function SurveysPage() {
             className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
               filterActive === true
                 ? "bg-primary-600 text-white border-primary-600"
-                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/50 dark:bg-gray-800/40"
+                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50"
             }`}
           >
             <Filter className="h-4 w-4" />
@@ -246,7 +246,7 @@ export default function SurveysPage() {
             className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
               filterActive === false
                 ? "bg-primary-600 text-white border-primary-600"
-                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/50 dark:bg-gray-800/40"
+                : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/50"
             }`}
           >
             <Filter className="h-4 w-4" />
@@ -254,7 +254,7 @@ export default function SurveysPage() {
           </button>
           <button
             onClick={loadSurveys}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
             disabled={isLoading}
           >
             <RefreshCw
@@ -268,7 +268,7 @@ export default function SurveysPage() {
       {isLoading ? (
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-12 text-center">
           <RefreshCw className="mx-auto h-8 w-8 text-primary-600 animate-spin mb-4" />
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Cargando encuestas...</p>
+          <p className="text-gray-600 dark:text-gray-400">Cargando encuestas...</p>
         </div>
       ) : (
         <SurveyList
