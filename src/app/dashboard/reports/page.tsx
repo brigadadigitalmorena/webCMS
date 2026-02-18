@@ -231,7 +231,10 @@ export default function ReportsPage() {
     return true;
   });
 
-  const totalResponses = filteredSummaries.reduce((s, r) => s + r.total_responses, 0);
+  const totalResponses = filteredSummaries.reduce(
+    (s, r) => s + r.total_responses,
+    0,
+  );
   const surveysWithResponses = filteredSummaries.filter(
     (s) => s.total_responses > 0,
   ).length;
@@ -286,7 +289,10 @@ export default function ReportsPage() {
               />
               {(dateFrom || dateTo) && (
                 <button
-                  onClick={() => { setDateFrom(""); setDateTo(""); }}
+                  onClick={() => {
+                    setDateFrom("");
+                    setDateTo("");
+                  }}
                   className="p-1 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                   title="Limpiar filtro"
                 >
@@ -382,7 +388,9 @@ export default function ReportsPage() {
                     borderRadius: "8px",
                     fontSize: "12px",
                   }}
-                  formatter={(v: number | undefined) => [v ?? 0, "Respuestas"] as [number, string]}
+                  formatter={(v: number | undefined) =>
+                    [v ?? 0, "Respuestas"] as [number, string]
+                  }
                 />
                 <Bar
                   dataKey="respuestas"
@@ -417,7 +425,9 @@ export default function ReportsPage() {
             </div>
           ) : filteredSummaries.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-              {summaries.length === 0 ? "No hay encuestas registradas aún" : "Sin resultados para el rango de fechas seleccionado"}
+              {summaries.length === 0
+                ? "No hay encuestas registradas aún"
+                : "Sin resultados para el rango de fechas seleccionado"}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -654,9 +664,13 @@ function SurveyDetailModal({
                         className="text-gray-500 dark:text-gray-400"
                       />
                       <Tooltip
-                        formatter={(v: number | undefined) => [v ?? 0, "Respuestas"] as [number, string]}
+                        formatter={(v: number | undefined) =>
+                          [v ?? 0, "Respuestas"] as [number, string]
+                        }
                         labelFormatter={(d: unknown) =>
-                          typeof d === "string" ? format(parseISO(d), "dd/MM/yyyy", { locale: es }) : String(d)
+                          typeof d === "string"
+                            ? format(parseISO(d), "dd/MM/yyyy", { locale: es })
+                            : String(d)
                         }
                         contentStyle={{
                           backgroundColor: "var(--color-bg,#fff)",

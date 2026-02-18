@@ -45,7 +45,9 @@ interface WhitelistState {
   fetchEntries: () => Promise<void>;
   fetchStats: () => Promise<void>;
   fetchById: (id: number) => Promise<void>;
-  createEntry: (data: CreateWhitelistRequest) => Promise<CreateWhitelistResponse>;
+  createEntry: (
+    data: CreateWhitelistRequest,
+  ) => Promise<CreateWhitelistResponse>;
   updateEntry: (id: number, data: WhitelistUpdate) => Promise<void>;
   deleteEntry: (id: number) => Promise<void>;
 
@@ -89,7 +91,9 @@ export const useWhitelistStore = create<WhitelistState>()(
             page: get().currentPage,
             limit: 20,
             status: get().statusFilter,
-            role: (get().roleFilter as import("@/types/index").UserRole) || undefined,
+            role:
+              (get().roleFilter as import("@/types/index").UserRole) ||
+              undefined,
             search: get().searchTerm || undefined,
           };
 
