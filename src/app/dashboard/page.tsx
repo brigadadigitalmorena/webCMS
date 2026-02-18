@@ -126,8 +126,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header con gradiente */}
       <div className="relative overflow-hidden rounded-2xl border border-primary-200/60 dark:border-gray-800 bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/40 dark:via-primary-800/30 dark:to-primary-900/50 p-8 shadow-sm dark:shadow-lg">
-        <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-primary-200/20 dark:bg-white/10 blur-3xl" />
-        <div className="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-primary-100/20 dark:bg-white/5 blur-2xl" />
+        <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-primary-200/20 dark:bg-white dark:bg-gray-900/10 blur-3xl" />
+        <div className="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-primary-100/20 dark:bg-white dark:bg-gray-900/5 blur-2xl" />
 
         <div className="relative z-10 flex items-start justify-between">
           <div>
@@ -144,7 +144,7 @@ export default function DashboardPage() {
           <button
             onClick={fetchStats}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-primary-700 dark:text-white text-sm font-medium transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-900/60 dark:bg-white dark:bg-gray-900/10 hover:bg-white dark:bg-gray-900/80 dark:hover:bg-white dark:bg-gray-900/20 text-primary-700 dark:text-white text-sm font-medium transition-colors disabled:opacity-50"
           >
             <RefreshCw
               className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
@@ -169,7 +169,7 @@ export default function DashboardPage() {
           return (
             <div
               key={index}
-              className="relative overflow-hidden rounded-xl border border-white/60 bg-white/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-all duration-300"
+              className="relative overflow-hidden rounded-xl border border-white/60 bg-white dark:bg-gray-900/80 backdrop-blur dark:border-gray-700 dark:bg-gray-900/50 shadow-sm hover:shadow-md transition-all duration-300"
             >
               {/* Gradient Background */}
               <div
@@ -185,7 +185,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
                   {card.title}
                 </h3>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -217,7 +217,7 @@ export default function DashboardPage() {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
                     {card.title}
                   </h3>
                   <div className={`inline-flex p-2 rounded-lg ${card.bgColor}`}>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Encuestas en Progreso
                 </span>
                 <span className="font-semibold text-gray-900 dark:text-white">
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Tasa de Respuesta
                 </span>
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400">
@@ -261,7 +261,7 @@ export default function DashboardPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Promedio Completado
                 </span>
                 <span className="font-semibold text-primary-600 dark:text-primary-400">
@@ -285,7 +285,7 @@ export default function DashboardPage() {
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   API Backend
                 </span>
                 <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Base de Datos
                 </span>
                 <div className="flex items-center gap-2">
@@ -307,7 +307,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/10">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Infraestructura
                 </span>
                 <div className="flex items-center gap-2">

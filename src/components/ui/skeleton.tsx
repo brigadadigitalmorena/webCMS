@@ -13,7 +13,7 @@ export function Skeleton({
 }: SkeletonProps) {
   return (
     <div
-      className={cn("animate-pulse bg-gray-200 rounded", className)}
+      className={cn("animate-pulse bg-gray-200 dark:bg-gray-700 rounded", className)}
       style={{ width, height }}
       {...props}
     />
@@ -37,7 +37,7 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
       <Skeleton className="h-6 w-1/3 mb-4" />
       <SkeletonText lines={3} />
     </div>
@@ -52,10 +52,10 @@ export function SkeletonTable({
   columns?: number;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-200">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-200 dark:border-gray-700">
       {/* Header */}
       <div
-        className="grid gap-4 p-4 border-b border-gray-200"
+        className="grid gap-4 p-4 border-b border-gray-200 dark:border-gray-700"
         style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
       >
         {Array.from({ length: columns }).map((_, i) => (
@@ -66,7 +66,7 @@ export function SkeletonTable({
       {Array.from({ length: rows }).map((_, rowIndex) => (
         <div
           key={rowIndex}
-          className="grid gap-4 p-4 border-b border-gray-200 last:border-b-0"
+          className="grid gap-4 p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
           {Array.from({ length: columns }).map((_, colIndex) => (

@@ -98,18 +98,18 @@ export default function ActivationCodesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
+      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
         <div className="absolute -left-10 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
         <div className="absolute bottom-0 right-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
         <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
               Seguridad y acceso
             </p>
-            <h1 className="font-display text-3xl font-semibold text-gray-900">
+            <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
               Codigos de activacion
             </h1>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
               Crea codigos temporales para usuarios preautorizados y monitorea
               intentos.
             </p>

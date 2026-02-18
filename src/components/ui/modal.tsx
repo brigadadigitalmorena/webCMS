@@ -60,7 +60,7 @@ export function Modal({
           <h2 className="text-xl font-semibold">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

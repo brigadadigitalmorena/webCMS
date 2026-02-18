@@ -144,18 +144,18 @@ export default function WhitelistPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
+      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900/80 p-6 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/70">
         <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
         <div className="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
         <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
               Pre-autorizaciones
             </p>
-            <h1 className="font-display text-3xl font-semibold text-gray-900">
+            <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
               Whitelist de usuarios
             </h1>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
               Registra usuarios y genera codigos de activacion seguros.
             </p>
           </div>
@@ -182,10 +182,10 @@ export default function WhitelistPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Total entradas
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                   {stats.total_entries}
                 </p>
               </div>
@@ -198,10 +198,10 @@ export default function WhitelistPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Activados
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                   {stats.activated}
                 </p>
               </div>
@@ -214,10 +214,10 @@ export default function WhitelistPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Pendientes
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                   {stats.pending}
                 </p>
               </div>
@@ -230,14 +230,14 @@ export default function WhitelistPage() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Con codigo activo
                 </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
                   {stats.with_active_codes}
                 </p>
               </div>
-              <div className="rounded-full bg-slate-100 p-3 text-slate-700">
+              <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-3 text-slate-700 dark:text-slate-300">
                 <Shield className="h-6 w-6" />
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function WhitelistPage() {
       <Card>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2 relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500" />
             <Input
               type="text"
               placeholder="Buscar por email o nombre..."
@@ -329,19 +329,19 @@ export default function WhitelistPage() {
               />
             ) : (
               entries.map((entry) => (
-                <TableRow key={entry.id} className="hover:bg-gray-50">
+                <TableRow key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 dark:bg-gray-800/40 dark:hover:bg-gray-800/50 dark:bg-gray-800/40">
                   <TableCell>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {entry.identifier}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                         {entry.identifier_type}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-gray-900 dark:text-white">
                       {entry.full_name}
                     </div>
                   </TableCell>
@@ -349,7 +349,7 @@ export default function WhitelistPage() {
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                         entry.assigned_role === "admin"
-                          ? "bg-slate-100 text-slate-700"
+                          ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                           : entry.assigned_role === "encargado"
                             ? "bg-blue-100 text-blue-700"
                             : "bg-emerald-100 text-emerald-700"
@@ -375,9 +375,9 @@ export default function WhitelistPage() {
                         Codigo activo
                       </span>
                     ) : entry.is_activated ? (
-                      <span className="text-xs text-gray-500">N/A</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">N/A</span>
                     ) : (
-                      <span className="text-xs text-gray-500">Sin codigo</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Sin codigo</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">

@@ -89,7 +89,7 @@ export default function HelpPage() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Ayuda y Soporte
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
           Encuentra respuestas a preguntas comunes, reporta problemas y accede a
           documentación
         </p>
@@ -103,7 +103,7 @@ export default function HelpPage() {
             className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
               activeTab === "faq"
                 ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+                : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export default function HelpPage() {
             className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
               activeTab === "report"
                 ? "border-primary-600 text-primary-600 dark:text-primary-400"
-                : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+                : "border-transparent text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:text-white dark:hover:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export default function HelpPage() {
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                     {item.q}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">{item.a}</p>
+                  <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">{item.a}</p>
                 </div>
               </div>
             </Card>
@@ -200,7 +200,7 @@ export default function HelpPage() {
 
             <form onSubmit={handleSubmitIssue} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
                   Tu Email
                 </label>
                 <Input
@@ -215,7 +215,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
                   Título del problema
                 </label>
                 <Input
@@ -229,7 +229,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
                   Severidad
                 </label>
                 <select
@@ -249,7 +249,7 @@ export default function HelpPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-2">
                   Descripción del problema
                 </label>
                 <textarea
@@ -279,7 +279,7 @@ export default function HelpPage() {
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Información de contacto
             </h3>
-            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+            <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300 dark:text-gray-600 dark:text-gray-400 dark:text-gray-500">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                 <span>brigadadigitalmorena@gmail.com</span>
