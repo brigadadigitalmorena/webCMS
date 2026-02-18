@@ -15,6 +15,7 @@ import {
   KeyRound,
   Settings,
   HelpCircle,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRole } from "@/hooks/use-role";
@@ -92,6 +93,12 @@ const navSections: NavSection[] = [
   {
     title: "Utilidades",
     items: [
+      {
+        href: "/dashboard/system-health",
+        label: "Estado del Sistema",
+        icon: Activity,
+        allowedRoles: ["admin"],
+      },
       {
         href: "/dashboard/settings",
         label: "Configuración",

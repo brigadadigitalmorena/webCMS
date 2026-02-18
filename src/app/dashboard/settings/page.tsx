@@ -63,22 +63,19 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
-    // Cargar datos del usuario y tema actual
-    setTimeout(() => {
-      if (currentUser) {
-        setFormData((prev) => ({
-          ...prev,
-          firstName: currentUser.nombre || "",
-          lastName: currentUser.apellido || "",
-          email: currentUser.email || "",
-          theme:
-            (localStorage.getItem("theme") as "light" | "dark") ||
-            currentTheme ||
-            "system",
-        }));
-      }
-      setIsLoading(false);
-    }, 500);
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: currentUser.nombre || "",
+        lastName: currentUser.apellido || "",
+        email: currentUser.email || "",
+        theme:
+          (localStorage.getItem("theme") as "light" | "dark") ||
+          currentTheme ||
+          "system",
+      }));
+    }
+    setIsLoading(false);
   }, [currentUser, currentTheme]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,15 +123,21 @@ export default function SettingsPage() {
     try {
       setIsSaving(true);
       setErrorMessage(null);
-      // TODO: Implement actual API call
-      // await userService.updateProfile(formData);
-      setTimeout(() => {
-        setSuccessMessage("Perfil actualizado exitosamente");
-        setIsSaving(false);
-        setTimeout(() => setSuccessMessage(null), 3000);
-      }, 500);
+      const updated = await userService.updateProfile({
+        nombre: formData.firstName,
+        apellido: formData.lastName,
+        email: formData.email,
+      });
+      // Sync updated name/email into auth store
+      const store = useAuthStore.getState();
+      if (store.user) {
+        store.setUser({ ...store.user, ...updated });
+      }
+      setSuccessMessage("Perfil actualizado exitosamente");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch {
       setErrorMessage("Error al actualizar el perfil");
+    } finally {
       setIsSaving(false);
     }
   };
@@ -153,20 +156,23 @@ export default function SettingsPage() {
     try {
       setIsSaving(true);
       setErrorMessage(null);
-      // TODO: Implement actual API call
-      // await userService.changePassword(passwordForm);
-      setTimeout(() => {
-        setSuccessMessage("Contraseña actualizada exitosamente");
-        setPasswordForm({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        setIsSaving(false);
-        setTimeout(() => setSuccessMessage(null), 3000);
-      }, 500);
-    } catch {
-      setErrorMessage("Error al cambiar la contraseña");
+      await userService.changePassword(
+        passwordForm.currentPassword,
+        passwordForm.newPassword,
+      );
+      setSuccessMessage("Contraseña actualizada exitosamente");
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } } })?.response?.data
+          ?.detail || "Error al cambiar la contraseña";
+      setErrorMessage(msg);
+    } finally {
       setIsSaving(false);
     }
   };

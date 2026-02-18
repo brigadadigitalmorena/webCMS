@@ -11,16 +11,11 @@ import {
   Clock,
   AlertCircle,
   Activity,
+  RefreshCw,
 } from "lucide-react";
+import { statsService, type AdminStats } from "@/lib/api/stats.service";
 
-interface DashboardStats {
-  totalUsers: number;
-  activeSurveys: number;
-  completedAssignments: number;
-  totalResponses: number;
-  pendingAssignments: number;
-  activeBrigadistas: number;
-  responseRate: number;
+interface DashboardStats extends AdminStats {
   lastUpdated: string;
 }
 
@@ -33,25 +28,29 @@ export default function DashboardPage() {
     pendingAssignments: 0,
     activeBrigadistas: 0,
     responseRate: 0,
+    totalAssignments: 0,
     lastUpdated: new Date().toLocaleTimeString(),
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Simular carga de datos
-    setTimeout(() => {
+  const fetchStats = async () => {
+    try {
+      setError(null);
+      const data = await statsService.getAdminStats();
       setStats({
-        totalUsers: 42,
-        activeSurveys: 8,
-        completedAssignments: 156,
-        totalResponses: 524,
-        pendingAssignments: 23,
-        activeBrigadistas: 28,
-        responseRate: 87.3,
+        ...data,
         lastUpdated: new Date().toLocaleTimeString(),
       });
+    } catch {
+      setError("No se pudieron cargar las estadísticas");
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
   }, []);
 
   const statCards = [
@@ -128,18 +127,38 @@ export default function DashboardPage() {
         <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-primary-200/20 dark:bg-white/10 blur-3xl" />
         <div className="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-primary-100/20 dark:bg-white/5 blur-2xl" />
 
-        <div className="relative z-10">
-          <h1 className="text-4xl font-bold text-primary-900 dark:text-white mb-2">
-            Dashboard
-          </h1>
-          <p className="text-primary-700 dark:text-primary-100 text-lg">
-            Bienvenido a tu panel de control de Brigada
-          </p>
-          <p className="text-primary-600 dark:text-primary-200 text-sm mt-2">
-            Actualizado: {stats.lastUpdated}
-          </p>
+        <div className="relative z-10 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-primary-900 dark:text-white mb-2">
+              Dashboard
+            </h1>
+            <p className="text-primary-700 dark:text-primary-100 text-lg">
+              Bienvenido a tu panel de control de Brigada
+            </p>
+            <p className="text-primary-600 dark:text-primary-200 text-sm mt-2">
+              Actualizado: {stats.lastUpdated}
+            </p>
+          </div>
+          <button
+            onClick={fetchStats}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/60 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-primary-700 dark:text-white text-sm font-medium transition-colors disabled:opacity-50"
+          >
+            <RefreshCw
+              className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+            Actualizar
+          </button>
         </div>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <div className="flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+          <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+        </div>
+      )}
 
       {/* Stats Grid - Main Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -171,14 +190,7 @@ export default function DashboardPage() {
                   {isLoading ? (
                     <span className="animate-pulse">--</span>
                   ) : (
-                    stats[
-                      card.title
-                        .toLowerCase()
-                        .replace(/ de /g, "")
-                        .replace(/á/g, "a")
-                        .replace(/é/g, "e")
-                        .replace(/í/g, "i") as keyof DashboardStats
-                    ]
+                    card.value
                   )}
                 </p>
 

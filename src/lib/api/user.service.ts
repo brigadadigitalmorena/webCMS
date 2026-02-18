@@ -178,4 +178,27 @@ export const userService = {
     }>(`/users/${id}/reset-password`);
     return response.data;
   },
+
+  /**
+   * Update own profile (PATCH /users/me)
+   */
+  async updateProfile(data: UpdateUserData): Promise<User> {
+    const payload = toBackendUserPayload(data);
+    const response = await apiClient.patch<User>("/users/me", payload);
+    return normalizeUser(response.data);
+  },
+
+  /**
+   * Change own password (POST /users/me/change-password)
+   */
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    const response = await apiClient.post<{ message: string }>(
+      "/users/me/change-password",
+      { current_password: currentPassword, new_password: newPassword },
+    );
+    return response.data;
+  },
 };
