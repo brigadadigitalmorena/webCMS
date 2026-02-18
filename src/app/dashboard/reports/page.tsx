@@ -655,8 +655,8 @@ function SurveyDetailModal({
                       />
                       <Tooltip
                         formatter={(v: number | undefined) => [v ?? 0, "Respuestas"] as [number, string]}
-                        labelFormatter={(d: string) =>
-                          format(parseISO(d), "dd/MM/yyyy", { locale: es })
+                        labelFormatter={(d: unknown) =>
+                          typeof d === "string" ? format(parseISO(d), "dd/MM/yyyy", { locale: es }) : String(d)
                         }
                         contentStyle={{
                           backgroundColor: "var(--color-bg,#fff)",
