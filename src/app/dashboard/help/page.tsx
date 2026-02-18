@@ -73,7 +73,9 @@ export default function HelpPage() {
       setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Error al enviar el reporte. Por favor intenta de nuevo."
+        error instanceof Error
+          ? error.message
+          : "Error al enviar el reporte. Por favor intenta de nuevo.",
       );
     } finally {
       setIsSubmitting(false);
@@ -290,8 +292,6 @@ export default function HelpPage() {
           </Card>
         </div>
       )}
-
-
     </div>
   );
 }

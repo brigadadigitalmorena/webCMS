@@ -96,7 +96,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         )}
 
         {/* Help */}
-        <Link 
+        <Link
           href="/dashboard/help"
           className="hidden md:block p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           title="Ayuda"

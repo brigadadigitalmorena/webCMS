@@ -52,11 +52,11 @@ class QuotaService {
       // Calcular información de uso
       const totalCpus = services.reduce(
         (sum: number, service: any) => sum + (service.cpuAllocation || 0),
-        0
+        0,
       );
       const totalMemory = services.reduce(
         (sum: number, service: any) => sum + (service.memoryAllocation || 0),
-        0
+        0,
       );
 
       return {
@@ -64,9 +64,8 @@ class QuotaService {
         status: "success",
         data: {
           totalServices: services.length,
-          activeServices: services.filter(
-            (s: any) => s.status === "live"
-          ).length,
+          activeServices: services.filter((s: any) => s.status === "live")
+            .length,
           totalCpus,
           totalMemory,
           services: services.map((s: any) => ({
@@ -111,7 +110,7 @@ class QuotaService {
             Authorization: `Bearer ${neonToken}`,
             Accept: "application/json",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -170,7 +169,7 @@ class QuotaService {
 
       // Crear autenticación basic
       const auth = Buffer.from(
-        `${cloudinaryApiKey}:${cloudinaryApiSecret}`
+        `${cloudinaryApiKey}:${cloudinaryApiSecret}`,
       ).toString("base64");
 
       const response = await fetch(
@@ -180,7 +179,7 @@ class QuotaService {
             Authorization: `Basic ${auth}`,
             Accept: "application/json",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -190,7 +189,8 @@ class QuotaService {
       const usage = await response.json();
 
       // Convertir bytes a GB
-      const bytesToGb = (bytes: number) => (bytes / (1024 * 1024 * 1024)).toFixed(2);
+      const bytesToGb = (bytes: number) =>
+        (bytes / (1024 * 1024 * 1024)).toFixed(2);
 
       return {
         service: "Cloudinary",
@@ -247,7 +247,9 @@ class QuotaService {
   /**
    * Obtener quota de un servicio específico
    */
-  async getQuotaByService(service: "render" | "neon" | "cloudinary"): Promise<QuotaInfo> {
+  async getQuotaByService(
+    service: "render" | "neon" | "cloudinary",
+  ): Promise<QuotaInfo> {
     switch (service) {
       case "render":
         return this.getRenderQuota();

@@ -53,9 +53,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error creating survey:", error);
-      alert(
-        error.response?.data?.detail || "Error al crear la encuesta",
-      );
+      alert(error.response?.data?.detail || "Error al crear la encuesta");
     } finally {
       setIsSaving(false);
     }
@@ -79,9 +77,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error updating survey:", error);
-      alert(
-        error.response?.data?.detail || "Error al actualizar la encuesta",
-      );
+      alert(error.response?.data?.detail || "Error al actualizar la encuesta");
     } finally {
       setIsSaving(false);
     }
@@ -149,9 +145,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error publishing version:", error);
-      alert(
-        error.response?.data?.detail || "Error al publicar la versión",
-      );
+      alert(error.response?.data?.detail || "Error al publicar la versión");
     } finally {
       setIsPublishing(false);
     }
@@ -311,4 +305,3 @@ export default function SurveysPage() {
     </div>
   );
 }
-

@@ -58,4 +58,3 @@ export const useAssignmentStore = create<AssignmentState>((set) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
 }));
-

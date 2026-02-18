@@ -109,9 +109,13 @@ export default function SurveyVersions({
                       <div className="text-sm text-gray-600 mb-2">
                         <div>
                           Creada el{" "}
-                          {format(new Date(version.created_at), "dd MMM yyyy HH:mm", {
-                            locale: es,
-                          })}
+                          {format(
+                            new Date(version.created_at),
+                            "dd MMM yyyy HH:mm",
+                            {
+                              locale: es,
+                            },
+                          )}
                         </div>
                         <div>
                           {version.questions.length}{" "}
@@ -191,20 +195,22 @@ export default function SurveyVersions({
                               )}
                             </div>
                             <div className="text-gray-500 text-xs mt-1">
-                              Tipo: {getQuestionTypeLabel(question.question_type)}
+                              Tipo:{" "}
+                              {getQuestionTypeLabel(question.question_type)}
                             </div>
-                            {question.options && question.options.length > 0 && (
-                              <div className="mt-1 ml-4 space-y-0.5">
-                                {question.options.map((option) => (
-                                  <div
-                                    key={option.id}
-                                    className="text-xs text-gray-600"
-                                  >
-                                    • {option.option_text}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                            {question.options &&
+                              question.options.length > 0 && (
+                                <div className="mt-1 ml-4 space-y-0.5">
+                                  {question.options.map((option) => (
+                                    <div
+                                      key={option.id}
+                                      className="text-xs text-gray-600"
+                                    >
+                                      • {option.option_text}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                           </div>
                         </div>
                       ))}

@@ -74,7 +74,9 @@ export default function SurveyPreviewModal({
         <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-50 to-primary-100">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold text-gray-900">{surveyTitle}</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {surveyTitle}
+              </h2>
               <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-primary-600 text-white">
                 v{version.version_number}
               </span>
@@ -127,9 +129,7 @@ export default function SurveyPreviewModal({
                   </div>
 
                   {/* Question Input Preview */}
-                  <div className="ml-11">
-                    {renderQuestionInput(question)}
-                  </div>
+                  <div className="ml-11">{renderQuestionInput(question)}</div>
                 </div>
               );
             })}
@@ -213,7 +213,14 @@ function renderQuestionInput(question: Question) {
       const step = question.validation_rules?.step ?? 1;
       return (
         <div className="space-y-2">
-          <input type="range" min={min} max={max} step={step} className="w-full accent-primary-600" disabled />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            className="w-full accent-primary-600"
+            disabled
+          />
           <div className="flex justify-between text-xs text-gray-500">
             <span>{min}</span>
             <span>{max}</span>
@@ -255,10 +262,16 @@ function renderQuestionInput(question: Question) {
     case "yes_no":
       return (
         <div className="flex gap-3">
-          <button disabled className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50">
+          <button
+            disabled
+            className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50"
+          >
             ✅ Sí
           </button>
-          <button disabled className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50">
+          <button
+            disabled
+            className="flex-1 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-600 bg-gray-50"
+          >
             ❌ No
           </button>
         </div>
@@ -370,7 +383,9 @@ function renderQuestionInput(question: Question) {
       return (
         <div className="border border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 text-center">
           <FileUp className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-          <p className="text-sm text-gray-600">El usuario adjuntará un archivo o documento</p>
+          <p className="text-sm text-gray-600">
+            El usuario adjuntará un archivo o documento
+          </p>
         </div>
       );
 
@@ -388,7 +403,9 @@ function renderQuestionInput(question: Question) {
       return (
         <div className="border border-gray-300 rounded-lg p-4 bg-blue-50 text-center">
           <ScanLine className="mx-auto h-12 w-12 text-blue-400 mb-2" />
-          <p className="text-sm font-medium text-blue-700">Captura de INE con OCR</p>
+          <p className="text-sm font-medium text-blue-700">
+            Captura de INE con OCR
+          </p>
           <p className="text-xs text-blue-500 mt-1">
             La app escaneará la credencial y extraerá datos automáticamente
           </p>

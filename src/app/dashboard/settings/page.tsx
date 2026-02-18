@@ -42,9 +42,9 @@ export default function SettingsPage() {
   const { theme: currentTheme, setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "password" | "system" | "services">(
-    "profile",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "password" | "system" | "services"
+  >("profile");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -71,7 +71,10 @@ export default function SettingsPage() {
           firstName: currentUser.nombre || "",
           lastName: currentUser.apellido || "",
           email: currentUser.email || "",
-          theme: (localStorage.getItem("theme") as "light" | "dark") || currentTheme || "system",
+          theme:
+            (localStorage.getItem("theme") as "light" | "dark") ||
+            currentTheme ||
+            "system",
         }));
       }
       setIsLoading(false);
@@ -91,7 +94,7 @@ export default function SettingsPage() {
       ...prev,
       [name]: value,
     }));
-    
+
     // Si cambia el tema, aplicarlo inmediatamente
     if (name === "theme") {
       if (value === "light" || value === "dark") {
@@ -100,7 +103,9 @@ export default function SettingsPage() {
         setTimeout(() => setSuccessMessage(null), 2000);
       } else if (value === "system") {
         // Usar preferencia del sistema
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
         setTheme(prefersDark ? "dark" : "light");
         localStorage.removeItem("theme"); // Remover para que use siempre la preferencia del sistema
         setSuccessMessage("Usando tema del sistema");

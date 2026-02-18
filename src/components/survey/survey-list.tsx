@@ -96,7 +96,8 @@ export default function SurveyList({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {totalVersions} {totalVersions === 1 ? "versión" : "versiones"}
+                    {totalVersions}{" "}
+                    {totalVersions === 1 ? "versión" : "versiones"}
                   </div>
                   {publishedVersion && (
                     <div className="text-xs text-gray-500">

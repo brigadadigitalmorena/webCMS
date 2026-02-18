@@ -67,9 +67,9 @@ function ActionsMenu({
 }) {
   const [open, setOpen] = useState(false);
 
-  const nextStatuses: AssignmentStatus[] = (["pending", "in_progress", "completed"] as AssignmentStatus[]).filter(
-    (s) => s !== assignment.status,
-  );
+  const nextStatuses: AssignmentStatus[] = (
+    ["pending", "in_progress", "completed"] as AssignmentStatus[]
+  ).filter((s) => s !== assignment.status);
 
   return (
     <div className="relative">
@@ -180,14 +180,16 @@ export default function AssignmentList({
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                    {a.user?.full_name
-                      ? a.user.full_name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .slice(0, 2)
-                          .join("")
-                          .toUpperCase()
-                      : <User className="h-4 w-4" />}
+                    {a.user?.full_name ? (
+                      a.user.full_name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                    ) : (
+                      <User className="h-4 w-4" />
+                    )}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
@@ -218,9 +220,7 @@ export default function AssignmentList({
                     {a.location}
                   </div>
                 ) : (
-                  <span className="text-xs text-gray-400 italic">
-                    Sin zona
-                  </span>
+                  <span className="text-xs text-gray-400 italic">Sin zona</span>
                 )}
               </td>
 

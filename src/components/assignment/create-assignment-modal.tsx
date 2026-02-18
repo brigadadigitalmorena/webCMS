@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { User, Survey } from "@/types";
 import { userService } from "@/lib/api/user.service";
 import { surveyService } from "@/lib/api/survey.service";
-import { X, User as UserIcon, ClipboardList, MapPin, ChevronDown } from "lucide-react";
+import {
+  X,
+  User as UserIcon,
+  ClipboardList,
+  MapPin,
+  ChevronDown,
+} from "lucide-react";
 
 interface CreateAssignmentModalProps {
   isOpen: boolean;

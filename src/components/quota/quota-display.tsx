@@ -12,7 +12,11 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { quotaService, QuotaResponse, QuotaInfo } from "@/lib/api/quota.service";
+import {
+  quotaService,
+  QuotaResponse,
+  QuotaInfo,
+} from "@/lib/api/quota.service";
 
 export function QuotaDisplay() {
   const [quotas, setQuotas] = useState<QuotaResponse | null>(null);
@@ -30,7 +34,7 @@ export function QuotaDisplay() {
       setQuotas(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al cargar las quotas"
+        err instanceof Error ? err.message : "Error al cargar las quotas",
       );
     } finally {
       if (isRefresh) setIsRefreshing(false);
@@ -48,7 +52,7 @@ export function QuotaDisplay() {
   const renderQuotaCard = (
     icon: React.ComponentType<{ className?: string }>,
     title: string,
-    info: QuotaInfo | undefined
+    info: QuotaInfo | undefined,
   ) => {
     const Icon = icon;
 
@@ -116,7 +120,8 @@ export function QuotaDisplay() {
                     </p>
                     {info.lastUpdated && (
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                        Actualizado: {new Date(info.lastUpdated).toLocaleTimeString()}
+                        Actualizado:{" "}
+                        {new Date(info.lastUpdated).toLocaleTimeString()}
                       </p>
                     )}
                   </>
@@ -125,7 +130,8 @@ export function QuotaDisplay() {
                 {title === "Cloudinary" && info.data && (
                   <>
                     <p>
-                      <strong>Almacenamiento:</strong> {info.data.storageUsed.gb}
+                      <strong>Almacenamiento:</strong>{" "}
+                      {info.data.storageUsed.gb}
                       GB
                     </p>
                     <p>
@@ -137,7 +143,8 @@ export function QuotaDisplay() {
                     </p>
                     {info.lastUpdated && (
                       <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                        Actualizado: {new Date(info.lastUpdated).toLocaleTimeString()}
+                        Actualizado:{" "}
+                        {new Date(info.lastUpdated).toLocaleTimeString()}
                       </p>
                     )}
                   </>
@@ -185,7 +192,9 @@ export function QuotaDisplay() {
           size="sm"
           variant="outline"
         >
-          <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
+          />
           {isRefreshing ? "Actualizando..." : "Actualizar"}
         </Button>
       </div>

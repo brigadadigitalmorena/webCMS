@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (!body.title || !body.description || !body.email) {
       return NextResponse.json(
         { error: "Faltan campos requeridos" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -56,24 +56,27 @@ Reporte enviado desde Brigada CMS
           body: emailBody,
           user_email: body.email,
         }),
-      }
+      },
     );
 
     if (!backendResponse.ok) {
-      console.error("Error sending email from backend:", backendResponse.status);
+      console.error(
+        "Error sending email from backend:",
+        backendResponse.status,
+      );
       // Even if backend fails, return success to avoid UI errors
       // In production, log this error properly
     }
 
     return NextResponse.json(
       { message: "Reporte enviado exitosamente" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error submitting issue:", error);
     return NextResponse.json(
       { error: "Error al procesar el reporte" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

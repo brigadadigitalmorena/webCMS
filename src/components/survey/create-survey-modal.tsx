@@ -103,7 +103,10 @@ const questionTypeGroups: { label: string; types: QuestionType[] }[] = [
   { label: "Numérico", types: ["number", "slider", "scale", "rating"] },
   { label: "Selección", types: ["single_choice", "multiple_choice", "yes_no"] },
   { label: "Fecha / Hora", types: ["date", "time", "datetime"] },
-  { label: "Multimedia y especial", types: ["photo", "file", "signature", "location", "ine_ocr"] },
+  {
+    label: "Multimedia y especial",
+    types: ["photo", "file", "signature", "location", "ine_ocr"],
+  },
 ];
 
 export default function CreateSurveyModal({
@@ -290,7 +293,8 @@ export default function CreateSurveyModal({
             {questions.length === 0 && (
               <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
                 <p className="text-gray-500">
-                  No hay preguntas. Haz clic en "Agregar Pregunta" para comenzar.
+                  No hay preguntas. Haz clic en "Agregar Pregunta" para
+                  comenzar.
                 </p>
               </div>
             )}
@@ -320,7 +324,11 @@ export default function CreateSurveyModal({
                           type="text"
                           value={question.question_text}
                           onChange={(e) =>
-                            updateQuestion(qIndex, "question_text", e.target.value)
+                            updateQuestion(
+                              qIndex,
+                              "question_text",
+                              e.target.value,
+                            )
                           }
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                           placeholder={`Pregunta ${qIndex + 1}`}
@@ -370,7 +378,9 @@ export default function CreateSurveyModal({
                             className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                             disabled={isLoading}
                           />
-                          <span className="text-sm text-gray-700">Requerida</span>
+                          <span className="text-sm text-gray-700">
+                            Requerida
+                          </span>
                         </label>
                       </div>
 
@@ -379,10 +389,15 @@ export default function CreateSurveyModal({
                         <div className="grid grid-cols-3 gap-2 mt-3">
                           {question.question_type !== "rating" && (
                             <div>
-                              <label className="text-xs font-medium text-gray-600 mb-1 block">Mínimo</label>
+                              <label className="text-xs font-medium text-gray-600 mb-1 block">
+                                Mínimo
+                              </label>
                               <input
                                 type="number"
-                                value={question.validation_rules?.min ?? (question.question_type === "scale" ? 1 : 0)}
+                                value={
+                                  question.validation_rules?.min ??
+                                  (question.question_type === "scale" ? 1 : 0)
+                                }
                                 onChange={(e) =>
                                   updateQuestion(qIndex, "validation_rules", {
                                     ...question.validation_rules,
@@ -396,11 +411,20 @@ export default function CreateSurveyModal({
                           )}
                           <div>
                             <label className="text-xs font-medium text-gray-600 mb-1 block">
-                              {question.question_type === "rating" ? "Estrellas" : "Máximo"}
+                              {question.question_type === "rating"
+                                ? "Estrellas"
+                                : "Máximo"}
                             </label>
                             <input
                               type="number"
-                              value={question.validation_rules?.max ?? (question.question_type === "rating" ? 5 : question.question_type === "scale" ? 10 : 100)}
+                              value={
+                                question.validation_rules?.max ??
+                                (question.question_type === "rating"
+                                  ? 5
+                                  : question.question_type === "scale"
+                                    ? 10
+                                    : 100)
+                              }
                               onChange={(e) =>
                                 updateQuestion(qIndex, "validation_rules", {
                                   ...question.validation_rules,
@@ -413,7 +437,9 @@ export default function CreateSurveyModal({
                           </div>
                           {question.question_type === "slider" && (
                             <div>
-                              <label className="text-xs font-medium text-gray-600 mb-1 block">Paso</label>
+                              <label className="text-xs font-medium text-gray-600 mb-1 block">
+                                Paso
+                              </label>
                               <input
                                 type="number"
                                 value={question.validation_rules?.step ?? 1}
@@ -472,7 +498,8 @@ export default function CreateSurveyModal({
                             </div>
                           ))}
 
-                          {(!question.options || question.options.length === 0) && (
+                          {(!question.options ||
+                            question.options.length === 0) && (
                             <p className="text-xs text-gray-500 italic">
                               Agrega al menos una opción
                             </p>
