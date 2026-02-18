@@ -71,7 +71,7 @@ export default function SurveyPreviewModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-primary-50 to-primary-100">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -82,7 +82,9 @@ export default function SurveyPreviewModal({
               </span>
             </div>
             {surveyDescription && (
-              <p className="text-gray-600 dark:text-gray-400">{surveyDescription}</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                {surveyDescription}
+              </p>
             )}
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               Vista previa - Así se verá en la app móvil
@@ -90,7 +92,7 @@ export default function SurveyPreviewModal({
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-2 rounded-full hover:bg-white/50 transition-colors"
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
@@ -253,7 +255,10 @@ function renderQuestionInput(question: Question) {
       return (
         <div className="flex gap-1">
           {Array.from({ length: stars }).map((_, i) => (
-            <Star key={i} className="h-8 w-8 text-gray-300 dark:text-gray-600" />
+            <Star
+              key={i}
+              className="h-8 w-8 text-gray-300 dark:text-gray-600"
+            />
           ))}
         </div>
       );
@@ -321,7 +326,9 @@ function renderQuestionInput(question: Question) {
                     className="w-4 h-4 text-primary-600"
                     disabled
                   />
-                  <span className="text-gray-700 dark:text-gray-300">{option.option_text}</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {option.option_text}
+                  </span>
                 </label>
               ))
           ) : (
@@ -348,7 +355,9 @@ function renderQuestionInput(question: Question) {
                     className="w-4 h-4 text-primary-600 rounded"
                     disabled
                   />
-                  <span className="text-gray-700 dark:text-gray-300">{option.option_text}</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {option.option_text}
+                  </span>
                 </label>
               ))
           ) : (

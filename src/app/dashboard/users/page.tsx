@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRequireAuth } from "@/hooks/use-auth";
 import { useAuthStore } from "@/store/auth-store";
 import { AdminGuard } from "@/components/auth/admin-guard";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -23,9 +22,32 @@ import { Pagination } from "@/components/ui/pagination";
 import { CreateUserModal } from "@/components/users/create-user-modal";
 import { userService } from "@/lib/api/user.service";
 import type { User } from "@/types";
-import { Search, UserPlus, Users, Shield, UserCheck } from "lucide-react";
+import { Search, UserPlus, RefreshCw, Download } from "lucide-react";
 
 const PAGE_SIZE = 10;
+
+function exportUsersCSV(users: User[]) {
+  if (users.length === 0) return;
+  const headers = ["ID", "Nombre", "Apellido", "Email", "Rol", "Estado", "Telefono", "Creado"];
+  const rows = users.map((u) => [
+    u.id,
+    `"${(u.nombre || "").replace(/"/g, '""')}"`,
+    `"${(u.apellido || "").replace(/"/g, '""')}"`,
+    u.email,
+    u.rol,
+    u.activo ? "Activo" : "Inactivo",
+    u.telefono || "",
+    new Intl.DateTimeFormat("es-MX", { dateStyle: "medium" }).format(new Date(u.created_at)),
+  ]);
+  const csv = "\uFEFF" + [headers, ...rows].map((r) => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `usuarios-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function UsersPage() {
   const { isChecking } = useRequireAuth();
@@ -111,108 +133,92 @@ export default function UsersPage() {
   return (
     <AdminGuard>
       <div className="space-y-6">
-        <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900 p-6 shadow-sm backdrop-blur">
-          <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
-          <div className="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
-          <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Administracion
-              </p>
-              <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
-                Usuarios
-              </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Gestiona accesos, roles y estado de actividad del equipo.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="ghost" onClick={loadUsers} disabled={loading}>
-                Actualizar
-              </Button>
-              <Button onClick={() => setIsCreateOpen(true)}>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Invitar usuario
-              </Button>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Usuarios
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              Gestiona accesos, roles y estado de actividad del equipo.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadUsers}
+              disabled={loading}
+              className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 transition-colors"
+              title="Recargar"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+              />
+            </button>
+            <button
+              onClick={() => exportUsersCSV(users)}
+              disabled={users.length === 0}
+              className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 transition-colors disabled:opacity-40"
+              title="Exportar CSV"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setIsCreateOpen(true)}
+              className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+            >
+              <UserPlus className="h-5 w-5" />
+              Invitar usuario
+            </button>
           </div>
         </div>
 
         {error && (
-          <Card className="border-red-200 bg-red-50/70 text-red-700">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{error}</p>
-              <Button variant="ghost" size="sm" onClick={() => setError(null)}>
-                Cerrar
-              </Button>
-            </div>
-          </Card>
+          <div className="flex items-center justify-between bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+            <p className="text-sm font-medium text-red-700 dark:text-red-300">
+              {error}
+            </p>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-700 dark:text-red-300 hover:text-red-900 ml-4 text-lg leading-none"
+            >
+              ✕
+            </button>
+          </div>
         )}
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card className="relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Total usuarios
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.total}
-                </p>
-              </div>
-              <div className="rounded-full bg-primary-100 p-3 text-primary-600">
-                <Users className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Activos
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.active}
-                </p>
-              </div>
-              <div className="rounded-full bg-emerald-100 p-3 text-emerald-600">
-                <UserCheck className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Inactivos
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.inactive}
-                </p>
-              </div>
-              <div className="rounded-full bg-amber-100 p-3 text-amber-600">
-                <Users className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Administradores
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.admins}
-                </p>
-              </div>
-              <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-3 text-slate-700 dark:text-slate-300">
-                <Shield className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Total usuarios
+            </p>
+            <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-white">
+              {stats.total}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">Activos</p>
+            <p className="text-3xl font-bold mt-1 text-green-600">
+              {stats.active}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Inactivos
+            </p>
+            <p className="text-3xl font-bold mt-1 text-amber-600">
+              {stats.inactive}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Administradores
+            </p>
+            <p className="text-3xl font-bold mt-1 text-indigo-600">
+              {stats.admins}
+            </p>
+          </div>
         </div>
 
-        <Card>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="md:col-span-2 relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -244,9 +250,9 @@ export default function UsersPage() {
               </Select>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           {loading ? (
             <div className="space-y-3 p-6">
               {Array.from({ length: 6 }).map((_, index) => (
@@ -279,7 +285,9 @@ export default function UsersPage() {
                           <p className="font-medium text-gray-900 dark:text-white">
                             {user.nombre} {user.apellido}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {user.email}
+                          </p>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -353,7 +361,7 @@ export default function UsersPage() {
               itemsPerPage={PAGE_SIZE}
             />
           )}
-        </Card>
+        </div>
 
         <CreateUserModal
           isOpen={isCreateOpen}

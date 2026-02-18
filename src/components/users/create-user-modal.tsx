@@ -5,10 +5,17 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { whitelistService } from "@/lib/api/whitelist.service";
 import { activationCodeService } from "@/lib/api/activation-code.service";
-import { Copy, Check, UserPlus } from "lucide-react";
+import {
+  Copy,
+  Check,
+  UserPlus,
+  Info,
+  AlertCircle,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -136,9 +143,12 @@ export function CreateUserModal({
           </p>
 
           {serverError && (
-            <Card className="border-red-200 bg-red-50/70 text-red-700">
-              <p className="text-sm font-medium">{serverError}</p>
-            </Card>
+            <div className="flex items-start gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+              <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-300 font-medium">
+                {serverError}
+              </p>
+            </div>
           )}
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -188,12 +198,13 @@ export function CreateUserModal({
             />
           </div>
 
-          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20/70 text-blue-800">
-            <p className="text-sm">
-              ℹ️ Se enviará un email automáticamente con el código de
-              activación. El código expirará en 72 horas.
+          <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
+            <Info className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Se enviará un email automáticamente con el código de activación.
+              El código expirará en 72 horas.
             </p>
-          </Card>
+          </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="ghost" onClick={handleClose}>
@@ -207,18 +218,20 @@ export function CreateUserModal({
         </div>
       ) : (
         <div className="space-y-4">
-          <Card className="border-emerald-200 bg-emerald-50/70 text-emerald-700">
-            <p className="text-sm font-medium">
-              ✓ Usuario registrado exitosamente
+          <div className="flex items-start gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg px-4 py-3">
+            <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
+              Usuario registrado exitosamente
             </p>
-          </Card>
+          </div>
 
-          <Card className="border-amber-200 bg-amber-50/70 text-amber-800">
-            <p className="text-sm font-medium">
-              ⚠️ Este es el código de activación. Se muestra{" "}
+          <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-4 py-3">
+            <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+              Este es el código de activación. Se muestra{" "}
               <strong>una sola vez</strong>.
             </p>
-          </Card>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

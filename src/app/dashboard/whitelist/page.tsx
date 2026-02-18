@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useWhitelistStore } from "@/store/whitelist-store";
 import { useActivationCodeStore } from "@/store/activation-code-store";
 import { activationCodeService } from "@/lib/api/activation-code.service";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -21,20 +20,7 @@ import {
 } from "@/components/ui/table";
 import { CreateCodeModal } from "@/components/activation/create-code-modal";
 import { CodeGeneratedModal } from "@/components/activation/code-generated-modal";
-import {
-  Plus,
-  Search,
-  Users,
-  CheckCircle2,
-  Clock,
-  Shield,
-  Mail,
-  Eye,
-  RefreshCw,
-  Trash2,
-  Clock4,
-  Ban,
-} from "lucide-react";
+import { Plus, Search, Mail, RefreshCw, Trash2, Clock4, Download } from "lucide-react";
 
 export default function WhitelistPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -47,7 +33,6 @@ export default function WhitelistPage() {
     error,
     statusFilter,
     roleFilter,
-    searchTerm,
     currentPage,
     totalPages,
     totalItems,
@@ -63,9 +48,14 @@ export default function WhitelistPage() {
   const { generateCode, showGeneratedCode, generatedCode, clearGeneratedCode } =
     useActivationCodeStore();
 
+  // Auto-debounce search input — fires 300 ms after the user stops typing
   useEffect(() => {
-    fetchEntries();
-  }, []);
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput);
+      fetchEntries();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     fetchStats();
@@ -73,6 +63,29 @@ export default function WhitelistPage() {
 
   const handleSearch = () => {
     setSearchTerm(searchInput);
+    fetchEntries();
+  };
+
+  const exportWhitelistCSV = () => {
+    if (entries.length === 0) return;
+    const headers = ["ID", "Identificador", "Tipo", "Nombre completo", "Rol asignado", "Estado", "Codigo activo"];
+    const rows = entries.map((e) => [
+      e.id,
+      e.identifier,
+      e.identifier_type,
+      `"${(e.full_name || "").replace(/"/g, '""')}"`,
+      e.assigned_role,
+      e.is_activated ? "Activado" : "Pendiente",
+      e.has_active_code ? "S\u00ed" : "No",
+    ]);
+    const csv = "\uFEFF" + [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `whitelist-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const handleGenerateCode = async (whitelistId: number) => {
@@ -144,33 +157,54 @@ export default function WhitelistPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white dark:bg-gray-900 p-6 shadow-sm backdrop-blur">
-        <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-primary-500/10 blur-2xl" />
-        <div className="absolute bottom-0 left-0 h-20 w-20 rounded-full bg-emerald-400/20 blur-2xl" />
-        <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Pre-autorizaciones
-            </p>
-            <h1 className="font-display text-3xl font-semibold text-gray-900 dark:text-white">
-              Whitelist de usuarios
-            </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Registra usuarios y genera codigos de activacion seguros.
-            </p>
-          </div>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar usuario y codigo
-          </Button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Whitelist de usuarios
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Registra usuarios y genera codigos de activacion seguros.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => fetchEntries()}
+            disabled={isLoading}
+            className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 transition-colors"
+            title="Recargar"
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+          </button>
+          <button
+            onClick={exportWhitelistCSV}
+            disabled={entries.length === 0}
+            className="p-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-600 dark:text-gray-400 transition-colors disabled:opacity-40"
+            title="Exportar CSV"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+          >
+            <Plus className="h-5 w-5" />
+            Agregar usuario
+          </button>
         </div>
       </div>
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded flex items-center justify-between">
-          <span>{error}</span>
-          <button onClick={clearError} className="text-red-900 font-bold">
+        <div className="flex items-center justify-between bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+          <span className="text-sm text-red-700 dark:text-red-300">
+            {error}
+          </span>
+          <button
+            onClick={clearError}
+            className="text-red-700 dark:text-red-300 hover:text-red-900 ml-4 text-lg leading-none"
+          >
             ✕
           </button>
         </div>
@@ -178,75 +212,44 @@ export default function WhitelistPage() {
 
       {/* Stats Cards */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Total entradas
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.total_entries}
-                </p>
-              </div>
-              <div className="rounded-full bg-primary-100 p-3 text-primary-600">
-                <Users className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Activados
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.activated}
-                </p>
-              </div>
-              <div className="rounded-full bg-emerald-100 p-3 text-emerald-600">
-                <CheckCircle2 className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Pendientes
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.pending}
-                </p>
-              </div>
-              <div className="rounded-full bg-amber-100 p-3 text-amber-600">
-                <Clock className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  Con codigo activo
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
-                  {stats.with_active_codes}
-                </p>
-              </div>
-              <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-3 text-slate-700 dark:text-slate-300">
-                <Shield className="h-6 w-6" />
-              </div>
-            </div>
-          </Card>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Total entradas
+            </p>
+            <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-white">
+              {stats.total_entries}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Activados
+            </p>
+            <p className="text-3xl font-bold mt-1 text-green-600">
+              {stats.activated}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Pendientes
+            </p>
+            <p className="text-3xl font-bold mt-1 text-amber-600">
+              {stats.pending}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Con codigo activo
+            </p>
+            <p className="text-3xl font-bold mt-1 text-indigo-600">
+              {stats.with_active_codes}
+            </p>
+          </div>
         </div>
       )}
 
       {/* Filters & Search */}
-      <Card>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-2 relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -283,10 +286,10 @@ export default function WhitelistPage() {
             <option value="brigadista">Brigadista</option>
           </Select>
         </div>
-      </Card>
+      </div>
 
       {/* Whitelist Table */}
-      <Card>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -329,7 +332,10 @@ export default function WhitelistPage() {
               />
             ) : (
               entries.map((entry) => (
-                <TableRow key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <TableRow
+                  key={entry.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                >
                   <TableCell>
                     <div>
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -375,9 +381,13 @@ export default function WhitelistPage() {
                         Codigo activo
                       </span>
                     ) : entry.is_activated ? (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">N/A</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        N/A
+                      </span>
                     ) : (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">Sin codigo</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        Sin codigo
+                      </span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -444,7 +454,7 @@ export default function WhitelistPage() {
             itemsPerPage={20}
           />
         )}
-      </Card>
+      </div>
 
       <CreateCodeModal
         isOpen={showCreateModal}

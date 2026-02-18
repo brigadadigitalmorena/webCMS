@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { AdminGuard } from "@/components/auth/admin-guard";
 import { useRequireAuth } from "@/hooks/use-auth";
-import { Card } from "@/components/ui/card";
 import {
   BarChart3,
   FileDown,
@@ -321,9 +320,9 @@ export default function ReportsPage() {
 
         {/* Error */}
         {error && (
-          <div className="flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
+            <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
           </div>
         )}
 
@@ -356,7 +355,7 @@ export default function ReportsPage() {
 
         {/* Overview bar chart */}
         {!isLoading && chartData.length > 0 && (
-          <Card className="dark:border-gray-700 p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Respuestas por Encuesta (Top 10)
             </h2>
@@ -397,11 +396,11 @@ export default function ReportsPage() {
                 />
               </BarChart>
             </ResponsiveContainer>
-          </Card>
+          </div>
         )}
 
         {/* Table */}
-        <Card className="dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Respuestas por Encuesta
@@ -518,7 +517,7 @@ export default function ReportsPage() {
               </table>
             </div>
           )}
-        </Card>
+        </div>
       </div>
 
       {/* Detail Modal */}
@@ -551,7 +550,7 @@ function KpiCard({
   bg: string;
 }) {
   return (
-    <Card className="p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center gap-4">
         <div className={`p-3 rounded-lg ${bg}`}>
           <Icon className={`w-6 h-6 ${color}`} />
@@ -563,7 +562,7 @@ function KpiCard({
           </p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 

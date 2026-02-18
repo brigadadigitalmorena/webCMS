@@ -208,7 +208,7 @@ export default function CreateAssignmentModal({
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Ej: Colonia Centro, Cuadra 3"
-                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   disabled={isLoading}
                 />
               </div>
@@ -225,7 +225,7 @@ export default function CreateAssignmentModal({
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Ej: Visitar en horario matutino. Priorizar adultos mayores."
                   rows={3}
-                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                   disabled={isLoading}
                 />
               </div>
