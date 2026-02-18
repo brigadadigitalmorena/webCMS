@@ -145,8 +145,12 @@ export default function ReportsPage() {
   const fetchSummary = useCallback(async () => {
     try {
       setError(null);
+      const params: Record<string, string> = {};
+      if (dateFrom) params.date_from = dateFrom;
+      if (dateTo) params.date_to = dateTo;
       const res = await apiClient.get<SurveySummary[]>(
         "/admin/responses/summary",
+        { params },
       );
       setSummaries(res.data);
     } catch {
@@ -155,7 +159,7 @@ export default function ReportsPage() {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, []);
+  }, [dateFrom, dateTo]);
 
   useEffect(() => {
     fetchSummary();
@@ -222,14 +226,8 @@ export default function ReportsPage() {
     }
   };
 
-  // Apply date range filter based on last_response_at
-  const filteredSummaries = summaries.filter((s) => {
-    if (!s.last_response_at) return !dateFrom && !dateTo ? true : false;
-    const d = s.last_response_at.slice(0, 10);
-    if (dateFrom && d < dateFrom) return false;
-    if (dateTo && d > dateTo) return false;
-    return true;
-  });
+  // Server-side filtering via date_from/date_to — fetchSummary already applies filters
+  const filteredSummaries = summaries;
 
   const totalResponses = filteredSummaries.reduce(
     (s, r) => s + r.total_responses,
