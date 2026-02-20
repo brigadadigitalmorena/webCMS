@@ -121,42 +121,52 @@ export default function WhitelistPage() {
 
   const handleExtendCode = async (whitelistId: number) => {
     try {
-      const entry = entries.find((e) => e.id === whitelistId);
-      if (!entry?.has_active_code) return;
-
-      // Fetch codes to find the active one for this whitelist entry
+      // Fetch codes by whitelist_id only (no status filter) so we find
+      // codes that may be expired/locked but not yet used or revoked.
       const codesResponse = await activationCodeService.list({
         whitelist_id: whitelistId,
-        status: "active",
       });
-      if (codesResponse.items.length === 0) {
-        throw new Error("No active code found");
+      const usableCode = codesResponse.items.find(
+        (c) => c.status !== "used" && c.status !== "revoked"
+      );
+      if (!usableCode) {
+        alert(
+          "No se encontró un código válido para extender. Genera un nuevo código."
+        );
+        return;
       }
 
-      const activeCodeId = codesResponse.items[0].id;
-      await useActivationCodeStore.getState().extendCode(activeCodeId, 24);
+      await useActivationCodeStore.getState().extendCode(usableCode.id, 24);
       await fetchEntries();
     } catch (error) {
       console.error("Failed to extend code:", error);
+      alert("Error al extender el código. Intenta de nuevo.");
     }
   };
 
   const handleResendEmail = async (whitelistId: number) => {
     try {
-      // Fetch codes to find the active one for this whitelist entry
+      // Fetch codes by whitelist_id only (no status filter) so we find
+      // codes that may be expired/locked but not yet used or revoked.
+      // The resend endpoint regenerates the code regardless of current status.
       const codesResponse = await activationCodeService.list({
         whitelist_id: whitelistId,
-        status: "active",
       });
-      if (codesResponse.items.length === 0) {
-        throw new Error("No active code found");
+      const usableCode = codesResponse.items.find(
+        (c) => c.status !== "used" && c.status !== "revoked"
+      );
+      if (!usableCode) {
+        alert(
+          "No se encontró un código válido para reenviar. Genera un nuevo código."
+        );
+        return;
       }
 
-      const activeCodeId = codesResponse.items[0].id;
-      await useActivationCodeStore.getState().resendEmail(activeCodeId);
+      await useActivationCodeStore.getState().resendEmail(usableCode.id);
       await fetchEntries();
     } catch (error) {
       console.error("Failed to resend email:", error);
+      alert("Error al reenviar el correo. Intenta de nuevo.");
     }
   };
 
