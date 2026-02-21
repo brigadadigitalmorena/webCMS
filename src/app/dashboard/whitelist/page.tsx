@@ -127,11 +127,11 @@ export default function WhitelistPage() {
         whitelist_id: whitelistId,
       });
       const usableCode = codesResponse.items.find(
-        (c) => c.status !== "used" && c.status !== "revoked"
+        (c) => c.status !== "used" && c.status !== "revoked",
       );
       if (!usableCode) {
         alert(
-          "No se encontró un código válido para extender. Genera un nuevo código."
+          "No se encontró un código válido para extender. Genera un nuevo código.",
         );
         return;
       }
@@ -153,11 +153,11 @@ export default function WhitelistPage() {
         whitelist_id: whitelistId,
       });
       const usableCode = codesResponse.items.find(
-        (c) => c.status !== "used" && c.status !== "revoked"
+        (c) => c.status !== "used" && c.status !== "revoked",
       );
       if (!usableCode) {
         alert(
-          "No se encontró un código válido para reenviar. Genera un nuevo código."
+          "No se encontró un código válido para reenviar. Genera un nuevo código.",
         );
         return;
       }
