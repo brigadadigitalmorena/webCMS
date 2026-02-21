@@ -69,6 +69,13 @@ apiClient.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${access_token}`;
           }
           return apiClient(originalRequest);
+        } else {
+          // No refresh token — session expired, force logout
+          useAuthStore.getState().logout();
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+          return Promise.reject(error);
         }
       } catch (refreshError) {
         // Refresh failed, logout user
