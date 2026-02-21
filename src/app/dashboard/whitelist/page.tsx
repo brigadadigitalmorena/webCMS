@@ -431,14 +431,16 @@ export default function WhitelistPage() {
                       )}
                       {entry.has_active_code && !entry.is_activated && (
                         <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleResendEmail(entry.id)}
-                            title="Reenviar código por email"
-                          >
-                            <RefreshCw className="h-3 w-3" />
-                          </Button>
+                          {entry.identifier_type === "email" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleResendEmail(entry.id)}
+                              title="Reenviar código por email"
+                            >
+                              <RefreshCw className="h-3 w-3" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
