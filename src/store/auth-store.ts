@@ -54,8 +54,17 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+      onRehydrateStorage: (beforeState) => (afterState, error) => {
+        if (error || !afterState) {
+          // Corrupt or unreadable localStorage — wipe it so next load is clean
+          try {
+            localStorage.removeItem("auth-storage");
+          } catch (_) {}
+          // Use the pre-rehydration state object to mark hydration as done
+          beforeState?.setHasHydrated(true);
+        } else {
+          afterState.setHasHydrated(true);
+        }
       },
     },
   ),

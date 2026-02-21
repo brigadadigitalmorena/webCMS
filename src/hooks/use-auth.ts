@@ -100,12 +100,28 @@ export function useRequireAuth() {
   const { isAuthenticated, isLoading, hasHydrated } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
+  // Safety net: if hasHydrated never fires within 4 seconds (e.g. another
+  // storage edge case) wipe the key and redirect to login so the user is
+  // never permanently stuck on the spinner.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!useAuthStore.getState().hasHydrated) {
+        try {
+          localStorage.removeItem("auth-storage");
+        } catch (_) {}
+        router.push("/login");
+      }
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [router]);
+
   useEffect(() => {
     if (!hasHydrated || isLoading) {
       return;
     }
 
     if (!isAuthenticated) {
+      setIsChecking(false);
       router.push("/login");
     } else {
       setIsChecking(false);
