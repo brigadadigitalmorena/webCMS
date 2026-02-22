@@ -138,7 +138,6 @@ export default function SettingsPage() {
       const updated = await userService.updateProfile({
         nombre: formData.firstName,
         apellido: formData.lastName,
-        email: formData.email,
         avatar_url: finalAvatarUrl || undefined,
       });
       // Sync updated name/email into auth store
@@ -367,14 +366,12 @@ export default function SettingsPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email
               </label>
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                placeholder="correo@example.com"
-                disabled={isSaving}
-              />
+              <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white">
+                {formData.email}
+              </div>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                El email no se puede modificar. Contacta al administrador si necesitas cambiarlo.
+              </p>
             </div>
 
             <div>
