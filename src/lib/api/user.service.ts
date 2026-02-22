@@ -192,12 +192,23 @@ export const userService = {
    * Upload own profile photo (POST /users/me/avatar)
    */
   async uploadAvatar(file: File): Promise<User> {
+    // Use native fetch — not the axios instance — so the browser sets the
+    // correct multipart/form-data Content-Type WITH boundary automatically.
+    // Axios has a default "Content-Type: application/json" that would
+    // otherwise be forwarded by the proxy, causing FastAPI to reject the body.
     const formData = new FormData();
     formData.append("file", file);
-    // Do NOT set Content-Type manually — axios must auto-set it with the
-    // multipart boundary, otherwise the backend cannot parse the body.
-    const response = await apiClient.post<User>("/users/me/avatar", formData);
-    return normalizeUser(response.data);
+    const res = await fetch("/api/backend/users/me/avatar", {
+      method: "POST",
+      credentials: "include", // send HttpOnly access_token cookie
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw Object.assign(new Error(err?.detail || "Error al subir la imagen"), { response: { data: err } });
+    }
+    const data = await res.json();
+    return normalizeUser(data);
   },
 
   /**
