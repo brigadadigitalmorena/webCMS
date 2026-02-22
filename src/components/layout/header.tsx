@@ -130,8 +130,16 @@ export function Header({ onMenuClick }: HeaderProps) {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-                <User className="w-4 h-4 text-primary-600" />
+              <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden">
+                {user.avatar_url ? (
+                  <img
+                    src={user.avatar_url}
+                    alt={user.nombre || user.email}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-4 h-4 text-primary-600" />
+                )}
               </div>
               <div className="hidden lg:block text-left">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">
