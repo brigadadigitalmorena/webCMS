@@ -4,6 +4,23 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Question, QuestionType, AnswerOption } from "@/types";
 import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   X,
   Plus,
   GripVertical,
@@ -120,6 +137,42 @@ const questionTypeGroups: { label: string; types: QuestionType[] }[] = [
   },
 ];
 
+// Internal question type that includes a stable DnD id
+type DraftQuestion = Omit<Question, "id" | "version_id"> & { _id: string };
+
+// ── Sortable wrapper ─────────────────────────────────────────────────────────
+function SortableQuestionCard({
+  id,
+  children,
+}: {
+  id: string;
+  children: (dragHandleProps: React.HTMLAttributes<HTMLButtonElement>) => React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : undefined,
+        position: isDragging ? "relative" : undefined,
+        zIndex: isDragging ? 10 : undefined,
+      }}
+    >
+      {children({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLButtonElement>)}
+    </div>
+  );
+}
+
 export default function CreateSurveyModal({
   isOpen,
   onClose,
@@ -159,6 +212,7 @@ export default function CreateSurveyModal({
       setAllowAnonymous(initialData.allow_anonymous ?? false);
       setQuestions(
         initialData.questions?.map((q) => ({
+          _id: crypto.randomUUID(),
           question_text: q.question_text,
           question_type: q.question_type,
           order: q.order,
@@ -183,6 +237,7 @@ export default function CreateSurveyModal({
     setQuestions([
       ...questions,
       {
+        _id: crypto.randomUUID(),
         question_text: "",
         question_type: "text",
         order: questions.length + 1,
@@ -249,6 +304,27 @@ export default function CreateSurveyModal({
     setQuestions(updated);
   };
 
+  // ── DnD sensors + reorder handler ──────────────────────────────────────────
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setQuestions((prev) => {
+        const from = prev.findIndex((q) => q._id === active.id);
+        const to = prev.findIndex((q) => q._id === over.id);
+        const reordered = arrayMove(prev, from, to);
+        reordered.forEach((q, i) => {
+          q.order = i + 1;
+        });
+        return reordered;
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || questions.length === 0) {
@@ -265,14 +341,14 @@ export default function CreateSurveyModal({
         : null,
       max_responses: maxResponses ? parseInt(maxResponses) : null,
       allow_anonymous: allowAnonymous,
-      questions,
+      questions: questions.map(({ _id, ...q }) => q),
     });
   };
 
   if (!isOpen) return null;
 
   return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-lg max-w-4xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b">
@@ -289,7 +365,10 @@ export default function CreateSurveyModal({
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-4 sm:p-6"
+        >
           {/* Basic Info */}
           <div className="space-y-4 mb-6">
             <div>
@@ -454,6 +533,15 @@ export default function CreateSurveyModal({
               </div>
             )}
 
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={questions.map((q) => q._id)}
+                strategy={verticalListSortingStrategy}
+              >
             {questions.map((question, qIndex) => {
               const Icon = questionTypeIcons[question.question_type];
               const needsOptions =
@@ -465,12 +553,20 @@ export default function CreateSurveyModal({
                 question.question_type === "rating";
 
               return (
+                <SortableQuestionCard key={question._id} id={question._id}>
+                  {(dragHandleProps) => (
                 <div
-                  key={qIndex}
                   className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40"
                 >
                   <div className="flex items-start gap-3">
-                    <GripVertical className="h-5 w-5 text-gray-400 dark:text-gray-500 mt-2 flex-shrink-0" />
+                    <button
+                      type="button"
+                      className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 mt-2 flex-shrink-0 touch-none"
+                      title="Arrastrar para reordenar"
+                      {...dragHandleProps}
+                    >
+                      <GripVertical className="h-5 w-5" />
+                    </button>
 
                     <div className="flex-1 space-y-3">
                       {/* Question text */}
@@ -673,8 +769,12 @@ export default function CreateSurveyModal({
                     </button>
                   </div>
                 </div>
+                  )}
+                </SortableQuestionCard>
               );
             })}
+              </SortableContext>
+            </DndContext>
           </div>
         </form>
 
