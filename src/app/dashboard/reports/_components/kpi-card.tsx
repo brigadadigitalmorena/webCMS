@@ -30,8 +30,8 @@ export function KpiCard({
           <span
             className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
               trend === "up"
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-red-100 text-red-600"
+                ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
             }`}
           >
             {trend === "up" ? "↑" : "↓"}

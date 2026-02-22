@@ -25,17 +25,25 @@ const typeConfig: Record<
     bg: string;
   }
 > = {
-  info: { icon: Info, color: "text-blue-600", bg: "bg-blue-100" },
+  info: {
+    icon: Info,
+    color: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-100 dark:bg-blue-900/30",
+  },
   warning: {
     icon: AlertTriangle,
-    color: "text-yellow-600",
-    bg: "bg-yellow-100",
+    color: "text-yellow-600 dark:text-yellow-400",
+    bg: "bg-yellow-100 dark:bg-yellow-900/30",
   },
-  error: { icon: AlertCircle, color: "text-red-600", bg: "bg-red-100" },
+  error: {
+    icon: AlertCircle,
+    color: "text-red-600 dark:text-red-400",
+    bg: "bg-red-100 dark:bg-red-900/30",
+  },
   announcement: {
     icon: Megaphone,
-    color: "text-purple-600",
-    bg: "bg-purple-100",
+    color: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-100 dark:bg-purple-900/30",
   },
 };
 
@@ -114,7 +122,7 @@ export default function NotificationsPage() {
                 className={cn(
                   "flex items-start gap-4 px-5 py-4 transition-colors",
                   !n.read
-                    ? "bg-blue-50 dark:bg-blue-900/20/60"
+                    ? "bg-blue-50/80 dark:bg-blue-900/20"
                     : "bg-white dark:bg-gray-900",
                 )}
               >
@@ -159,7 +167,7 @@ export default function NotificationsPage() {
                     <button
                       title="Marcar como leído"
                       onClick={() => markRead(n.id)}
-                      className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                     >
                       <Check className="h-4 w-4" />
                     </button>
@@ -167,7 +175,7 @@ export default function NotificationsPage() {
                   <button
                     title="Eliminar"
                     onClick={() => deleteOne(n.id)}
-                    className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

@@ -208,16 +208,16 @@ export default function SettingsPage() {
 
       {/* Alerts */}
       {successMessage && (
-        <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 p-4 border border-green-200">
-          <CheckCircle2 className="w-5 h-5 text-green-600" />
-          <p className="text-green-800">{successMessage}</p>
+        <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-50 dark:bg-green-900/20 p-4 border border-green-200 dark:border-green-800">
+          <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <p className="text-green-800 dark:text-green-300">{successMessage}</p>
         </div>
       )}
 
       {errorMessage && (
-        <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 p-4 border border-red-200">
-          <AlertCircle className="w-5 h-5 text-red-600" />
-          <p className="text-red-800">{errorMessage}</p>
+        <div className="mb-6 flex items-center gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+          <p className="text-red-800 dark:text-red-300">{errorMessage}</p>
         </div>
       )}
 
@@ -405,7 +405,7 @@ export default function SettingsPage() {
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-2xl">
           <div className="space-y-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
+              <p className="text-sm text-blue-800 dark:text-blue-300">
                 Utiliza una contraseña fuerte con al menos 8 caracteres,
                 incluyendo mayúsculas, minúsculas y números.
               </p>

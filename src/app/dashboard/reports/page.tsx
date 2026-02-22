@@ -398,7 +398,7 @@ export default function ReportsPage() {
                       </td>
                       <td className="px-4 py-4 text-center">
                         {s.is_active ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
                             <CheckCircle2 className="w-3 h-3" /> Activa
                           </span>
                         ) : (

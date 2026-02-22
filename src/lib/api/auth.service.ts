@@ -1,5 +1,6 @@
 import axios from "axios";
 import apiClient from "./client";
+import { normalizeUser } from "./user.service";
 import { User } from "@/types";
 
 interface LoginCredentials {
@@ -36,9 +37,10 @@ export const authService = {
 
   /**
    * Get current user profile (through the backend proxy).
+   * Normalises backend field names (full_name → nombre/apellido, etc.).
    */
   async me(): Promise<User> {
     const response = await apiClient.get("/auth/me");
-    return response.data;
+    return normalizeUser(response.data);
   },
 };

@@ -40,7 +40,12 @@ const splitFullName = (fullName: string | undefined) => {
   };
 };
 
-const normalizeUser = (user: any): User => {
+/**
+ * Normalise a raw user object from the backend into the frontend User shape.
+ * Handles both backend field names (full_name / role / is_active) and
+ * pre-normalised fields (nombre / apellido / rol / activo).
+ */
+export const normalizeUser = (user: any): User => {
   const nameParts = splitFullName(user.full_name || user.nombre);
 
   return {

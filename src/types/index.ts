@@ -42,11 +42,6 @@ export interface User {
   activo: boolean;
 }
 
-export interface AuthUser extends User {
-  access_token: string;
-  refresh_token?: string;
-}
-
 // Survey types (matching backend schema)
 export interface Survey {
   id: number;
@@ -118,15 +113,7 @@ export type QuestionType =
   | "location"
   | "ine_ocr";
 
-// Legacy types (for backward compatibility)
-export interface SurveyQuestion extends Question {
-  encuesta_id?: number;
-  pregunta?: string;
-  tipo_pregunta?: QuestionType;
-  requerido?: boolean;
-  orden?: number;
-  opciones?: string[];
-}
+// Legacy types (for backward compatibility)\n// SurveyQuestion extends Question with Spanish-named fields — unused in CMS.
 
 // Assignment types
 export interface Assignment {
@@ -161,31 +148,11 @@ export interface Assignment {
 
 export type AssignmentStatus = "active" | "inactive";
 
-// Response types
-export interface SurveyResponse {
-  id: number;
-  asignacion_id: number;
-  encuesta_id: number;
-  respondido_por: number;
-  fecha_inicio: string;
-  fecha_fin?: string;
-  estado: "borrador" | "enviado" | "rechazado";
-  respuestas: QuestionResponse[];
-}
-
-export interface QuestionResponse {
-  pregunta_id: number;
-  valor: any;
-  archivos_adjuntos?: string[];
-}
+// Response types (used by mobile app / future CMS features)
+// SurveyResponse and QuestionResponse are kept for backend schema parity
+// but are currently unused in the CMS — the reports page uses ExportRow instead.
 
 // API Response types
-export interface ApiResponse<T = any> {
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
