@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Sans, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { ThemeScript } from "@/lib/theme-script";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const fontBody = Instrument_Sans({
@@ -32,7 +33,15 @@ export default function RootLayout({
       <body
         className={`${fontBody.variable} ${fontDisplay.variable} antialiased`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            duration={4000}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

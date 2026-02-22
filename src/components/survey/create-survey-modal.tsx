@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Question, QuestionType, AnswerOption } from "@/types";
 import {
   X,
@@ -251,7 +252,7 @@ export default function CreateSurveyModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || questions.length === 0) {
-      alert("Debes agregar un título y al menos una pregunta");
+      toast.warning("Debes agregar un título y al menos una pregunta");
       return;
     }
     onSubmit({
@@ -325,7 +326,9 @@ export default function CreateSurveyModal({
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Fecha de inicio
-                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(opcional)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
+                    (opcional)
+                  </span>
                 </label>
                 <input
                   type="date"
@@ -338,7 +341,9 @@ export default function CreateSurveyModal({
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Fecha de cierre
-                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(opcional)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
+                    (opcional)
+                  </span>
                 </label>
                 <input
                   type="date"
@@ -361,7 +366,9 @@ export default function CreateSurveyModal({
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Duración estimada
-                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">(minutos)</span>
+                  <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
+                    (minutos)
+                  </span>
                 </label>
                 <input
                   type="number"
@@ -424,7 +431,9 @@ export default function CreateSurveyModal({
           {/* Questions */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Preguntas</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Preguntas
+              </h3>
               <button
                 type="button"
                 onClick={addQuestion}

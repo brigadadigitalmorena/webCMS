@@ -13,10 +13,7 @@ export async function POST(request: NextRequest) {
   // Require authentication — read token from HttpOnly cookie
   const token = request.cookies.get("access_token")?.value;
   if (!token) {
-    return NextResponse.json(
-      { error: "No autenticado" },
-      { status: 401 },
-    );
+    return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   }
 
   try {

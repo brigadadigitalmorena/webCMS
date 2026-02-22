@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Survey, Question } from "@/types";
 import { surveyService } from "@/lib/api/survey.service";
 import SurveyList from "@/components/survey/survey-list";
@@ -31,7 +32,7 @@ export default function SurveysPage() {
       setSurveys(data);
     } catch (error) {
       console.error("Error loading surveys:", error);
-      alert("Error al cargar las encuestas");
+      toast.error("Error al cargar las encuestas");
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +59,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error creating survey:", error);
-      alert(error.response?.data?.detail || "Error al crear la encuesta");
+      toast.error(error.response?.data?.detail || "Error al crear la encuesta");
     } finally {
       setIsSaving(false);
     }
@@ -87,7 +88,9 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error updating survey:", error);
-      alert(error.response?.data?.detail || "Error al actualizar la encuesta");
+      toast.error(
+        error.response?.data?.detail || "Error al actualizar la encuesta",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -107,7 +110,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error) {
       console.error("Error deleting survey:", error);
-      alert("Error al eliminar la encuesta");
+      toast.error("Error al eliminar la encuesta");
     }
   };
 
@@ -119,7 +122,7 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error) {
       console.error("Error toggling survey status:", error);
-      alert("Error al cambiar el estado de la encuesta");
+      toast.error("Error al cambiar el estado de la encuesta");
     }
   };
 
@@ -130,7 +133,7 @@ export default function SurveysPage() {
       setIsDetailsModalOpen(true);
     } catch (error) {
       console.error("Error loading survey details:", error);
-      alert("Error al cargar los detalles de la encuesta");
+      toast.error("Error al cargar los detalles de la encuesta");
     }
   };
 
@@ -154,7 +157,9 @@ export default function SurveysPage() {
       await loadSurveys();
     } catch (error: any) {
       console.error("Error publishing version:", error);
-      alert(error.response?.data?.detail || "Error al publicar la versión");
+      toast.error(
+        error.response?.data?.detail || "Error al publicar la versión",
+      );
     } finally {
       setIsPublishing(false);
     }
@@ -179,7 +184,7 @@ export default function SurveysPage() {
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error loading survey for edit:", error);
-      alert("Error al cargar la encuesta para editar");
+      toast.error("Error al cargar la encuesta para editar");
     }
   };
 

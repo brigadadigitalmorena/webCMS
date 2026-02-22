@@ -3,11 +3,29 @@ import type { NextRequest } from "next/server";
 
 /**
  * Next.js Middleware for route protection
- * Layer 1: Basic authentication check (token presence)
+ * Checks that the access_token cookie exists AND is not expired (JWT exp claim).
  *
  * Note: Role-based checks are handled client-side via useRole hook
- * because JWT decoding on Edge runtime has limitations
  */
+
+function isTokenExpired(token: string): boolean {
+  try {
+    // JWT is base64url-encoded: header.payload.signature
+    const payloadBase64 = token.split(".")[1];
+    if (!payloadBase64) return true;
+
+    const payload = JSON.parse(
+      Buffer.from(payloadBase64, "base64url").toString("utf-8"),
+    );
+
+    if (!payload.exp) return false; // No expiry claim → trust it
+    // exp is in seconds, Date.now() in milliseconds
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true; // Malformed token → treat as expired
+  }
+}
+
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
   const { pathname } = request.nextUrl;
@@ -15,17 +33,20 @@ export function middleware(request: NextRequest) {
   const isAuthPage = pathname.startsWith("/login");
   const isProtectedRoute = pathname.startsWith("/dashboard");
 
-  // Block unauthenticated users from protected routes
-  if (!token && isProtectedRoute) {
+  const hasValidToken = token && !isTokenExpired(token);
+
+  // Block unauthenticated/expired users from protected routes
+  if (!hasValidToken && isProtectedRoute) {
     const loginUrl = new URL("/login", request.url);
-    // Preserve attempted URL for redirect after login
     loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+    // Clear potentially stale cookie
+    if (token) response.cookies.delete("access_token");
+    return response;
   }
 
   // Redirect authenticated users away from login page
-  if (token && isAuthPage) {
-    // Check if there's a redirect parameter
+  if (hasValidToken && isAuthPage) {
     const redirect = request.nextUrl.searchParams.get("redirect");
     const targetUrl = redirect || "/dashboard";
     return NextResponse.redirect(new URL(targetUrl, request.url));

@@ -120,14 +120,4 @@ export function useRequireAuth() {
 
   return { isChecking };
 }
-
-/**
- * Hook to check if user has specific role
- */
-export function useRole(allowedRoles: string[]) {
-  const { user } = useAuthStore();
-
-  const hasRole = user ? allowedRoles.includes(user.rol) : false;
-
-  return { hasRole, role: user?.rol };
 }

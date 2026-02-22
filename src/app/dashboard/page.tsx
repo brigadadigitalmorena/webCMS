@@ -3,6 +3,12 @@
 import { useState, useEffect } from "react";
 import { BarChart3, AlertCircle, Activity, RefreshCw } from "lucide-react";
 import { statsService, type AdminStats } from "@/lib/api/stats.service";
+import apiClient from "@/lib/api/client";
+
+interface HealthStatus {
+  api: "ok" | "error";
+  database: "ok" | "error";
+}
 
 interface DashboardStats extends AdminStats {
   lastUpdated: string;
@@ -22,6 +28,22 @@ export default function DashboardPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [health, setHealth] = useState<HealthStatus>({
+    api: "ok",
+    database: "ok",
+  });
+
+  const fetchHealth = async () => {
+    try {
+      const { data } = await apiClient.get("/health");
+      setHealth({
+        api: "ok",
+        database: data.database === "connected" ? "ok" : "error",
+      });
+    } catch {
+      setHealth({ api: "error", database: "error" });
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -40,7 +62,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchStats();
-    const interval = setInterval(fetchStats, 60_000);
+    fetchHealth();
+    const interval = setInterval(() => {
+      fetchStats();
+      fetchHealth();
+    }, 60_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -220,9 +246,13 @@ export default function DashboardPage() {
                 API Backend
               </span>
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-emerald-600">
-                  Activo
+                <div
+                  className={`h-2 w-2 rounded-full ${health.api === "ok" ? "bg-emerald-500" : "bg-red-500"}`}
+                />
+                <span
+                  className={`text-xs font-medium ${health.api === "ok" ? "text-emerald-600" : "text-red-600"}`}
+                >
+                  {health.api === "ok" ? "Activo" : "Error"}
                 </span>
               </div>
             </div>
@@ -231,20 +261,13 @@ export default function DashboardPage() {
                 Base de Datos
               </span>
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-emerald-600">
-                  Conectado
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Infraestructura
-              </span>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-emerald-600">
-                  Óptimo
+                <div
+                  className={`h-2 w-2 rounded-full ${health.database === "ok" ? "bg-emerald-500" : "bg-red-500"}`}
+                />
+                <span
+                  className={`text-xs font-medium ${health.database === "ok" ? "text-emerald-600" : "text-red-600"}`}
+                >
+                  {health.database === "ok" ? "Conectado" : "Desconectado"}
                 </span>
               </div>
             </div>

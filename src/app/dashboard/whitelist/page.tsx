@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useWhitelistStore } from "@/store/whitelist-store";
 import { useActivationCodeStore } from "@/store/activation-code-store";
 import { activationCodeService } from "@/lib/api/activation-code.service";
@@ -130,7 +131,7 @@ export default function WhitelistPage() {
         (c) => c.status !== "used" && c.status !== "revoked",
       );
       if (!usableCode) {
-        alert(
+        toast.warning(
           "No se encontró un código válido para extender. Genera un nuevo código.",
         );
         return;
@@ -140,7 +141,7 @@ export default function WhitelistPage() {
       await fetchEntries();
     } catch (error) {
       console.error("Failed to extend code:", error);
-      alert("Error al extender el código. Intenta de nuevo.");
+      toast.error("Error al extender el código. Intenta de nuevo.");
     }
   };
 
@@ -156,7 +157,7 @@ export default function WhitelistPage() {
         (c) => c.status !== "used" && c.status !== "revoked",
       );
       if (!usableCode) {
-        alert(
+        toast.warning(
           "No se encontró un código válido para reenviar. Genera un nuevo código.",
         );
         return;
@@ -166,7 +167,7 @@ export default function WhitelistPage() {
       await fetchEntries();
     } catch (error) {
       console.error("Failed to resend email:", error);
-      alert("Error al reenviar el correo. Intenta de nuevo.");
+      toast.error("Error al reenviar el correo. Intenta de nuevo.");
     }
   };
 

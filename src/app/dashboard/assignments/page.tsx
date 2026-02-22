@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import { Assignment, AssignmentStatus } from "@/types";
 import { assignmentService } from "@/lib/api/assignment.service";
 import AssignSurveyModal from "@/components/assignment/assign-survey-modal";
@@ -34,7 +35,9 @@ function StatusBadge({ status }: { status: AssignmentStatus }) {
     <span className="relative inline-flex">
       <span
         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium cursor-help select-none transition-colors ${
-          isActive ? "bg-green-100 text-green-700" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+          isActive
+            ? "bg-green-100 text-green-700"
+            : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
         }`}
         onMouseEnter={() => setShowTip(true)}
         onMouseLeave={() => setShowTip(false)}
@@ -378,8 +381,10 @@ export default function AssignmentsPage() {
     try {
       await assignmentService.deleteAssignment(id);
       setAssignments((prev) => prev.filter((a) => a.id !== id));
+      toast.success("Asignación eliminada correctamente");
     } catch (err) {
       console.error("Error deleting assignment:", err);
+      toast.error("Error al eliminar la asignación");
     }
   };
 
@@ -399,7 +404,9 @@ export default function AssignmentsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Asignaciones</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Asignaciones
+          </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             Asigna encargados y brigadistas a cada encuesta
           </p>
@@ -442,7 +449,9 @@ export default function AssignmentsPage() {
             key={s.label}
             className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
           >
-            <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {s.label}
+            </p>
             <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
           </div>
         ))}
