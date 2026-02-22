@@ -50,7 +50,107 @@ export default function SurveyList({
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-      <div className="overflow-x-auto">
+      {/* ── Mobile card list (hidden on sm+) ── */}
+      <div className="sm:hidden divide-y divide-gray-200 dark:divide-gray-700">
+        {surveys.map((survey) => {
+          const publishedVersion = survey.versions?.find((v) => v.is_published);
+          const latestVersion = survey.versions?.sort(
+            (a, b) => b.version_number - a.version_number,
+          )[0];
+          const totalVersions = survey.versions?.length || 0;
+          const hasDraft =
+            latestVersion && !latestVersion.is_published && totalVersions > 1;
+
+          return (
+            <div
+              key={survey.id}
+              className="p-4"
+            >
+              {/* Title row */}
+              <button
+                className="w-full text-left mb-2"
+                onClick={() => onView(survey)}
+              >
+                <p className="text-sm font-semibold text-gray-900 dark:text-white leading-snug">
+                  {survey.title}
+                </p>
+                {survey.description && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                    {survey.description}
+                  </p>
+                )}
+              </button>
+
+              {/* Badges row */}
+              <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                <span
+                  className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                    survey.is_active
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                  }`}
+                >
+                  {survey.is_active ? "Activa" : "Inactiva"}
+                </span>
+                {publishedVersion ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                    <BadgeCheck className="h-3 w-3" />
+                    v{publishedVersion.version_number} publicada
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700">
+                    Sin publicar
+                  </span>
+                )}
+                {hasDraft && (
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-amber-50 text-amber-700">
+                    borrador v{latestVersion!.version_number}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                  <GitBranch className="h-3 w-3" />
+                  {totalVersions} {totalVersions === 1 ? "versión" : "versiones"}
+                </span>
+              </div>
+
+              {/* Actions row — always visible on mobile */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => onView(survey)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  Ver
+                </button>
+                <button
+                  onClick={() => onEdit(survey)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Editar
+                </button>
+                <button
+                  onClick={() => onToggleStatus(survey)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                >
+                  <Power className="h-3.5 w-3.5" />
+                  {survey.is_active ? "Desactivar" : "Activar"}
+                </button>
+                <button
+                  onClick={() => onDelete(survey)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Desktop table (hidden below sm) ── */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800/40">
             <tr>

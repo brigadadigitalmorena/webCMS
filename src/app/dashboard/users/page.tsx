@@ -272,8 +272,8 @@ export default function UsersPage() {
                   <TableHead>Usuario</TableHead>
                   <TableHead>Rol</TableHead>
                   <TableHead>Estado</TableHead>
-                  <TableHead>Telefono</TableHead>
-                  <TableHead>Creado</TableHead>
+                  <TableHead className="hidden md:table-cell">Telefono</TableHead>
+                  <TableHead className="hidden md:table-cell">Creado</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -312,12 +312,12 @@ export default function UsersPage() {
                           {user.activo ? "Activo" : "Inactivo"}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           {user.telefono || "-"}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           {new Intl.DateTimeFormat("es-MX", {
                             dateStyle: "medium",

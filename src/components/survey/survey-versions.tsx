@@ -86,8 +86,8 @@ export default function SurveyVersions({
             >
               {/* Version Header */}
               <div className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3 flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
                     {version.is_published ? (
                       <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
                     ) : (
@@ -134,7 +134,7 @@ export default function SurveyVersions({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 ml-4">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => onPreview(version)}
                       className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -147,7 +147,7 @@ export default function SurveyVersions({
                       <button
                         onClick={() => onPublish(version.id)}
                         disabled={isPublishing}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         title="Publicar versión"
                       >
                         <Send className="h-4 w-4" />

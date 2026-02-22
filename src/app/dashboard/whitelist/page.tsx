@@ -325,7 +325,7 @@ export default function WhitelistPage() {
               <TableHead>Nombre completo</TableHead>
               <TableHead>Rol</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead>Codigo</TableHead>
+              <TableHead className="hidden sm:table-cell">Codigo</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -345,7 +345,7 @@ export default function WhitelistPage() {
                   <TableCell>
                     <Skeleton className="h-6 w-20" />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <Skeleton className="h-6 w-20" />
                   </TableCell>
                   <TableCell>
@@ -403,7 +403,7 @@ export default function WhitelistPage() {
                       {entry.is_activated ? "Activado" : "Pendiente"}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     {entry.has_active_code ? (
                       <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
                         Codigo activo

@@ -43,16 +43,16 @@ export default function SurveyDetailsModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-lg max-w-4xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="flex items-start justify-between p-4 sm:p-6 border-b">
+            <div className="flex-1 min-w-0 pr-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 leading-tight">
                 {survey.title}
               </h2>
               {survey.description && (
-                <p className="text-gray-600 dark:text-gray-400">{survey.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{survey.description}</p>
               )}
             </div>
             <button
@@ -64,10 +64,10 @@ export default function SurveyDetailsModal({
           </div>
 
           {/* Info Cards */}
-          <div className="p-6 border-b bg-gray-50 dark:bg-gray-800/40">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="p-4 sm:p-6 border-b bg-gray-50 dark:bg-gray-800/40">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {/* Estado */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <FileText className="h-5 w-5 text-blue-600" />
@@ -83,7 +83,7 @@ export default function SurveyDetailsModal({
 
               {/* Publicación */}
               <div
-                className={`bg-white dark:bg-gray-900 rounded-lg p-4 border ${publishedVersion ? "border-green-200" : "border-gray-200 dark:border-gray-700"}`}
+                className={`bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border ${publishedVersion ? "border-green-200" : "border-gray-200 dark:border-gray-700"}`}
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -107,9 +107,9 @@ export default function SurveyDetailsModal({
               </div>
 
               {/* Vigencia */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-100 rounded-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
                     <CalendarRange className="h-5 w-5 text-orange-600" />
                   </div>
                   <div className="min-w-0">
@@ -147,9 +147,9 @@ export default function SurveyDetailsModal({
               </div>
 
               {/* Creada */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
                     <User className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
@@ -164,9 +164,9 @@ export default function SurveyDetailsModal({
               </div>
 
               {/* Duración estimada */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-teal-100 rounded-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-2 bg-teal-100 rounded-lg flex-shrink-0">
                     <Clock className="h-5 w-5 text-teal-600" />
                   </div>
                   <div>
@@ -181,9 +181,9 @@ export default function SurveyDetailsModal({
               </div>
 
               {/* Máx. respuestas */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-2 bg-indigo-100 rounded-lg flex-shrink-0">
                     <Users className="h-5 w-5 text-indigo-600" />
                   </div>
                   <div>
@@ -198,8 +198,8 @@ export default function SurveyDetailsModal({
               </div>
 
               {/* Anónimo */}
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div
                     className={`p-2 rounded-lg ${survey.allow_anonymous ? "bg-yellow-100" : "bg-gray-100 dark:bg-gray-800"}`}
                   >
@@ -221,7 +221,7 @@ export default function SurveyDetailsModal({
           </div>
 
           {/* Versions Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             <SurveyVersions
               survey={survey}
               onPublish={onPublish}
@@ -231,7 +231,7 @@ export default function SurveyDetailsModal({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 p-6 border-t bg-gray-50 dark:bg-gray-800/40">
+          <div className="flex justify-end gap-3 p-4 sm:p-6 border-t bg-gray-50 dark:bg-gray-800/40">
             <button
               onClick={onClose}
               className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50"
