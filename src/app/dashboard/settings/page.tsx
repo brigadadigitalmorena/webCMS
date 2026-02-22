@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRequireAuth } from "@/hooks/use-auth";
 import { useAuthStore } from "@/store/auth-store";
 import { useTheme } from "@/contexts/theme-context";
@@ -10,11 +10,13 @@ import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertCircle,
+  Camera,
   CheckCircle2,
   Lock,
   Mail,
   User,
   Save,
+  X,
 } from "lucide-react";
 import { userService } from "@/lib/api/user.service";
 
@@ -22,6 +24,7 @@ interface SettingsForm {
   firstName: string;
   lastName: string;
   email: string;
+  avatarUrl: string;
   theme: "light" | "dark" | "system";
   emailNotifications: boolean;
 }
@@ -38,6 +41,9 @@ export default function SettingsPage() {
   const { theme: currentTheme, setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<"profile" | "password" | "system">(
     "profile",
   );
@@ -48,6 +54,7 @@ export default function SettingsPage() {
     firstName: "",
     lastName: "",
     email: "",
+    avatarUrl: "",
     theme: "system",
     emailNotifications: true,
   });
@@ -65,6 +72,7 @@ export default function SettingsPage() {
         firstName: currentUser.nombre || "",
         lastName: currentUser.apellido || "",
         email: currentUser.email || "",
+        avatarUrl: currentUser.avatar_url || "",
         theme:
           (localStorage.getItem("theme") as "light" | "dark") ||
           currentTheme ||
@@ -119,10 +127,19 @@ export default function SettingsPage() {
     try {
       setIsSaving(true);
       setErrorMessage(null);
+      // Upload new avatar if one was selected
+      let finalAvatarUrl = formData.avatarUrl;
+      if (pendingAvatarFile) {
+        const uploadedUser = await userService.uploadAvatar(pendingAvatarFile);
+        finalAvatarUrl = uploadedUser.avatar_url || "";
+        setPendingAvatarFile(null);
+        setFormData((prev) => ({ ...prev, avatarUrl: finalAvatarUrl }));
+      }
       const updated = await userService.updateProfile({
         nombre: formData.firstName,
         apellido: formData.lastName,
         email: formData.email,
+        avatar_url: finalAvatarUrl || undefined,
       });
       // Sync updated name/email into auth store
       const store = useAuthStore.getState();
@@ -253,6 +270,68 @@ export default function SettingsPage() {
       {activeTab === "profile" && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-2xl">
           <div className="space-y-6">
+            {/* Avatar Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Foto de perfil
+              </label>
+              <div className="flex items-center gap-4">
+                {/* Avatar preview */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center border-2 border-gray-200 dark:border-gray-700">
+                    {(avatarPreview || formData.avatarUrl) ? (
+                      <img
+                        src={avatarPreview || formData.avatarUrl}
+                        alt="Foto de perfil"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-2xl font-bold text-primary-600 dark:text-primary-400 select-none">
+                        {(formData.firstName?.[0] || "").toUpperCase()}{(formData.lastName?.[0] || "").toUpperCase() || (formData.firstName?.[1] || "").toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  {pendingAvatarFile && (
+                    <button
+                      type="button"
+                      onClick={() => { setPendingAvatarFile(null); setAvatarPreview(null); }}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+                      title="Quitar foto seleccionada"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={isSaving}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+                  >
+                    <Camera className="w-4 h-4" />
+                    {pendingAvatarFile ? "Foto seleccionada" : "Cambiar foto"}
+                  </button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    JPG, PNG o WEBP · máx. 5 MB
+                  </p>
+                </div>
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setPendingAvatarFile(file);
+                    setAvatarPreview(URL.createObjectURL(file));
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nombre

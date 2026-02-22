@@ -189,6 +189,18 @@ export const userService = {
   },
 
   /**
+   * Upload own profile photo (POST /users/me/avatar)
+   */
+  async uploadAvatar(file: File): Promise<User> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await apiClient.post<User>("/users/me/avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return normalizeUser(response.data);
+  },
+
+  /**
    * Change own password (POST /users/me/change-password)
    */
   async changePassword(

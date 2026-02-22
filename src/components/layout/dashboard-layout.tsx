@@ -34,14 +34,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         setIsDesktopCollapsed={setIsDesktopSidebarCollapsed}
       />
 
+      {/* Sticky header — own stacking context so modal backdrops render above it */}
+      <div
+        className={cn(
+          "sticky top-0 z-30 transition-[padding-left] duration-300 ease-in-out",
+          isDesktopSidebarCollapsed ? "lg:pl-16" : "lg:pl-64",
+        )}
+      >
+        <Header onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+      </div>
+
+      {/* Main content — separate from header so fixed modals escape any compositing layer */}
       <div
         className={cn(
           "transition-[padding-left] duration-300 ease-in-out",
           isDesktopSidebarCollapsed ? "lg:pl-16" : "lg:pl-64",
         )}
       >
-        <Header onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
-
         <main className="p-4 lg:p-6">
           {/* Main content container with max-width for better readability */}
           <div className="max-w-[1600px] mx-auto">{children}</div>
