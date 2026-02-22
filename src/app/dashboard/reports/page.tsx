@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useAsync } from "@/hooks/use-async";
+import { useDisclosure } from "@/hooks/use-disclosure";
 import { AdminGuard } from "@/components/auth/admin-guard";
 import { useRequireAuth } from "@/hooks/use-auth";
 import {
@@ -126,24 +128,16 @@ function exportToCSV(rows: ExportRow[], surveyTitle: string) {
 
 export default function ReportsPage() {
   const { isChecking } = useRequireAuth();
-  const [summaries, setSummaries] = useState<SurveySummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
-  // Modal state
-  const [selectedSurvey, setSelectedSurvey] = useState<SurveySummary | null>(
-    null,
-  );
-  const [exportRows, setExportRows] = useState<ExportRow[]>([]);
-  const [timeline, setTimeline] = useState<TimelinePoint[]>([]);
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-
-  const fetchSummary = useCallback(async () => {
-    try {
-      setError(null);
+  const {
+    data: summaries,
+    isLoading,
+    error,
+    refetch: handleRefresh,
+  } = useAsync(
+    async () => {
       const params: Record<string, string> = {};
       if (dateFrom) params.date_from = dateFrom;
       if (dateTo) params.date_to = dateTo;
@@ -151,27 +145,20 @@ export default function ReportsPage() {
         "/admin/responses/summary",
         { params },
       );
-      setSummaries(res.data);
-    } catch {
-      setError("No se pudieron cargar los reportes");
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [dateFrom, dateTo]);
+      return res.data;
+    },
+    [dateFrom, dateTo],
+  );
 
-  useEffect(() => {
-    fetchSummary();
-  }, [fetchSummary]);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    fetchSummary();
-  };
+  // Detail modal
+  const detailModal = useDisclosure<SurveySummary>();
+  const [exportRows, setExportRows] = useState<ExportRow[]>([]);
+  const [timeline, setTimeline] = useState<TimelinePoint[]>([]);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   // Summary CSV (one row per survey)
   const handleExportSummaryCSV = () => {
-    if (summaries.length === 0) return;
+    if (!summaries?.length) return;
     const headers = [
       "ID",
       "Encuesta",
@@ -203,7 +190,7 @@ export default function ReportsPage() {
 
   const handleOpenSurvey = async (survey: SurveySummary) => {
     if (survey.total_responses === 0) return;
-    setSelectedSurvey(survey);
+    detailModal.open(survey);
     setIsLoadingDetail(true);
     setExportRows([]);
     setTimeline([]);
@@ -225,8 +212,8 @@ export default function ReportsPage() {
     }
   };
 
-  // Server-side filtering via date_from/date_to — fetchSummary already applies filters
-  const filteredSummaries = summaries;
+  // Server-side filtering via date_from/date_to — useAsync already applies filters
+  const filteredSummaries = summaries ?? [];
 
   const totalResponses = filteredSummaries.reduce(
     (s, r) => s + r.total_responses,
@@ -301,11 +288,11 @@ export default function ReportsPage() {
             </div>
             <button
               onClick={handleRefresh}
-              disabled={isRefreshing}
+              disabled={isLoading}
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-sm font-medium transition-colors disabled:opacity-50"
             >
               <RefreshCw
-                className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+                className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
               />
               Actualizar
             </button>
@@ -341,7 +328,7 @@ export default function ReportsPage() {
             icon={ClipboardCheck}
             label="Encuestas con Respuestas"
             value={
-              isLoading ? "--" : `${surveysWithResponses} / ${summaries.length}`
+              isLoading ? "--" : `${surveysWithResponses} / ${(summaries ?? []).length}`
             }
             color="text-emerald-600"
             bg="bg-emerald-50"
@@ -424,7 +411,7 @@ export default function ReportsPage() {
             </div>
           ) : filteredSummaries.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-              {summaries.length === 0
+              {(summaries ?? []).length === 0
                 ? "No hay encuestas registradas aún"
                 : "Sin resultados para el rango de fechas seleccionado"}
             </div>
@@ -523,13 +510,13 @@ export default function ReportsPage() {
       </div>
 
       {/* Detail Modal */}
-      {selectedSurvey && (
+      {detailModal.isOpen && detailModal.data && (
         <SurveyDetailModal
-          survey={selectedSurvey}
+          survey={detailModal.data}
           exportRows={exportRows}
           timeline={timeline}
           isLoading={isLoadingDetail}
-          onClose={() => setSelectedSurvey(null)}
+          onClose={detailModal.close}
         />
       )}
     </AdminGuard>

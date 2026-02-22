@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useAsync } from "@/hooks/use-async";
+import { useDisclosure } from "@/hooks/use-disclosure";
 import { toast } from "sonner";
 import { Assignment, AssignmentStatus } from "@/types";
 import { assignmentService } from "@/lib/api/assignment.service";
@@ -279,32 +281,18 @@ function SurveyCard({
 }
 
 export default function AssignmentsPage() {
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    data: assignments,
+    isLoading,
+    refetch: loadAssignments,
+    setData: setAssignments,
+  } = useAsync<Assignment[]>(() => assignmentService.getAssignments());
+
   const [isSaving, setIsSaving] = useState(false);
-  const [preselectedSurvey, setPreselectedSurvey] = useState<{
-    id: number;
-    title: string;
-  } | null>(null);
-
-  const loadAssignments = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      setAssignments(await assignmentService.getAssignments());
-    } catch (err) {
-      console.error("Error loading assignments:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadAssignments();
-  }, [loadAssignments]);
+  const assignModal = useDisclosure<{ id: number; title: string }>();
 
   const groups: SurveyGroup[] = Object.values(
-    assignments.reduce<Record<number, SurveyGroup>>((acc, a) => {
+    (assignments ?? []).reduce<Record<number, SurveyGroup>>((acc, a) => {
       const sid = a.survey_id;
       if (!acc[sid]) {
         acc[sid] = {
@@ -320,7 +308,7 @@ export default function AssignmentsPage() {
     }, {}),
   ).sort((a, b) => a.surveyTitle.localeCompare(b.surveyTitle));
 
-  const totalResponses = assignments.reduce(
+  const totalResponses = (assignments ?? []).reduce(
     (s, a) => s + (a.response_count ?? 0),
     0,
   );
@@ -333,12 +321,12 @@ export default function AssignmentsPage() {
     },
     {
       label: "Personas asignadas",
-      value: assignments.length,
+      value: (assignments ?? []).length,
       color: "text-gray-700 dark:text-gray-300",
     },
     {
       label: "Activos",
-      value: assignments.filter((a) => a.status === "active").length,
+      value: (assignments ?? []).filter((a) => a.status === "active").length,
       color: "text-green-600",
     },
     {
@@ -349,10 +337,7 @@ export default function AssignmentsPage() {
   ];
 
   const openModal = (surveyId?: number, surveyTitle?: string) => {
-    setPreselectedSurvey(
-      surveyId ? { id: surveyId, title: surveyTitle! } : null,
-    );
-    setIsModalOpen(true);
+    assignModal.open(surveyId ? { id: surveyId, title: surveyTitle! } : undefined);
   };
 
   const handleCreate = async (data: {
@@ -364,7 +349,7 @@ export default function AssignmentsPage() {
     setIsSaving(true);
     try {
       await assignmentService.createAssignment(data);
-      setIsModalOpen(false);
+      assignModal.close();
       await loadAssignments();
     } finally {
       setIsSaving(false);
@@ -380,7 +365,7 @@ export default function AssignmentsPage() {
       return;
     try {
       await assignmentService.deleteAssignment(id);
-      setAssignments((prev) => prev.filter((a) => a.id !== id));
+      setAssignments((prev) => (prev ?? []).filter((a) => a.id !== id));
       toast.success("Asignación eliminada correctamente");
     } catch (err) {
       console.error("Error deleting assignment:", err);
@@ -393,7 +378,7 @@ export default function AssignmentsPage() {
     try {
       await assignmentService.updateAssignment(id, { status: next });
       setAssignments((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status: next } : a)),
+        (prev ?? []).map((a) => (a.id === id ? { ...a, status: next } : a)),
       );
     } catch (err) {
       console.error("Error toggling status:", err);
@@ -495,11 +480,11 @@ export default function AssignmentsPage() {
       )}
 
       <AssignSurveyModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={assignModal.isOpen}
+        onClose={assignModal.close}
         onSubmit={handleCreate}
         isLoading={isSaving}
-        preselectedSurvey={preselectedSurvey}
+        preselectedSurvey={assignModal.data ?? null}
       />
     </div>
   );

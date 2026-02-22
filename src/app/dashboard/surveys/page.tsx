@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Survey, Question } from "@/types";
 import { surveyService } from "@/lib/api/survey.service";
@@ -8,14 +8,10 @@ import SurveyList from "@/components/survey/survey-list";
 import CreateSurveyModal from "@/components/survey/create-survey-modal";
 import SurveyDetailsModal from "@/components/survey/survey-details-modal";
 import { Plus, Search, Filter, RefreshCw } from "lucide-react";
+import { useAsync } from "@/hooks/use-async";
+import { useDisclosure } from "@/hooks/use-disclosure";
 
 export default function SurveysPage() {
-  const [surveys, setSurveys] = useState<Survey[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [editingSurvey, setEditingSurvey] = useState<Survey | null>(null);
-  const [viewingSurvey, setViewingSurvey] = useState<Survey | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterActive, setFilterActive] = useState<boolean | undefined>(
     undefined,
@@ -23,24 +19,19 @@ export default function SurveysPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
 
-  const loadSurveys = async () => {
-    try {
-      setIsLoading(true);
-      const data = await surveyService.getSurveys({
-        is_active: filterActive,
-      });
-      setSurveys(data);
-    } catch (error) {
-      console.error("Error loading surveys:", error);
-      toast.error("Error al cargar las encuestas");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    data: surveys,
+    isLoading,
+    refetch: loadSurveys,
+  } = useAsync(
+    () => surveyService.getSurveys({ is_active: filterActive }),
+    [filterActive],
+  );
 
-  useEffect(() => {
-    loadSurveys();
-  }, [filterActive]);
+  // Edit / create modal — data is undefined for "create" mode, Survey for "edit" mode.
+  const editModal = useDisclosure<Survey>();
+  // Details modal — data can be refreshed in-place after a publish action.
+  const detailsModal = useDisclosure<Survey>();
 
   const handleCreateSurvey = async (data: {
     title: string;
@@ -55,7 +46,7 @@ export default function SurveysPage() {
     try {
       setIsSaving(true);
       await surveyService.createSurvey(data);
-      setIsModalOpen(false);
+      editModal.close();
       await loadSurveys();
     } catch (error: any) {
       console.error("Error creating survey:", error);
@@ -75,16 +66,15 @@ export default function SurveysPage() {
     allow_anonymous?: boolean;
     questions: Omit<Question, "id" | "version_id">[];
   }) => {
-    if (!editingSurvey) return;
+    if (!editModal.data) return;
 
     try {
       setIsSaving(true);
-      await surveyService.updateSurvey(editingSurvey.id, {
+      await surveyService.updateSurvey(editModal.data.id, {
         ...data,
         change_summary: "Actualización manual desde CMS",
       });
-      setIsModalOpen(false);
-      setEditingSurvey(null);
+      editModal.close();
       await loadSurveys();
     } catch (error: any) {
       console.error("Error updating survey:", error);
@@ -129,8 +119,7 @@ export default function SurveysPage() {
   const handleView = async (survey: Survey) => {
     try {
       const fullSurvey = await surveyService.getSurvey(survey.id);
-      setViewingSurvey(fullSurvey);
-      setIsDetailsModalOpen(true);
+      detailsModal.open(fullSurvey);
     } catch (error) {
       console.error("Error loading survey details:", error);
       toast.error("Error al cargar los detalles de la encuesta");
@@ -138,7 +127,7 @@ export default function SurveysPage() {
   };
 
   const handlePublishVersion = async (versionId: number) => {
-    if (!viewingSurvey) return;
+    if (!detailsModal.data) return;
 
     if (
       !confirm(
@@ -150,10 +139,10 @@ export default function SurveysPage() {
 
     try {
       setIsPublishing(true);
-      await surveyService.publishVersion(viewingSurvey.id, versionId);
+      await surveyService.publishVersion(detailsModal.data.id, versionId);
       // Reload survey details
-      const updatedSurvey = await surveyService.getSurvey(viewingSurvey.id);
-      setViewingSurvey(updatedSurvey);
+      const updatedSurvey = await surveyService.getSurvey(detailsModal.data.id);
+      detailsModal.setData(updatedSurvey);
       await loadSurveys();
     } catch (error: any) {
       console.error("Error publishing version:", error);
@@ -173,22 +162,18 @@ export default function SurveysPage() {
         (a, b) => b.version_number - a.version_number,
       )[0];
 
-      if (latestVersion) {
-        setEditingSurvey({
-          ...fullSurvey,
-          versions: [latestVersion],
-        });
-      } else {
-        setEditingSurvey(fullSurvey);
-      }
-      setIsModalOpen(true);
+      editModal.open(
+        latestVersion
+          ? { ...fullSurvey, versions: [latestVersion] }
+          : fullSurvey,
+      );
     } catch (error) {
       console.error("Error loading survey for edit:", error);
       toast.error("Error al cargar la encuesta para editar");
     }
   };
 
-  const filteredSurveys = surveys.filter((survey) =>
+  const filteredSurveys = (surveys ?? []).filter((survey) =>
     survey.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -205,10 +190,7 @@ export default function SurveysPage() {
           </p>
         </div>
         <button
-          onClick={() => {
-            setEditingSurvey(null);
-            setIsModalOpen(true);
-          }}
+          onClick={() => editModal.open()}
           className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
           disabled={isLoading}
         >
@@ -291,24 +273,21 @@ export default function SurveysPage() {
 
       {/* Create/Edit Modal */}
       <CreateSurveyModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingSurvey(null);
-        }}
-        onSubmit={editingSurvey ? handleEditSurvey : handleCreateSurvey}
+        isOpen={editModal.isOpen}
+        onClose={editModal.close}
+        onSubmit={editModal.data ? handleEditSurvey : handleCreateSurvey}
         initialData={
-          editingSurvey
+          editModal.data
             ? {
-                title: editingSurvey.title,
-                description: editingSurvey.description,
-                starts_at: editingSurvey.starts_at,
-                ends_at: editingSurvey.ends_at,
+                title: editModal.data.title,
+                description: editModal.data.description,
+                starts_at: editModal.data.starts_at,
+                ends_at: editModal.data.ends_at,
                 estimated_duration_minutes:
-                  editingSurvey.estimated_duration_minutes,
-                max_responses: editingSurvey.max_responses,
-                allow_anonymous: editingSurvey.allow_anonymous,
-                questions: editingSurvey.versions?.[0]?.questions || [],
+                  editModal.data.estimated_duration_minutes,
+                max_responses: editModal.data.max_responses,
+                allow_anonymous: editModal.data.allow_anonymous,
+                questions: editModal.data.versions?.[0]?.questions || [],
               }
             : undefined
         }
@@ -317,12 +296,9 @@ export default function SurveysPage() {
 
       {/* Details Modal */}
       <SurveyDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => {
-          setIsDetailsModalOpen(false);
-          setViewingSurvey(null);
-        }}
-        survey={viewingSurvey}
+        isOpen={detailsModal.isOpen}
+        onClose={detailsModal.close}
+        survey={detailsModal.data ?? null}
         onPublish={handlePublishVersion}
         isPublishing={isPublishing}
       />

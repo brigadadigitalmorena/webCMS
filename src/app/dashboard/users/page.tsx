@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useAsync } from "@/hooks/use-async";
 import Link from "next/link";
 import { useRequireAuth } from "@/hooks/use-auth";
 import { useAuthStore } from "@/store/auth-store";
@@ -63,44 +65,41 @@ function exportUsersCSV(users: User[]) {
 export default function UsersPage() {
   const { isChecking } = useRequireAuth();
   const currentUser = useAuthStore((state) => state.user);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Debounce search input 300 ms before passing it to the fetch
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
-    const timer = setTimeout(() => {
-      loadUsers();
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [roleFilter, statusFilter, searchTerm, currentPage]);
+    const t = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
 
-  const loadUsers = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await userService.getUsersPaginated({
+  const {
+    data,
+    isLoading: loading,
+    error,
+    refetch: loadUsers,
+    setData,
+  } = useAsync(
+    () =>
+      userService.getUsersPaginated({
         page: currentPage,
         size: PAGE_SIZE,
         rol: roleFilter === "all" ? undefined : roleFilter,
-        activo: statusFilter === "all" ? undefined : statusFilter === "active",
-        search: searchTerm.trim() || undefined,
-      });
-      setUsers(response.items);
-      setTotalItems(response.total);
-    } catch (err: any) {
-      setError(err.message || "Error al cargar usuarios");
-    } finally {
-      setLoading(false);
-    }
-  };
+        activo:
+          statusFilter === "all" ? undefined : statusFilter === "active",
+        search: debouncedSearch.trim() || undefined,
+      }),
+    [roleFilter, statusFilter, debouncedSearch, currentPage],
+  );
 
+  const users = data?.items ?? [];
+  const totalItems = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   useEffect(() => {
@@ -116,16 +115,18 @@ export default function UsersPage() {
 
   const handleToggleActive = async (user: User) => {
     if (currentUser?.id === user.id && user.activo) {
-      setError("No puedes desactivar tu propia cuenta");
+      toast.error("No puedes desactivar tu propia cuenta");
       return;
     }
     try {
       const updated = await userService.toggleUserStatus(user.id, !user.activo);
-      setUsers((prev) =>
-        prev.map((item) => (item.id === updated.id ? updated : item)),
+      setData((prev) =>
+        prev
+          ? { ...prev, items: prev.items.map((item) => (item.id === updated.id ? updated : item)) }
+          : null,
       );
     } catch (err: any) {
-      setError(err.message || "No se pudo actualizar el estado");
+      toast.error(err.message || "No se pudo actualizar el estado");
     }
   };
 
@@ -183,16 +184,10 @@ export default function UsersPage() {
         </div>
 
         {error && (
-          <div className="flex items-center justify-between bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
             <p className="text-sm font-medium text-red-700 dark:text-red-300">
               {error}
             </p>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-700 dark:text-red-300 hover:text-red-900 ml-4 text-lg leading-none"
-            >
-              ✕
-            </button>
           </div>
         )}
 
