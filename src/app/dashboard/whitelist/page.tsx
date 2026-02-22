@@ -425,9 +425,10 @@ export default function WhitelistPage() {
                           size="sm"
                           onClick={() => handleGenerateCode(entry.id)}
                           title="Generar código de activación"
+                          className="px-2 sm:px-3"
                         >
-                          <Mail className="mr-1 h-3 w-3" />
-                          Generar
+                          <Mail className="h-3 w-3 sm:mr-1" />
+                          <span className="hidden sm:inline">Generar</span>
                         </Button>
                       )}
                       {entry.has_active_code && !entry.is_activated && (

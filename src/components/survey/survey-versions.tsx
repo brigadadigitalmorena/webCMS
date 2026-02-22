@@ -71,7 +71,7 @@ export default function SurveyVersions({
         </span>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {sortedVersions.map((version) => {
           const isExpanded = expandedVersions.has(version.id);
 
@@ -85,7 +85,7 @@ export default function SurveyVersions({
               }`}
             >
               {/* Version Header */}
-              <div className="p-4">
+              <div className="p-3 sm:p-4">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     {version.is_published ? (
@@ -172,7 +172,7 @@ export default function SurveyVersions({
 
               {/* Expanded Questions List */}
               {isExpanded && (
-                <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 p-4">
+                <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 p-3 sm:p-4">
                   <h5 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                     Preguntas en esta versión:
                   </h5>

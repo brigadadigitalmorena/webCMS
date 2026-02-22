@@ -178,10 +178,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Configuración
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
@@ -206,7 +206,7 @@ export default function SettingsPage() {
 
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-        <div className="flex gap-6">
+        <div className="flex gap-1 sm:gap-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab("profile")}
             className={`pb-3 px-1 border-b-2 font-medium transition-colors ${
@@ -251,7 +251,7 @@ export default function SettingsPage() {
 
       {/* Profile Tab */}
       {activeTab === "profile" && (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-2xl">
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -318,7 +318,7 @@ export default function SettingsPage() {
 
       {/* Password Tab */}
       {activeTab === "password" && (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-2xl">
           <div className="space-y-6">
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <p className="text-sm text-blue-800">
@@ -383,7 +383,7 @@ export default function SettingsPage() {
 
       {/* System Preferences Tab */}
       {activeTab === "system" && (
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 max-w-2xl">
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

@@ -243,18 +243,18 @@ export default function ReportsPage() {
     <AdminGuard>
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
               Reportes
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Resumen de respuestas por encuesta
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Date range filter */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Calendar className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
               <input
                 type="date"

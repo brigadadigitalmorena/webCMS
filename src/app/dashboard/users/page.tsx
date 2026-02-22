@@ -24,7 +24,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { CreateUserModal } from "@/components/users/create-user-modal";
 import { userService } from "@/lib/api/user.service";
 import type { User } from "@/types";
-import { Search, UserPlus, RefreshCw, Download } from "lucide-react";
+import { Search, UserPlus, RefreshCw, Download, Pencil, Power } from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -325,10 +325,11 @@ export default function UsersPage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex flex-wrap justify-end gap-2">
+                        <div className="flex flex-wrap justify-end gap-1.5 sm:gap-2">
                           <Link href={`/dashboard/users/${user.id}`}>
-                            <Button variant="ghost" size="sm">
-                              Editar
+                            <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                              <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                              <span className="hidden sm:inline">Editar</span>
                             </Button>
                           </Link>
                           {currentUser?.id === user.id ? (
@@ -337,16 +338,20 @@ export default function UsersPage() {
                               size="sm"
                               disabled
                               title="No puedes desactivar tu propia cuenta"
+                              className="px-2 sm:px-3"
                             >
-                              Tu cuenta
+                              <span className="hidden sm:inline">Tu cuenta</span>
+                              <span className="sm:hidden text-xs">–</span>
                             </Button>
                           ) : (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleToggleActive(user)}
+                              className="px-2 sm:px-3"
                             >
-                              {user.activo ? "Desactivar" : "Activar"}
+                              <Power className="h-3.5 w-3.5 sm:mr-1.5" />
+                              <span className="hidden sm:inline">{user.activo ? "Desactivar" : "Activar"}</span>
                             </Button>
                           )}
                         </div>

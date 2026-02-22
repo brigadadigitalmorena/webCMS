@@ -32,15 +32,15 @@ export default function NotificationsPage() {
   const hasUnread = unreadCount > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-center gap-3 flex-1">
           <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20">
             <Bell className="h-6 w-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notificaciones</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Notificaciones</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {hasUnread ? `${unreadCount} sin leer` : "Todo al día"}
             </p>
@@ -51,7 +51,7 @@ export default function NotificationsPage() {
             variant="outline"
             size="sm"
             onClick={() => markAllRead()}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 self-start sm:self-auto"
           >
             <CheckCheck className="h-4 w-4" />
             Marcar todo como leído

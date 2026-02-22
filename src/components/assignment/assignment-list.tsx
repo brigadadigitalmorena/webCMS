@@ -193,6 +193,65 @@ export default function AssignmentList({
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {/* ── Mobile card list (hidden on sm+) ── */}
+      <div className="sm:hidden divide-y divide-gray-200 dark:divide-gray-700">
+        {assignments.map((a) => (
+          <div key={a.id} className="p-4 space-y-2.5">
+            {/* Survey title — full, never truncated */}
+            <p className="text-sm font-semibold text-gray-900 dark:text-white leading-snug">
+              {a.survey?.title ?? `Encuesta #${a.survey_id}`}
+            </p>
+            {/* User + status */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                  {a.user?.full_name ? (
+                    a.user.full_name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join("")
+                      .toUpperCase()
+                  ) : (
+                    <User className="h-3.5 w-3.5" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-gray-900 dark:text-white truncate">
+                    {a.user?.full_name ?? `Usuario #${a.user_id}`}
+                  </p>
+                  <RoleBadge role={a.user?.role} />
+                </div>
+              </div>
+              <StatusBadge status={a.status} />
+            </div>
+            {/* Meta */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+              {a.location && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 flex-shrink-0" />
+                  {a.location}
+                </span>
+              )}
+              <span>{format(new Date(a.created_at), "d MMM yyyy", { locale: es })}</span>
+            </div>
+            {/* Notes */}
+            {a.notes && (
+              <div className="flex items-start gap-1.5 bg-amber-50 rounded-md p-2 text-xs text-amber-800">
+                <FileText className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
+                <span>{a.notes}</span>
+              </div>
+            )}
+            {/* Actions */}
+            <div className="flex justify-end pt-1">
+              <ActionsMenu assignment={a} onUpdateStatus={onUpdateStatus} onDelete={onDelete} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Desktop table (hidden below sm) ── */}
+      <div className="hidden sm:block overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800/40">
           <tr>
@@ -310,6 +369,7 @@ export default function AssignmentList({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
