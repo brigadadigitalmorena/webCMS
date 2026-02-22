@@ -69,14 +69,22 @@ export default function SurveyDetailsModal({
           <div className="p-4 sm:p-6 border-b bg-gray-50 dark:bg-gray-800/40">
             {/* Mobile: compact pill row */}
             <div className="sm:hidden flex flex-wrap gap-2 text-xs">
-              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${survey.is_active ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"}`}>
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${survey.is_active ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"}`}
+              >
                 {survey.is_active ? "Activa" : "Inactiva"}
               </span>
-              <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${publishedVersion ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500"}`}>
-                {publishedVersion ? `v${publishedVersion.version_number} publicada` : "Sin publicar"}
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${publishedVersion ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500"}`}
+              >
+                {publishedVersion
+                  ? `v${publishedVersion.version_number} publicada`
+                  : "Sin publicar"}
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 font-medium">
-                {format(new Date(survey.created_at), "dd MMM yyyy", { locale: es })}
+                {format(new Date(survey.created_at), "dd MMM yyyy", {
+                  locale: es,
+                })}
               </span>
               {survey.estimated_duration_minutes && (
                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 font-medium">
@@ -84,8 +92,11 @@ export default function SurveyDetailsModal({
                 </span>
               )}
               {survey.ends_at && (
-                <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${new Date(survey.ends_at) < new Date() ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"}`}>
-                  Cierre: {format(new Date(survey.ends_at), "dd MMM", { locale: es })}
+                <span
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${new Date(survey.ends_at) < new Date() ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"}`}
+                >
+                  Cierre:{" "}
+                  {format(new Date(survey.ends_at), "dd MMM", { locale: es })}
                 </span>
               )}
               {survey.allow_anonymous && (

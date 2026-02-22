@@ -279,7 +279,7 @@ export default function SettingsPage() {
                 {/* Avatar preview */}
                 <div className="relative flex-shrink-0">
                   <div className="w-20 h-20 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center border-2 border-gray-200 dark:border-gray-700">
-                    {(avatarPreview || formData.avatarUrl) ? (
+                    {avatarPreview || formData.avatarUrl ? (
                       <img
                         src={avatarPreview || formData.avatarUrl}
                         alt="Foto de perfil"
@@ -287,14 +287,19 @@ export default function SettingsPage() {
                       />
                     ) : (
                       <span className="text-2xl font-bold text-primary-600 dark:text-primary-400 select-none">
-                        {(formData.firstName?.[0] || "").toUpperCase()}{(formData.lastName?.[0] || "").toUpperCase() || (formData.firstName?.[1] || "").toUpperCase()}
+                        {(formData.firstName?.[0] || "").toUpperCase()}
+                        {(formData.lastName?.[0] || "").toUpperCase() ||
+                          (formData.firstName?.[1] || "").toUpperCase()}
                       </span>
                     )}
                   </div>
                   {pendingAvatarFile && (
                     <button
                       type="button"
-                      onClick={() => { setPendingAvatarFile(null); setAvatarPreview(null); }}
+                      onClick={() => {
+                        setPendingAvatarFile(null);
+                        setAvatarPreview(null);
+                      }}
                       className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
                       title="Quitar foto seleccionada"
                     >

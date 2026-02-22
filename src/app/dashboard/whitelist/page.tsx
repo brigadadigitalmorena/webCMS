@@ -340,12 +340,16 @@ export default function WhitelistPage() {
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       {entry.identifier}{" "}
-                      <span className="text-gray-400 dark:text-gray-500">({entry.identifier_type})</span>
+                      <span className="text-gray-400 dark:text-gray-500">
+                        ({entry.identifier_type})
+                      </span>
                     </p>
                   </div>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold flex-shrink-0 ${
-                      entry.is_activated ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                      entry.is_activated
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-amber-100 text-amber-700"
                     }`}
                   >
                     {entry.is_activated ? "Activado" : "Pendiente"}
@@ -365,7 +369,12 @@ export default function WhitelistPage() {
                   </span>
                   <div className="flex gap-1">
                     {!entry.is_activated && !entry.has_active_code && (
-                      <Button size="sm" onClick={() => handleGenerateCode(entry.id)} title="Generar código" className="px-2 gap-1">
+                      <Button
+                        size="sm"
+                        onClick={() => handleGenerateCode(entry.id)}
+                        title="Generar código"
+                        className="px-2 gap-1"
+                      >
                         <Mail className="h-3 w-3" />
                         <span className="text-xs">Generar</span>
                       </Button>
@@ -373,22 +382,39 @@ export default function WhitelistPage() {
                     {entry.has_active_code && !entry.is_activated && (
                       <>
                         {entry.identifier_type === "email" && (
-                          <Button variant="ghost" size="sm" onClick={() => handleResendEmail(entry.id)} title="Reenviar email">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleResendEmail(entry.id)}
+                            title="Reenviar email"
+                          >
                             <RefreshCw className="h-3 w-3" />
                           </Button>
                         )}
-                        <Button variant="ghost" size="sm" onClick={() => handleExtendCode(entry.id)} title="Extender código">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleExtendCode(entry.id)}
+                          title="Extender código"
+                        >
                           <Clock4 className="h-3 w-3" />
                         </Button>
                       </>
                     )}
                     {!entry.is_activated && (
-                      <Button variant="ghost" size="sm" onClick={() => handleDeleteEntry(entry.id)} title="Eliminar">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteEntry(entry.id)}
+                        title="Eliminar"
+                      >
                         <Trash2 className="h-3 w-3 text-red-600" />
                       </Button>
                     )}
                     {entry.is_activated && (
-                      <span className="text-xs text-emerald-600 font-medium px-2">✓</span>
+                      <span className="text-xs text-emerald-600 font-medium px-2">
+                        ✓
+                      </span>
                     )}
                   </div>
                 </div>
@@ -398,163 +424,163 @@ export default function WhitelistPage() {
         </div>
         {/* ── Desktop table (hidden below sm) ── */}
         <div className="hidden sm:block overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Identificador</TableHead>
-              <TableHead>Nombre completo</TableHead>
-              <TableHead>Rol</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="hidden sm:table-cell">Codigo</TableHead>
-              <TableHead className="text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-40" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-20" />
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Skeleton className="h-6 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-32" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : entries.length === 0 ? (
-              <TableEmpty
-                message="No hay entradas en la whitelist"
-                description="Agrega un usuario y genera su codigo de activacion."
-              />
-            ) : (
-              entries.map((entry) => (
-                <TableRow
-                  key={entry.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                >
-                  <TableCell>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {entry.identifier}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Identificador</TableHead>
+                <TableHead>Nombre completo</TableHead>
+                <TableHead>Rol</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead className="hidden sm:table-cell">Codigo</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-20" />
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <Skeleton className="h-6 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-8 w-32" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : entries.length === 0 ? (
+                <TableEmpty
+                  message="No hay entradas en la whitelist"
+                  description="Agrega un usuario y genera su codigo de activacion."
+                />
+              ) : (
+                entries.map((entry) => (
+                  <TableRow
+                    key={entry.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  >
+                    <TableCell>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          {entry.identifier}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {entry.identifier_type}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {entry.identifier_type}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {entry.full_name}
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-gray-900 dark:text-white">
-                      {entry.full_name}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        entry.assigned_role === "admin"
-                          ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                          : entry.assigned_role === "encargado"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-emerald-100 text-emerald-700"
-                      }`}
-                    >
-                      {entry.assigned_role}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        entry.is_activated
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
-                      {entry.is_activated ? "Activado" : "Pendiente"}
-                    </span>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {entry.has_active_code ? (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                        Codigo activo
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                          entry.assigned_role === "admin"
+                            ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                            : entry.assigned_role === "encargado"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-emerald-100 text-emerald-700"
+                        }`}
+                      >
+                        {entry.assigned_role}
                       </span>
-                    ) : entry.is_activated ? (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        N/A
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                          entry.is_activated
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
+                        {entry.is_activated ? "Activado" : "Pendiente"}
                       </span>
-                    ) : (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Sin codigo
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      {!entry.is_activated && !entry.has_active_code && (
-                        <Button
-                          size="sm"
-                          onClick={() => handleGenerateCode(entry.id)}
-                          title="Generar código de activación"
-                          className="px-2 sm:px-3"
-                        >
-                          <Mail className="h-3 w-3 sm:mr-1" />
-                          <span className="hidden sm:inline">Generar</span>
-                        </Button>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {entry.has_active_code ? (
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                          Codigo activo
+                        </span>
+                      ) : entry.is_activated ? (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          N/A
+                        </span>
+                      ) : (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Sin codigo
+                        </span>
                       )}
-                      {entry.has_active_code && !entry.is_activated && (
-                        <>
-                          {entry.identifier_type === "email" && (
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {!entry.is_activated && !entry.has_active_code && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleGenerateCode(entry.id)}
+                            title="Generar código de activación"
+                            className="px-2 sm:px-3"
+                          >
+                            <Mail className="h-3 w-3 sm:mr-1" />
+                            <span className="hidden sm:inline">Generar</span>
+                          </Button>
+                        )}
+                        {entry.has_active_code && !entry.is_activated && (
+                          <>
+                            {entry.identifier_type === "email" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleResendEmail(entry.id)}
+                                title="Reenviar código por email"
+                              >
+                                <RefreshCw className="h-3 w-3" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleResendEmail(entry.id)}
-                              title="Reenviar código por email"
+                              onClick={() => handleExtendCode(entry.id)}
+                              title="Extender expiración del código"
                             >
-                              <RefreshCw className="h-3 w-3" />
+                              <Clock4 className="h-3 w-3" />
                             </Button>
-                          )}
+                          </>
+                        )}
+                        {!entry.is_activated && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleExtendCode(entry.id)}
-                            title="Extender expiración del código"
+                            onClick={() => handleDeleteEntry(entry.id)}
+                            title="Eliminar invitación"
                           >
-                            <Clock4 className="h-3 w-3" />
+                            <Trash2 className="h-3 w-3 text-red-600" />
                           </Button>
-                        </>
-                      )}
-                      {!entry.is_activated && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteEntry(entry.id)}
-                          title="Eliminar invitación"
-                        >
-                          <Trash2 className="h-3 w-3 text-red-600" />
-                        </Button>
-                      )}
-                      {entry.is_activated && (
-                        <span className="text-xs text-emerald-600 font-medium px-2">
-                          ✓ Activado
-                        </span>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+                        )}
+                        {entry.is_activated && (
+                          <span className="text-xs text-emerald-600 font-medium px-2">
+                            ✓ Activado
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
 
         {totalPages > 1 && (

@@ -312,12 +312,22 @@ export default function UsersPage() {
                         </span>
                         <div className="flex gap-1">
                           <Link href={`/dashboard/users/${user.id}`}>
-                            <Button variant="ghost" size="sm" className="px-2" title="Editar">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="px-2"
+                              title="Editar"
+                            >
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
                           </Link>
                           {currentUser?.id === user.id ? (
-                            <Button variant="outline" size="sm" disabled className="px-2 text-xs">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled
+                              className="px-2 text-xs"
+                            >
                               –
                             </Button>
                           ) : (
@@ -348,7 +358,9 @@ export default function UsersPage() {
                       <TableHead className="hidden md:table-cell">
                         Telefono
                       </TableHead>
-                      <TableHead className="hidden md:table-cell">Creado</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Creado
+                      </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -408,7 +420,9 @@ export default function UsersPage() {
                                   className="px-2 sm:px-3"
                                 >
                                   <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
-                                  <span className="hidden sm:inline">Editar</span>
+                                  <span className="hidden sm:inline">
+                                    Editar
+                                  </span>
                                 </Button>
                               </Link>
                               {currentUser?.id === user.id ? (
