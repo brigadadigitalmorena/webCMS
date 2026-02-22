@@ -69,6 +69,8 @@ const toBackendUserPayload = (data: CreateUserData | UpdateUserData) => {
   const isActive = "activo" in data ? data.activo : undefined;
   const avatarUrl = "avatar_url" in data ? data.avatar_url : undefined;
 
+  const role = "rol" in data ? data.rol : undefined;
+
   return {
     // Only send fields that have a value — Pydantic EmailStr rejects "" so
     // omit email/phone/full_name rather than sending an empty string.
@@ -77,6 +79,7 @@ const toBackendUserPayload = (data: CreateUserData | UpdateUserData) => {
     phone: data.telefono || undefined,
     avatar_url: avatarUrl,
     is_active: isActive,
+    role: role || undefined,
   };
 };
 
