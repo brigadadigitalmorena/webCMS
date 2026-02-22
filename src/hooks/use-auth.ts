@@ -4,7 +4,10 @@ import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/lib/api";
 
 /**
- * Hook to handle authentication state
+ * Hook to handle authentication state.
+ *
+ * Tokens are managed server-side via HttpOnly cookies — this hook
+ * only deals with user profile data stored in Zustand.
  */
 export function useAuth() {
   const router = useRouter();
@@ -20,24 +23,18 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Login with credentials
+   * Login with credentials.
+   * The server-side proxy sets HttpOnly cookies — we only store the
+   * user profile in Zustand.
    */
   const handleLogin = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-      console.log("Attempting login for:", email);
-      const authUser = await authService.login({ email, password });
-      console.log("Login successful, user:", authUser);
-      login(authUser);
-
-      // Set cookies for middleware
-      document.cookie = `access_token=${authUser.access_token}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
-
+      const userProfile = await authService.login({ email, password });
+      login(userProfile);
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Login error:", err);
-      console.error("Error response:", err.response);
       const errorMessage =
         err.response?.data?.detail || err.message || "Error al iniciar sesión";
       setError(errorMessage);
@@ -48,22 +45,16 @@ export function useAuth() {
   };
 
   /**
-   * Logout user
+   * Logout user.
+   * The server-side proxy clears the HttpOnly cookies.
    */
   const handleLogout = async () => {
     try {
       await authService.logout();
-    } catch (err) {
-      console.error("Logout error:", err);
+    } catch {
+      // Best-effort — cookies are cleared server-side regardless
     } finally {
-      // Clear cookies first
-      document.cookie =
-        "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-
-      // Clear auth state
       logout();
-
-      // Force full page reload so middleware re-evaluates without the token
       window.location.href = "/login";
     }
   };
@@ -75,8 +66,7 @@ export function useAuth() {
     try {
       const userData = await authService.me();
       setUser(userData);
-    } catch (err) {
-      console.error("Failed to refresh user:", err);
+    } catch {
       handleLogout();
     }
   };

@@ -1,78 +1,43 @@
+import axios from "axios";
 import apiClient from "./client";
-import { AuthUser } from "@/types";
+import { User } from "@/types";
 
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
-interface LoginResponse {
-  access_token: string;
-  refresh_token?: string;
-  token_type: string;
-  user: {
-    id: number;
-    email: string;
-    nombre: string;
-    apellido: string;
-    rol: string;
-    telefono?: string;
-    created_at: string;
-    activo: boolean;
-  };
-}
-
+/**
+ * Auth service.
+ *
+ * Login and logout go through Next.js API proxy routes that set/clear
+ * HttpOnly cookies. All other calls go through the generic proxy in
+ * apiClient (which reads the cookie server-side).
+ */
 export const authService = {
   /**
-   * Login with email and password
+   * Login via server-side proxy — tokens are set as HttpOnly cookies.
+   * Returns ONLY the user profile (no tokens in JS).
    */
-  async login(credentials: LoginCredentials): Promise<AuthUser> {
-    const formData = new FormData();
-    formData.append("username", credentials.email);
-    formData.append("password", credentials.password);
-
-    console.log("Sending login request...");
-
-    const response = await apiClient.post<LoginResponse>(
-      "/auth/login",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      },
+  async login(credentials: LoginCredentials): Promise<User> {
+    const response = await axios.post<{ user: User }>(
+      "/api/auth/login",
+      credentials,
     );
-
-    console.log("Login response:", response.data);
-
-    return {
-      ...response.data.user,
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    } as AuthUser;
+    return response.data.user;
   },
 
   /**
-   * Logout current user
+   * Logout via server-side proxy — clears HttpOnly cookies.
    */
   async logout(): Promise<void> {
-    await apiClient.post("/auth/logout");
+    await axios.post("/api/auth/logout");
   },
 
   /**
-   * Refresh access token
+   * Get current user profile (through the backend proxy).
    */
-  async refresh(refreshToken: string): Promise<{ access_token: string }> {
-    const response = await apiClient.post("/auth/refresh", {
-      refresh_token: refreshToken,
-    });
-    return response.data;
-  },
-
-  /**
-   * Get current user profile
-   */
-  async me(): Promise<AuthUser> {
+  async me(): Promise<User> {
     const response = await apiClient.get("/auth/me");
     return response.data;
   },

@@ -1,16 +1,22 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { AuthUser } from "@/types";
+import { User } from "@/types";
 
+/**
+ * Auth store — persists ONLY user profile (no tokens).
+ *
+ * Tokens live exclusively in HttpOnly cookies managed by server-side
+ * API routes (/api/auth/login, /api/auth/refresh, /api/auth/logout).
+ */
 interface AuthState {
-  user: AuthUser | null;
+  user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   hasHydrated: boolean;
 
   // Actions
-  setUser: (user: AuthUser | null) => void;
-  login: (user: AuthUser) => void;
+  setUser: (user: User | null) => void;
+  login: (user: User) => void;
   logout: () => void;
   setLoading: (loading: boolean) => void;
   setHasHydrated: (hydrated: boolean) => void;
@@ -51,16 +57,15 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
+        // Only persist the user profile — never tokens
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: (beforeState) => (afterState, error) => {
         if (error || !afterState) {
-          // Corrupt or unreadable localStorage — wipe it so next load is clean
           try {
             localStorage.removeItem("auth-storage");
           } catch (_) {}
-          // Use the pre-rehydration state object to mark hydration as done
           beforeState?.setHasHydrated(true);
         } else {
           afterState.setHasHydrated(true);

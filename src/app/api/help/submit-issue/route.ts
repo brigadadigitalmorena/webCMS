@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 interface IssueReport {
   title: string;
   description: string;
@@ -8,6 +10,15 @@ interface IssueReport {
 }
 
 export async function POST(request: NextRequest) {
+  // Require authentication — read token from HttpOnly cookie
+  const token = request.cookies.get("access_token")?.value;
+  if (!token) {
+    return NextResponse.json(
+      { error: "No autenticado" },
+      { status: 401 },
+    );
+  }
+
   try {
     const body: IssueReport = await request.json();
 
@@ -42,30 +53,29 @@ ${body.description}
 Reporte enviado desde Brigada CMS
     `.trim();
 
-    // Send email via backend API
+    // Call the (now authenticated) backend email endpoint
     const backendResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/email/send-issue-report`,
+      `${BACKEND_URL}/api/email/send-issue-report`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          to_email: "brigadadigitalmorena@gmail.com",
           subject: `[${body.severity.toUpperCase()}] Reporte: ${body.title}`,
           body: emailBody,
-          user_email: body.email,
         }),
       },
     );
 
     if (!backendResponse.ok) {
-      console.error(
-        "Error sending email from backend:",
-        backendResponse.status,
+      const err = await backendResponse.json().catch(() => ({}));
+      console.error("Backend issue-report error:", backendResponse.status, err);
+      return NextResponse.json(
+        { error: err.detail || "Error al enviar el reporte" },
+        { status: backendResponse.status },
       );
-      // Even if backend fails, return success to avoid UI errors
-      // In production, log this error properly
     }
 
     return NextResponse.json(
