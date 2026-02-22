@@ -10,17 +10,16 @@ import type { NextRequest } from "next/server";
 
 function isTokenExpired(token: string): boolean {
   try {
-    // JWT is base64url-encoded: header.payload.signature
     const payloadBase64 = token.split(".")[1];
     if (!payloadBase64) return true;
 
-    const payload = JSON.parse(
-      Buffer.from(payloadBase64, "base64url").toString("utf-8"),
-    );
+    // Convert base64url → standard base64 (Edge Runtime compatible)
+    const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
+    const payload = JSON.parse(atob(base64));
 
-    if (!payload.exp) return false; // No expiry claim → trust it
-    // exp is in seconds, Date.now() in milliseconds
-    return payload.exp * 1000 < Date.now();
+    if (!payload.exp) return false;
+    // exp is seconds, Date.now() is milliseconds — add 30s grace
+    return payload.exp * 1000 < Date.now() - 30_000;
   } catch {
     return true; // Malformed token → treat as expired
   }

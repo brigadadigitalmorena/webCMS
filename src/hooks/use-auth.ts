@@ -87,37 +87,59 @@ export function useAuth() {
  */
 export function useRequireAuth() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, hasHydrated } = useAuthStore();
+  const { isAuthenticated, isLoading, hasHydrated, logout } = useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
-  // Safety net: if hasHydrated never fires within 4 seconds (e.g. another
-  // storage edge case) wipe the key and redirect to login so the user is
-  // never permanently stuck on the spinner.
+  // Safety net: if hasHydrated never fires within 4 seconds, redirect to login.
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!useAuthStore.getState().hasHydrated) {
         try {
           localStorage.removeItem("auth-storage");
         } catch (_) {}
-        router.push("/login");
+        window.location.href = "/login";
       }
     }, 4000);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, []);
 
+  // When Zustand says "authenticated", verify the session is actually alive
+  // by calling /api/auth/me. If the cookie is expired the call will 401,
+  // the interceptor will try refresh, and if that also fails it will redirect.
   useEffect(() => {
-    if (!hasHydrated || isLoading) {
-      return;
-    }
+    if (!hasHydrated || isLoading) return;
 
     if (!isAuthenticated) {
       setIsChecking(false);
-      router.push("/login");
-    } else {
-      setIsChecking(false);
+      window.location.href = "/login";
+      return;
     }
-  }, [hasHydrated, isAuthenticated, isLoading, router]);
+
+    // Verify the real session — don't trust localStorage alone
+    let cancelled = false;
+    authService
+      .me()
+      .then((user) => {
+        if (!cancelled) {
+          useAuthStore.getState().setUser(user);
+          setIsChecking(false);
+        }
+      })
+      .catch(() => {
+        // Interceptor already handles 401→refresh→redirect.
+        // If we reach here, the redirect is already in progress
+        // or there was a different network error.
+        if (!cancelled) {
+          logout();
+          setIsChecking(false);
+          window.location.href = "/login";
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasHydrated, isAuthenticated, isLoading, logout]);
 
   return { isChecking };
-}
 }

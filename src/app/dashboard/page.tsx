@@ -40,8 +40,9 @@ export default function DashboardPage() {
         api: "ok",
         database: data.database === "connected" ? "ok" : "error",
       });
-    } catch {
+    } catch (err: any) {
       setHealth({ api: "error", database: "error" });
+      if (err?.message === "Session expired") throw err;
     }
   };
 
@@ -53,21 +54,40 @@ export default function DashboardPage() {
         ...data,
         lastUpdated: new Date().toLocaleTimeString(),
       });
-    } catch {
+    } catch (err: any) {
       setError("No se pudieron cargar las estadísticas");
+      if (err?.message === "Session expired") throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchStats();
-    fetchHealth();
-    const interval = setInterval(() => {
-      fetchStats();
-      fetchHealth();
+    let alive = true;
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const poll = async () => {
+      try {
+        await Promise.all([fetchStats(), fetchHealth()]);
+      } catch {
+        // If any call fails with a session error, stop polling
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+        return;
+      }
+    };
+
+    poll();
+    interval = setInterval(() => {
+      if (alive) poll();
     }, 60_000);
-    return () => clearInterval(interval);
+
+    return () => {
+      alive = false;
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   const statCards = [

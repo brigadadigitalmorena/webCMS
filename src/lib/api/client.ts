@@ -23,6 +23,7 @@ const apiClient: AxiosInstance = axios.create({
 
 // Response interceptor — handle 401 via server-side refresh
 let isRefreshing = false;
+let isSessionDead = false; // Prevents ALL further requests after session loss
 let pendingQueue: Array<{
   resolve: (v: unknown) => void;
   reject: (e: unknown) => void;
@@ -40,9 +41,30 @@ function processPendingQueue(success: boolean) {
   pendingQueue = [];
 }
 
+function forceRedirectToLogin() {
+  if (isSessionDead) return; // Already redirecting
+  isSessionDead = true;
+  useAuthStore.getState().logout();
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
+  }
+}
+
+// Reset the dead flag when the module is re-evaluated (HMR / new session)
+if (typeof window !== "undefined") {
+  (window as any).__resetApiSession = () => {
+    isSessionDead = false;
+  };
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
+    // If session is already dead, reject immediately — no retries, no refresh
+    if (isSessionDead) {
+      return Promise.reject(new Error("Session expired"));
+    }
+
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -60,27 +82,20 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Call our server-side refresh proxy (reads HttpOnly cookie)
         const res = await axios.post("/api/auth/refresh");
 
         if (res.status === 200) {
           isRefreshing = false;
           processPendingQueue(true);
-          // Retry the original request — new cookie is already set
           return apiClient(originalRequest);
         }
       } catch {
-        // Refresh failed
+        // Refresh failed — session is dead
       }
 
       isRefreshing = false;
       processPendingQueue(false);
-
-      // Clear local state and redirect
-      useAuthStore.getState().logout();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      forceRedirectToLogin();
       return Promise.reject(error);
     }
 
