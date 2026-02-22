@@ -344,16 +344,52 @@ export default function AssignmentsPage() {
   };
 
   const handleCreate = async (data: {
-    user_id: number;
+    user_ids: number[];
     survey_id: number;
-    location?: string;
-    notes?: string;
   }) => {
     setIsSaving(true);
+    const errors: string[] = [];
+    let created = 0;
+
     try {
-      await assignmentService.createAssignment(data);
+      for (const userId of data.user_ids) {
+        try {
+          await assignmentService.createAssignment({
+            survey_id: data.survey_id,
+            user_id: userId,
+          });
+          created++;
+        } catch (err: any) {
+          const detail = err?.response?.data?.detail ?? err?.response?.data?.message ?? "";
+          // Skip duplicates silently if assigning in bulk
+          if (err?.response?.status === 409) {
+            // Already assigned — don't count as error in bulk
+            if (data.user_ids.length === 1) {
+              errors.push("Este usuario ya tiene asignada esta encuesta.");
+            }
+          } else {
+            errors.push(detail || "Error desconocido");
+          }
+        }
+      }
+
+      if (created > 0) {
+        toast.success(
+          created === 1
+            ? "Asignación creada correctamente"
+            : `${created} asignaciones creadas correctamente`
+        );
+      }
+
+      if (errors.length > 0) {
+        throw new Error(errors.join(". "));
+      }
+
       assignModal.close();
       await loadAssignments();
+    } catch (err: any) {
+      if (created > 0) await loadAssignments();
+      throw err;
     } finally {
       setIsSaving(false);
     }
