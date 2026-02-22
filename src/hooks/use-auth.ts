@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/lib/api";
+import { resetApiSession } from "@/lib/api/client";
 
 /**
  * Hook to handle authentication state.
@@ -32,6 +33,7 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       const userProfile = await authService.login({ email, password });
+      resetApiSession(); // Clear dead-session flag so apiClient works again
       login(userProfile);
       router.push("/dashboard");
     } catch (err: any) {
@@ -103,9 +105,9 @@ export function useRequireAuth() {
     return () => clearTimeout(timer);
   }, []);
 
-  // When Zustand says "authenticated", verify the session is actually alive
-  // by calling /api/auth/me. If the cookie is expired the call will 401,
-  // the interceptor will try refresh, and if that also fails it will redirect.
+  // Once Zustand hydrates, decide whether to show the dashboard or redirect.
+  // We trust Zustand + the HttpOnly cookie here — the middleware already
+  // blocks expired tokens server-side, and the interceptor handles 401s.
   useEffect(() => {
     if (!hasHydrated || isLoading) return;
 
@@ -115,31 +117,9 @@ export function useRequireAuth() {
       return;
     }
 
-    // Verify the real session — don't trust localStorage alone
-    let cancelled = false;
-    authService
-      .me()
-      .then((user) => {
-        if (!cancelled) {
-          useAuthStore.getState().setUser(user);
-          setIsChecking(false);
-        }
-      })
-      .catch(() => {
-        // Interceptor already handles 401→refresh→redirect.
-        // If we reach here, the redirect is already in progress
-        // or there was a different network error.
-        if (!cancelled) {
-          logout();
-          setIsChecking(false);
-          window.location.href = "/login";
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [hasHydrated, isAuthenticated, isLoading, logout]);
+    // Session looks good — unblock the UI immediately
+    setIsChecking(false);
+  }, [hasHydrated, isAuthenticated, isLoading]);
 
   return { isChecking };
 }

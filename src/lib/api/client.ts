@@ -50,11 +50,11 @@ function forceRedirectToLogin() {
   }
 }
 
-// Reset the dead flag when the module is re-evaluated (HMR / new session)
-if (typeof window !== "undefined") {
-  (window as any).__resetApiSession = () => {
-    isSessionDead = false;
-  };
+/** Call after a successful login to allow requests again. */
+export function resetApiSession() {
+  isSessionDead = false;
+  isRefreshing = false;
+  pendingQueue = [];
 }
 
 apiClient.interceptors.response.use(
