@@ -370,7 +370,8 @@ export default function SettingsPage() {
                 {formData.email}
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                El email no se puede modificar. Contacta al administrador si necesitas cambiarlo.
+                El email no se puede modificar. Contacta al administrador si
+                necesitas cambiarlo.
               </p>
             </div>
 

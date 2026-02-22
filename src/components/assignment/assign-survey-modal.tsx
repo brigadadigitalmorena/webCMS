@@ -17,10 +17,7 @@ import {
 interface AssignSurveyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    user_ids: number[];
-    survey_id: number;
-  }) => Promise<void>;
+  onSubmit: (data: { user_ids: number[]; survey_id: number }) => Promise<void>;
   isLoading?: boolean;
   preselectedSurvey?: { id: number; title: string } | null;
 }
@@ -39,7 +36,9 @@ export default function AssignSurveyModal({
 
   const [surveyId, setSurveyId] = useState<number | "">("");
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
-  const [roleTab, setRoleTab] = useState<"encargado" | "brigadista">("encargado");
+  const [roleTab, setRoleTab] = useState<"encargado" | "brigadista">(
+    "encargado",
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
 
@@ -75,7 +74,9 @@ export default function AssignSurveyModal({
 
   const filteredUsers = searchTerm
     ? activeUsers.filter((u) =>
-        `${u.nombre} ${u.apellido}`.toLowerCase().includes(searchTerm.toLowerCase())
+        `${u.nombre} ${u.apellido}`
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()),
       )
     : activeUsers;
 
@@ -83,7 +84,7 @@ export default function AssignSurveyModal({
     setSelectedUserIds((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+        : [...prev, userId],
     );
   };
 
@@ -92,7 +93,7 @@ export default function AssignSurveyModal({
     const allSelected = ids.every((id) => selectedUserIds.includes(id));
     if (allSelected) {
       setSelectedUserIds((prev) => prev.filter((id) => !ids.includes(id)));
-    } else {
+    } else {Array.from(new Set([...prev, ...ids]))
       setSelectedUserIds((prev) => [...new Set([...prev, ...ids])]);
     }
   };
@@ -110,7 +111,10 @@ export default function AssignSurveyModal({
         user_ids: selectedUserIds,
       });
     } catch (err: any) {
-      const msg = err?.message ?? err?.response?.data?.detail ?? "Error al crear asignación.";
+      const msg =
+        err?.message ??
+        err?.response?.data?.detail ??
+        "Error al crear asignación.";
       setError(typeof msg === "string" ? msg : JSON.stringify(msg));
     }
   };
@@ -121,7 +125,9 @@ export default function AssignSurveyModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full shadow-xl max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Nueva asignación</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Nueva asignación
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 dark:text-gray-500 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -131,7 +137,10 @@ export default function AssignSurveyModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-5 overflow-y-auto flex-1"
+        >
           {error && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
               {error}
@@ -165,7 +174,9 @@ export default function AssignSurveyModal({
                     <select
                       value={surveyId}
                       onChange={(e) =>
-                        setSurveyId(e.target.value ? Number(e.target.value) : "")
+                        setSurveyId(
+                          e.target.value ? Number(e.target.value) : "",
+                        )
                       }
                       className="w-full pl-3 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 appearance-none"
                       required
@@ -194,7 +205,11 @@ export default function AssignSurveyModal({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => { setRoleTab("encargado"); setSelectedUserIds([]); setSearchTerm(""); }}
+                    onClick={() => {
+                      setRoleTab("encargado");
+                      setSelectedUserIds([]);
+                      setSearchTerm("");
+                    }}
                     className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                       roleTab === "encargado"
                         ? "bg-indigo-50 border-indigo-300 text-indigo-700"
@@ -206,7 +221,11 @@ export default function AssignSurveyModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setRoleTab("brigadista"); setSelectedUserIds([]); setSearchTerm(""); }}
+                    onClick={() => {
+                      setRoleTab("brigadista");
+                      setSelectedUserIds([]);
+                      setSearchTerm("");
+                    }}
                     className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
                       roleTab === "brigadista"
                         ? "bg-purple-50 border-purple-300 text-purple-700"
@@ -230,10 +249,13 @@ export default function AssignSurveyModal({
                   <span className="w-5 h-5 rounded-full bg-primary-600 text-white text-xs flex items-center justify-center font-bold">
                     3
                   </span>
-                  {roleTab === "encargado" ? "Seleccionar encargados" : "Seleccionar brigadistas"}
+                  {roleTab === "encargado"
+                    ? "Seleccionar encargados"
+                    : "Seleccionar brigadistas"}
                   {selectedUserIds.length > 0 && (
                     <span className="ml-auto text-xs font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 px-2 py-0.5 rounded-full">
-                      {selectedUserIds.length} seleccionado{selectedUserIds.length !== 1 ? "s" : ""}
+                      {selectedUserIds.length} seleccionado
+                      {selectedUserIds.length !== 1 ? "s" : ""}
                     </span>
                   )}
                 </label>
@@ -280,7 +302,9 @@ export default function AssignSurveyModal({
                         <label
                           key={u.id}
                           className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0 ${
-                            isSelected ? "bg-primary-50/50 dark:bg-primary-900/10" : ""
+                            isSelected
+                              ? "bg-primary-50/50 dark:bg-primary-900/10"
+                              : ""
                           }`}
                         >
                           <div
@@ -290,7 +314,9 @@ export default function AssignSurveyModal({
                                 : "border-gray-300 dark:border-gray-600"
                             }`}
                           >
-                            {isSelected && <Check className="h-3 w-3 text-white" />}
+                            {isSelected && (
+                              <Check className="h-3 w-3 text-white" />
+                            )}
                           </div>
                           <input
                             type="checkbox"
@@ -328,7 +354,12 @@ export default function AssignSurveyModal({
           <button
             onClick={handleSubmit}
             className="px-4 py-2 text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-            disabled={isLoading || loadingData || !surveyId || selectedUserIds.length === 0}
+            disabled={
+              isLoading ||
+              loadingData ||
+              !surveyId ||
+              selectedUserIds.length === 0
+            }
           >
             {isLoading
               ? "Asignando..."

@@ -360,7 +360,8 @@ export default function AssignmentsPage() {
           });
           created++;
         } catch (err: any) {
-          const detail = err?.response?.data?.detail ?? err?.response?.data?.message ?? "";
+          const detail =
+            err?.response?.data?.detail ?? err?.response?.data?.message ?? "";
           // Skip duplicates silently if assigning in bulk
           if (err?.response?.status === 409) {
             // Already assigned — don't count as error in bulk
@@ -377,7 +378,7 @@ export default function AssignmentsPage() {
         toast.success(
           created === 1
             ? "Asignación creada correctamente"
-            : `${created} asignaciones creadas correctamente`
+            : `${created} asignaciones creadas correctamente`,
         );
       }
 
