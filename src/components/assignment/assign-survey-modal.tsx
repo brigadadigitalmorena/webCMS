@@ -94,9 +94,7 @@ export default function AssignSurveyModal({
     if (allSelected) {
       setSelectedUserIds((prev) => prev.filter((id) => !ids.includes(id)));
     } else {
-      setSelectedUserIds((prev) =>
-        Array.from(new Set([...prev, ...ids]))
-      );
+      setSelectedUserIds((prev) => Array.from(new Set([...prev, ...ids])));
     }
   };
 
