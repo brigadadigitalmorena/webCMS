@@ -277,111 +277,175 @@ export default function UsersPage() {
               ))}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Rol</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Telefono
-                  </TableHead>
-                  <TableHead className="hidden md:table-cell">Creado</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              {/* ── Mobile card view (hidden sm+) ── */}
+              <div className="sm:hidden divide-y divide-gray-200 dark:divide-gray-700">
                 {users.length === 0 ? (
-                  <TableEmpty
-                    message="No hay usuarios"
-                    description="Prueba ajustando los filtros o crea un nuevo usuario."
-                  />
+                  <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                    No hay usuarios. Prueba ajustando los filtros.
+                  </div>
                 ) : (
                   users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium text-gray-900 dark:text-white">
+                    <div key={user.id} className="p-4 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
                             {user.nombre} {user.apellido}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                             {user.email}
                           </p>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                          {user.rol}
-                        </span>
-                      </TableCell>
-                      <TableCell>
                         <span
                           className={
                             user.activo
-                              ? "inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700"
-                              : "inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                              ? "inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700 flex-shrink-0"
+                              : "inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700 flex-shrink-0"
                           }
                         >
                           {user.activo ? "Activo" : "Inactivo"}
                         </span>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                          {user.telefono || "-"}
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                          {user.rol}
                         </span>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                          {new Intl.DateTimeFormat("es-MX", {
-                            dateStyle: "medium",
-                          }).format(new Date(user.created_at))}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex flex-wrap justify-end gap-1.5 sm:gap-2">
+                        <div className="flex gap-1">
                           <Link href={`/dashboard/users/${user.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="px-2 sm:px-3"
-                            >
-                              <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
-                              <span className="hidden sm:inline">Editar</span>
+                            <Button variant="ghost" size="sm" className="px-2" title="Editar">
+                              <Pencil className="h-3.5 w-3.5" />
                             </Button>
                           </Link>
                           {currentUser?.id === user.id ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled
-                              title="No puedes desactivar tu propia cuenta"
-                              className="px-2 sm:px-3"
-                            >
-                              <span className="hidden sm:inline">
-                                Tu cuenta
-                              </span>
-                              <span className="sm:hidden text-xs">–</span>
+                            <Button variant="outline" size="sm" disabled className="px-2 text-xs">
+                              –
                             </Button>
                           ) : (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleToggleActive(user)}
-                              className="px-2 sm:px-3"
+                              className="px-2"
+                              title={user.activo ? "Desactivar" : "Activar"}
                             >
-                              <Power className="h-3.5 w-3.5 sm:mr-1.5" />
-                              <span className="hidden sm:inline">
-                                {user.activo ? "Desactivar" : "Activar"}
-                              </span>
+                              <Power className="h-3.5 w-3.5" />
                             </Button>
                           )}
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </div>
+                    </div>
                   ))
                 )}
-              </TableBody>
-            </Table>
+              </div>
+              {/* ── Desktop table (hidden below sm) ── */}
+              <div className="hidden sm:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Usuario</TableHead>
+                      <TableHead>Rol</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Telefono
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell">Creado</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.length === 0 ? (
+                      <TableEmpty
+                        message="No hay usuarios"
+                        description="Prueba ajustando los filtros o crea un nuevo usuario."
+                      />
+                    ) : (
+                      users.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium text-gray-900 dark:text-white">
+                                {user.nombre} {user.apellido}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {user.email}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                              {user.rol}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={
+                                user.activo
+                                  ? "inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700"
+                                  : "inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700"
+                              }
+                            >
+                              {user.activo ? "Activo" : "Inactivo"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {user.telefono || "-"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {new Intl.DateTimeFormat("es-MX", {
+                                dateStyle: "medium",
+                              }).format(new Date(user.created_at))}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex flex-wrap justify-end gap-1.5">
+                              <Link href={`/dashboard/users/${user.id}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="px-2 sm:px-3"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                                  <span className="hidden sm:inline">Editar</span>
+                                </Button>
+                              </Link>
+                              {currentUser?.id === user.id ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled
+                                  title="No puedes desactivar tu propia cuenta"
+                                  className="px-2 sm:px-3"
+                                >
+                                  <span className="hidden sm:inline">
+                                    Tu cuenta
+                                  </span>
+                                  <span className="sm:hidden text-xs">–</span>
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleToggleActive(user)}
+                                  className="px-2 sm:px-3"
+                                >
+                                  <Power className="h-3.5 w-3.5 sm:mr-1.5" />
+                                  <span className="hidden sm:inline">
+                                    {user.activo ? "Desactivar" : "Activar"}
+                                  </span>
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
 
           {totalPages > 1 && (

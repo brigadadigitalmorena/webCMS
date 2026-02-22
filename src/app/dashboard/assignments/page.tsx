@@ -190,7 +190,7 @@ function SurveyCard({
             <ClipboardList className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0">
-            <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+            <h3 className="font-semibold text-gray-900 dark:text-white break-words leading-tight">
               {group.surveyTitle}
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 flex-wrap">
@@ -218,10 +218,11 @@ function SurveyCard({
         </button>
         <button
           onClick={() => onAddUser(group.surveyId, group.surveyTitle)}
-          className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium px-3 py-1.5 rounded-lg hover:bg-primary-50 transition-colors ml-3 flex-shrink-0"
+          title="Asignar usuario"
+          className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium px-2 sm:px-3 py-1.5 rounded-lg hover:bg-primary-50 transition-colors ml-2 flex-shrink-0"
         >
           <Plus className="h-4 w-4" />
-          Asignar usuario
+          <span className="hidden sm:inline">Asignar usuario</span>
         </button>
       </div>
       {open && (

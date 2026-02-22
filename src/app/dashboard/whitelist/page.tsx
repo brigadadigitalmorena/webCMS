@@ -318,6 +318,86 @@ export default function WhitelistPage() {
 
       {/* Whitelist Table */}
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        {/* ── Mobile card view (hidden sm+) ── */}
+        <div className="sm:hidden divide-y divide-gray-200 dark:divide-gray-700">
+          {isLoading ? (
+            <div className="p-4 space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : entries.length === 0 ? (
+            <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              No hay entradas. Agrega un usuario.
+            </div>
+          ) : (
+            entries.map((entry) => (
+              <div key={entry.id} className="p-4 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                      {entry.full_name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {entry.identifier}{" "}
+                      <span className="text-gray-400 dark:text-gray-500">({entry.identifier_type})</span>
+                    </p>
+                  </div>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold flex-shrink-0 ${
+                      entry.is_activated ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {entry.is_activated ? "Activado" : "Pendiente"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+                      entry.assigned_role === "admin"
+                        ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                        : entry.assigned_role === "encargado"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-emerald-100 text-emerald-700"
+                    }`}
+                  >
+                    {entry.assigned_role}
+                  </span>
+                  <div className="flex gap-1">
+                    {!entry.is_activated && !entry.has_active_code && (
+                      <Button size="sm" onClick={() => handleGenerateCode(entry.id)} title="Generar código" className="px-2 gap-1">
+                        <Mail className="h-3 w-3" />
+                        <span className="text-xs">Generar</span>
+                      </Button>
+                    )}
+                    {entry.has_active_code && !entry.is_activated && (
+                      <>
+                        {entry.identifier_type === "email" && (
+                          <Button variant="ghost" size="sm" onClick={() => handleResendEmail(entry.id)} title="Reenviar email">
+                            <RefreshCw className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => handleExtendCode(entry.id)} title="Extender código">
+                          <Clock4 className="h-3 w-3" />
+                        </Button>
+                      </>
+                    )}
+                    {!entry.is_activated && (
+                      <Button variant="ghost" size="sm" onClick={() => handleDeleteEntry(entry.id)} title="Eliminar">
+                        <Trash2 className="h-3 w-3 text-red-600" />
+                      </Button>
+                    )}
+                    {entry.is_activated && (
+                      <span className="text-xs text-emerald-600 font-medium px-2">✓</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {/* ── Desktop table (hidden below sm) ── */}
+        <div className="hidden sm:block overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -475,6 +555,7 @@ export default function WhitelistPage() {
             )}
           </TableBody>
         </Table>
+        </div>
 
         {totalPages > 1 && (
           <Pagination
