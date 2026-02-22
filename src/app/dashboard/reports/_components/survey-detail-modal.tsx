@@ -68,10 +68,9 @@ function buildAnalytics(rows: ExportRow[]): QuestionAnalytics[] {
         for (const r of qRows) {
           // Handle both string and array answers
           const raw = r.answer_value;
-          const values: string[] =
-            Array.isArray(raw)
-              ? raw.map(String)
-              : [answerToString(raw)];
+          const values: string[] = Array.isArray(raw)
+            ? raw.map(String)
+            : [answerToString(raw)];
           for (const v of values) {
             if (v) freq.set(v, (freq.get(v) ?? 0) + 1);
           }
@@ -114,7 +113,14 @@ function FrequencyBars({
   total: number;
 }) {
   const sorted = Array.from(frequencies.entries()).sort((a, b) => b[1] - a[1]);
-  const COLORS = ["#6366f1", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+  const COLORS = [
+    "#6366f1",
+    "#06b6d4",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+  ];
 
   return (
     <div className="space-y-1.5 mt-2">
@@ -122,7 +128,10 @@ function FrequencyBars({
         const pct = Math.round((count / total) * 100);
         return (
           <div key={label} className="flex items-center gap-2 text-xs">
-            <span className="w-36 truncate text-gray-700 dark:text-gray-300 shrink-0" title={label}>
+            <span
+              className="w-36 truncate text-gray-700 dark:text-gray-300 shrink-0"
+              title={label}
+            >
               {label}
             </span>
             <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-4 overflow-hidden">
@@ -144,7 +153,15 @@ function FrequencyBars({
   );
 }
 
-function RatingStats({ avg, min, max }: { avg: number; min: number; max: number }) {
+function RatingStats({
+  avg,
+  min,
+  max,
+}: {
+  avg: number;
+  min: number;
+  max: number;
+}) {
   return (
     <div className="flex items-center gap-6 mt-2 text-sm">
       <div className="text-center">
@@ -152,11 +169,15 @@ function RatingStats({ avg, min, max }: { avg: number; min: number; max: number 
         <p className="text-xs text-gray-500 dark:text-gray-400">Promedio</p>
       </div>
       <div className="text-center">
-        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{min}</p>
+        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+          {min}
+        </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">Mínimo</p>
       </div>
       <div className="text-center">
-        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{max}</p>
+        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+          {max}
+        </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">Máximo</p>
       </div>
     </div>
@@ -207,7 +228,8 @@ export function SurveyDetailModal({
               {survey.survey_title}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-              {survey.total_responses} respuesta{survey.total_responses !== 1 ? "s" : ""}
+              {survey.total_responses} respuesta
+              {survey.total_responses !== 1 ? "s" : ""}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -240,7 +262,9 @@ export function SurveyDetailModal({
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700"
               }`}
             >
-              {tab === "analytics" ? "Análisis de Respuestas" : "Respuestas Individuales"}
+              {tab === "analytics"
+                ? "Análisis de Respuestas"
+                : "Respuestas Individuales"}
             </button>
           ))}
         </div>
@@ -263,7 +287,10 @@ export function SurveyDetailModal({
                       data={timeline}
                       margin={{ top: 0, right: 16, left: -20, bottom: 0 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        className="opacity-30"
+                      />
                       <XAxis
                         dataKey="date"
                         tick={{ fontSize: 11, fill: "currentColor" }}
@@ -333,11 +360,16 @@ export function SurveyDetailModal({
                         </p>
 
                         {q.frequencies && (
-                          <FrequencyBars frequencies={q.frequencies} total={q.total} />
+                          <FrequencyBars
+                            frequencies={q.frequencies}
+                            total={q.total}
+                          />
                         )}
-                        {q.avg !== undefined && q.min !== undefined && q.max !== undefined && (
-                          <RatingStats avg={q.avg} min={q.min} max={q.max} />
-                        )}
+                        {q.avg !== undefined &&
+                          q.min !== undefined &&
+                          q.max !== undefined && (
+                            <RatingStats avg={q.avg} min={q.min} max={q.max} />
+                          )}
                         {q.samples && q.samples.length > 0 && (
                           <ul className="mt-2 space-y-1">
                             {q.samples.map((s, i) => (
@@ -361,84 +393,90 @@ export function SurveyDetailModal({
                 </div>
               )}
             </>
+          ) : /* Raw responses tab */
+          responseMap.length === 0 ? (
+            <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+              No hay datos disponibles
+            </p>
           ) : (
-            /* Raw responses tab */
-            responseMap.length === 0 ? (
-              <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-                No hay datos disponibles
-              </p>
-            ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {responseMap.map(([responseId, rows]) => {
-                  const first = rows[0];
-                  const isExpanded = expandedResponse === responseId;
-                  return (
-                    <div key={responseId}>
-                      <button
-                        onClick={() =>
-                          setExpandedResponse(isExpanded ? null : responseId)
-                        }
-                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs font-mono text-gray-400 dark:text-gray-500">
-                            #{responseId}
-                          </span>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
-                            Usuario {first.user_id}
-                          </span>
-                          <span className="text-xs text-gray-400 dark:text-gray-500">
-                            {rows.length} preg.
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {first.completed_at && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {format(parseISO(first.completed_at), "dd MMM yyyy HH:mm", {
+            <div className="divide-y divide-gray-100 dark:divide-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              {responseMap.map(([responseId, rows]) => {
+                const first = rows[0];
+                const isExpanded = expandedResponse === responseId;
+                return (
+                  <div key={responseId}>
+                    <button
+                      onClick={() =>
+                        setExpandedResponse(isExpanded ? null : responseId)
+                      }
+                      className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-mono text-gray-400 dark:text-gray-500">
+                          #{responseId}
+                        </span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          Usuario {first.user_id}
+                        </span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">
+                          {rows.length} preg.
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {first.completed_at && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {format(
+                              parseISO(first.completed_at),
+                              "dd MMM yyyy HH:mm",
+                              {
                                 locale: es,
-                              })}
-                            </span>
-                          )}
-                          {isExpanded ? (
-                            <ChevronUp className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                          )}
-                        </div>
-                      </button>
-                      {isExpanded && (
-                        <div className="bg-gray-50 dark:bg-gray-800/40 px-4 pb-3">
-                          <table className="w-full text-xs mt-2">
-                            <thead>
-                              <tr className="text-gray-500 dark:text-gray-400">
-                                <th className="text-left py-1 pr-4 font-medium w-1/2">
-                                  Pregunta
-                                </th>
-                                <th className="text-left py-1 font-medium">Respuesta</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                              {rows
-                                .sort((a, b) => a.question_order - b.question_order)
-                                .map((r) => (
-                                  <tr key={r.question_id}>
-                                    <td className="py-1.5 pr-4 text-gray-700 dark:text-gray-300 align-top">
-                                      {r.question_text}
-                                    </td>
-                                    <td className="py-1.5 text-gray-900 dark:text-white align-top font-medium">
-                                      {answerToString(r.answer_value) || "—"}
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )
+                              },
+                            )}
+                          </span>
+                        )}
+                        {isExpanded ? (
+                          <ChevronUp className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                        )}
+                      </div>
+                    </button>
+                    {isExpanded && (
+                      <div className="bg-gray-50 dark:bg-gray-800/40 px-4 pb-3">
+                        <table className="w-full text-xs mt-2">
+                          <thead>
+                            <tr className="text-gray-500 dark:text-gray-400">
+                              <th className="text-left py-1 pr-4 font-medium w-1/2">
+                                Pregunta
+                              </th>
+                              <th className="text-left py-1 font-medium">
+                                Respuesta
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {rows
+                              .sort(
+                                (a, b) => a.question_order - b.question_order,
+                              )
+                              .map((r) => (
+                                <tr key={r.question_id}>
+                                  <td className="py-1.5 pr-4 text-gray-700 dark:text-gray-300 align-top">
+                                    {r.question_text}
+                                  </td>
+                                  <td className="py-1.5 text-gray-900 dark:text-white align-top font-medium">
+                                    {answerToString(r.answer_value) || "—"}
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

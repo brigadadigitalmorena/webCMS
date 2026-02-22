@@ -52,7 +52,10 @@ export default function ReportsPage() {
     const params: Record<string, string> = {};
     if (dateFrom) params.date_from = dateFrom;
     if (dateTo) params.date_to = dateTo;
-    const res = await apiClient.get<SurveySummary[]>("/admin/responses/summary", { params });
+    const res = await apiClient.get<SurveySummary[]>(
+      "/admin/responses/summary",
+      { params },
+    );
     return res.data;
   }, [dateFrom, dateTo]);
 
@@ -70,8 +73,12 @@ export default function ReportsPage() {
     setTimeline([]);
     try {
       const [exportRes, timelineRes] = await Promise.all([
-        apiClient.get<ExportRow[]>(`/admin/responses/survey/${survey.survey_id}/export`),
-        apiClient.get<TimelinePoint[]>(`/admin/responses/survey/${survey.survey_id}/timeline`),
+        apiClient.get<ExportRow[]>(
+          `/admin/responses/survey/${survey.survey_id}/export`,
+        ),
+        apiClient.get<TimelinePoint[]>(
+          `/admin/responses/survey/${survey.survey_id}/timeline`,
+        ),
       ]);
       setExportRows(exportRes.data);
       setTimeline(timelineRes.data);
@@ -90,7 +97,9 @@ export default function ReportsPage() {
   const activeSurveys = all.filter((s) => s.is_active).length;
   const surveysNoActivity = totalSurveys - surveysWithResponses;
   const completionRate =
-    totalSurveys > 0 ? Math.round((surveysWithResponses / totalSurveys) * 100) : 0;
+    totalSurveys > 0
+      ? Math.round((surveysWithResponses / totalSurveys) * 100)
+      : 0;
   const avgPerActive =
     activeSurveys > 0 ? (totalResponses / activeSurveys).toFixed(1) : "—";
   const topSurvey =
@@ -162,7 +171,9 @@ export default function ReportsPage() {
               disabled={isLoading}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 text-sm transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+              />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
             <button
@@ -195,7 +206,9 @@ export default function ReportsPage() {
           <KpiCard
             icon={ClipboardCheck}
             label="Encuestas con Datos"
-            value={isLoading ? "—" : `${surveysWithResponses} / ${totalSurveys}`}
+            value={
+              isLoading ? "—" : `${surveysWithResponses} / ${totalSurveys}`
+            }
             sub="encuestas respondidas"
             color="text-emerald-600"
             bg="bg-emerald-50 dark:bg-emerald-900/20"
@@ -220,7 +233,11 @@ export default function ReportsPage() {
             color="text-indigo-600"
             bg="bg-indigo-50 dark:bg-indigo-900/20"
             trend={
-              completionRate >= 70 ? "up" : completionRate < 40 ? "down" : "neutral"
+              completionRate >= 70
+                ? "up"
+                : completionRate < 40
+                  ? "down"
+                  : "neutral"
             }
           />
           <KpiCard
@@ -311,7 +328,11 @@ export default function ReportsPage() {
                     [v ?? 0, "Respuestas"] as [number, string]
                   }
                 />
-                <Bar dataKey="respuestas" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="respuestas"
+                  fill="#6366f1"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -324,7 +345,8 @@ export default function ReportsPage() {
               Detalle por Encuesta
             </h2>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-              Clic en <Eye className="inline w-3 h-3 mx-0.5" /> para ver análisis detallado y exportar CSV.
+              Clic en <Eye className="inline w-3 h-3 mx-0.5" /> para ver
+              análisis detallado y exportar CSV.
             </p>
           </div>
 
@@ -396,9 +418,13 @@ export default function ReportsPage() {
                       </td>
                       <td className="hidden sm:table-cell px-4 py-4 text-right text-gray-400 dark:text-gray-500 text-xs">
                         {s.last_response_at
-                          ? format(parseISO(s.last_response_at), "dd MMM yyyy", {
-                              locale: es,
-                            })
+                          ? format(
+                              parseISO(s.last_response_at),
+                              "dd MMM yyyy",
+                              {
+                                locale: es,
+                              },
+                            )
                           : "—"}
                       </td>
                       <td className="px-4 py-4 text-center">
@@ -406,7 +432,9 @@ export default function ReportsPage() {
                           onClick={() => handleOpenSurvey(s)}
                           disabled={s.total_responses === 0}
                           title={
-                            s.total_responses === 0 ? "Sin respuestas" : "Ver análisis"
+                            s.total_responses === 0
+                              ? "Sin respuestas"
+                              : "Ver análisis"
                           }
                           className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                         >

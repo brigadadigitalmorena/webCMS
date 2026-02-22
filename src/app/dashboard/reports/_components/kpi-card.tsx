@@ -11,7 +11,15 @@ interface KpiCardProps {
   trend?: "up" | "down" | "neutral";
 }
 
-export function KpiCard({ icon: Icon, label, value, sub, color, bg, trend }: KpiCardProps) {
+export function KpiCard({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  color,
+  bg,
+  trend,
+}: KpiCardProps) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between">

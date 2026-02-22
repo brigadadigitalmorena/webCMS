@@ -28,7 +28,13 @@ function slugify(text: string): string {
 
 /** One row per survey — high-level overview export */
 export function exportSummaryCSV(summaries: SurveySummary[]): void {
-  const headers = ["ID", "Encuesta", "Estado", "Respuestas", "Última Respuesta"];
+  const headers = [
+    "ID",
+    "Encuesta",
+    "Estado",
+    "Respuestas",
+    "Última Respuesta",
+  ];
   const rows = summaries.map((s) => [
     s.survey_id,
     `"${s.survey_title.replace(/"/g, '""')}"`,
@@ -43,7 +49,10 @@ export function exportSummaryCSV(summaries: SurveySummary[]): void {
 }
 
 /** Full granular export — one row per question answer */
-export function exportDetailedCSV(rows: ExportRow[], surveyTitle: string): void {
+export function exportDetailedCSV(
+  rows: ExportRow[],
+  surveyTitle: string,
+): void {
   const headers = [
     "response_id",
     "user_id",

@@ -206,7 +206,10 @@ export const userService = {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw Object.assign(new Error(err?.detail || "Error al subir la imagen"), { response: { data: err } });
+      throw Object.assign(
+        new Error(err?.detail || "Error al subir la imagen"),
+        { response: { data: err } },
+      );
     }
     const data = await res.json();
     return normalizeUser(data);
