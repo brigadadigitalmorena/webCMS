@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import { Bell, Check, CheckCheck, Trash2, Info, AlertTriangle, AlertCircle, Megaphone } from "lucide-react";
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  Trash2,
+  Info,
+  AlertTriangle,
+  AlertCircle,
+  Megaphone,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNotificationStore } from "@/store/notification-store";
@@ -10,18 +19,37 @@ import { useRequireAuth } from "@/hooks/use-auth";
 
 const typeConfig: Record<
   string,
-  { icon: React.ComponentType<{ className?: string }>; color: string; bg: string }
+  {
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+    bg: string;
+  }
 > = {
   info: { icon: Info, color: "text-blue-600", bg: "bg-blue-100" },
-  warning: { icon: AlertTriangle, color: "text-yellow-600", bg: "bg-yellow-100" },
+  warning: {
+    icon: AlertTriangle,
+    color: "text-yellow-600",
+    bg: "bg-yellow-100",
+  },
   error: { icon: AlertCircle, color: "text-red-600", bg: "bg-red-100" },
-  announcement: { icon: Megaphone, color: "text-purple-600", bg: "bg-purple-100" },
+  announcement: {
+    icon: Megaphone,
+    color: "text-purple-600",
+    bg: "bg-purple-100",
+  },
 };
 
 export default function NotificationsPage() {
   const { isChecking } = useRequireAuth();
-  const { notifications, unreadCount, isLoading, fetchNotifications, markRead, markAllRead, deleteOne } =
-    useNotificationStore();
+  const {
+    notifications,
+    unreadCount,
+    isLoading,
+    fetchNotifications,
+    markRead,
+    markAllRead,
+    deleteOne,
+  } = useNotificationStore();
 
   useEffect(() => {
     fetchNotifications();
@@ -40,7 +68,9 @@ export default function NotificationsPage() {
             <Bell className="h-6 w-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Notificaciones</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              Notificaciones
+            </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {hasUnread ? `${unreadCount} sin leer` : "Todo al día"}
             </p>
@@ -85,11 +115,16 @@ export default function NotificationsPage() {
                   "flex items-start gap-4 px-5 py-4 transition-colors",
                   !n.read
                     ? "bg-blue-50 dark:bg-blue-900/20/60"
-                    : "bg-white dark:bg-gray-900"
+                    : "bg-white dark:bg-gray-900",
                 )}
               >
                 {/* Icon */}
-                <div className={cn("mt-0.5 flex-shrink-0 rounded-full p-2", cfg.bg)}>
+                <div
+                  className={cn(
+                    "mt-0.5 flex-shrink-0 rounded-full p-2",
+                    cfg.bg,
+                  )}
+                >
                   <Icon className={cn("h-4 w-4", cfg.color)} />
                 </div>
 
@@ -100,7 +135,7 @@ export default function NotificationsPage() {
                       "text-sm",
                       !n.read
                         ? "font-semibold text-gray-900 dark:text-white"
-                        : "text-gray-700 dark:text-gray-300"
+                        : "text-gray-700 dark:text-gray-300",
                     )}
                   >
                     {n.title}

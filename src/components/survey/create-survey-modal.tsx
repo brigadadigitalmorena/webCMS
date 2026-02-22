@@ -146,7 +146,9 @@ function SortableQuestionCard({
   children,
 }: {
   id: string;
-  children: (dragHandleProps: React.HTMLAttributes<HTMLButtonElement>) => React.ReactNode;
+  children: (
+    dragHandleProps: React.HTMLAttributes<HTMLButtonElement>,
+  ) => React.ReactNode;
 }) {
   const {
     attributes,
@@ -168,7 +170,10 @@ function SortableQuestionCard({
         zIndex: isDragging ? 10 : undefined,
       }}
     >
-      {children({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLButtonElement>)}
+      {children({
+        ...attributes,
+        ...listeners,
+      } as React.HTMLAttributes<HTMLButtonElement>)}
     </div>
   );
 }
@@ -307,7 +312,9 @@ export default function CreateSurveyModal({
   // ── DnD sensors + reorder handler ──────────────────────────────────────────
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -542,237 +549,260 @@ export default function CreateSurveyModal({
                 items={questions.map((q) => q._id)}
                 strategy={verticalListSortingStrategy}
               >
-            {questions.map((question, qIndex) => {
-              const Icon = questionTypeIcons[question.question_type];
-              const needsOptions =
-                question.question_type === "single_choice" ||
-                question.question_type === "multiple_choice";
-              const needsRangeConfig =
-                question.question_type === "slider" ||
-                question.question_type === "scale" ||
-                question.question_type === "rating";
+                {questions.map((question, qIndex) => {
+                  const Icon = questionTypeIcons[question.question_type];
+                  const needsOptions =
+                    question.question_type === "single_choice" ||
+                    question.question_type === "multiple_choice";
+                  const needsRangeConfig =
+                    question.question_type === "slider" ||
+                    question.question_type === "scale" ||
+                    question.question_type === "rating";
 
-              return (
-                <SortableQuestionCard key={question._id} id={question._id}>
-                  {(dragHandleProps) => (
-                <div
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40"
-                >
-                  <div className="flex items-start gap-3">
-                    <button
-                      type="button"
-                      className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 mt-2 flex-shrink-0 touch-none"
-                      title="Arrastrar para reordenar"
-                      {...dragHandleProps}
-                    >
-                      <GripVertical className="h-5 w-5" />
-                    </button>
-
-                    <div className="flex-1 space-y-3">
-                      {/* Question text */}
-                      <div>
-                        <input
-                          type="text"
-                          value={question.question_text}
-                          onChange={(e) =>
-                            updateQuestion(
-                              qIndex,
-                              "question_text",
-                              e.target.value,
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
-                          placeholder={`Pregunta ${qIndex + 1}`}
-                          required
-                          disabled={isLoading}
-                        />
-                      </div>
-
-                      {/* Question type and required */}
-                      <div className="flex gap-3">
-                        <div className="flex-1">
-                          <select
-                            value={question.question_type}
-                            onChange={(e) =>
-                              updateQuestion(
-                                qIndex,
-                                "question_type",
-                                e.target.value as QuestionType,
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
-                            disabled={isLoading}
-                          >
-                            {questionTypeGroups.map((group) => (
-                              <optgroup key={group.label} label={group.label}>
-                                {group.types.map((type) => (
-                                  <option key={type} value={type}>
-                                    {questionTypeLabels[type]}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            ))}
-                          </select>
-                        </div>
-
-                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={question.is_required}
-                            onChange={(e) =>
-                              updateQuestion(
-                                qIndex,
-                                "is_required",
-                                e.target.checked,
-                              )
-                            }
-                            className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded"
-                            disabled={isLoading}
-                          />
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
-                            Requerida
-                          </span>
-                        </label>
-                      </div>
-
-                      {/* Range config for slider / scale / rating */}
-                      {needsRangeConfig && (
-                        <div className="grid grid-cols-3 gap-2 mt-3">
-                          {question.question_type !== "rating" && (
-                            <div>
-                              <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
-                                Mínimo
-                              </label>
-                              <input
-                                type="number"
-                                value={
-                                  question.validation_rules?.min ??
-                                  (question.question_type === "scale" ? 1 : 0)
-                                }
-                                onChange={(e) =>
-                                  updateQuestion(qIndex, "validation_rules", {
-                                    ...question.validation_rules,
-                                    min: Number(e.target.value),
-                                  })
-                                }
-                                className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
-                                disabled={isLoading}
-                              />
-                            </div>
-                          )}
-                          <div>
-                            <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
-                              {question.question_type === "rating"
-                                ? "Estrellas"
-                                : "Máximo"}
-                            </label>
-                            <input
-                              type="number"
-                              value={
-                                question.validation_rules?.max ??
-                                (question.question_type === "rating"
-                                  ? 5
-                                  : question.question_type === "scale"
-                                    ? 10
-                                    : 100)
-                              }
-                              onChange={(e) =>
-                                updateQuestion(qIndex, "validation_rules", {
-                                  ...question.validation_rules,
-                                  max: Number(e.target.value),
-                                })
-                              }
-                              className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
-                              disabled={isLoading}
-                            />
-                          </div>
-                          {question.question_type === "slider" && (
-                            <div>
-                              <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
-                                Paso
-                              </label>
-                              <input
-                                type="number"
-                                value={question.validation_rules?.step ?? 1}
-                                onChange={(e) =>
-                                  updateQuestion(qIndex, "validation_rules", {
-                                    ...question.validation_rules,
-                                    step: Number(e.target.value),
-                                  })
-                                }
-                                className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
-                                disabled={isLoading}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Options for choice questions */}
-                      {needsOptions && (
-                        <div className="space-y-2 mt-3">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                              Opciones
-                            </label>
+                  return (
+                    <SortableQuestionCard key={question._id} id={question._id}>
+                      {(dragHandleProps) => (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40">
+                          <div className="flex items-start gap-3">
                             <button
                               type="button"
-                              onClick={() => addOption(qIndex)}
-                              className="text-xs text-primary-600 hover:text-primary-700"
+                              className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 mt-2 flex-shrink-0 touch-none"
+                              title="Arrastrar para reordenar"
+                              {...dragHandleProps}
+                            >
+                              <GripVertical className="h-5 w-5" />
+                            </button>
+
+                            <div className="flex-1 space-y-3">
+                              {/* Question text */}
+                              <div>
+                                <input
+                                  type="text"
+                                  value={question.question_text}
+                                  onChange={(e) =>
+                                    updateQuestion(
+                                      qIndex,
+                                      "question_text",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
+                                  placeholder={`Pregunta ${qIndex + 1}`}
+                                  required
+                                  disabled={isLoading}
+                                />
+                              </div>
+
+                              {/* Question type and required */}
+                              <div className="flex gap-3">
+                                <div className="flex-1">
+                                  <select
+                                    value={question.question_type}
+                                    onChange={(e) =>
+                                      updateQuestion(
+                                        qIndex,
+                                        "question_type",
+                                        e.target.value as QuestionType,
+                                      )
+                                    }
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900"
+                                    disabled={isLoading}
+                                  >
+                                    {questionTypeGroups.map((group) => (
+                                      <optgroup
+                                        key={group.label}
+                                        label={group.label}
+                                      >
+                                        {group.types.map((type) => (
+                                          <option key={type} value={type}>
+                                            {questionTypeLabels[type]}
+                                          </option>
+                                        ))}
+                                      </optgroup>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={question.is_required}
+                                    onChange={(e) =>
+                                      updateQuestion(
+                                        qIndex,
+                                        "is_required",
+                                        e.target.checked,
+                                      )
+                                    }
+                                    className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded"
+                                    disabled={isLoading}
+                                  />
+                                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                                    Requerida
+                                  </span>
+                                </label>
+                              </div>
+
+                              {/* Range config for slider / scale / rating */}
+                              {needsRangeConfig && (
+                                <div className="grid grid-cols-3 gap-2 mt-3">
+                                  {question.question_type !== "rating" && (
+                                    <div>
+                                      <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+                                        Mínimo
+                                      </label>
+                                      <input
+                                        type="number"
+                                        value={
+                                          question.validation_rules?.min ??
+                                          (question.question_type === "scale"
+                                            ? 1
+                                            : 0)
+                                        }
+                                        onChange={(e) =>
+                                          updateQuestion(
+                                            qIndex,
+                                            "validation_rules",
+                                            {
+                                              ...question.validation_rules,
+                                              min: Number(e.target.value),
+                                            },
+                                          )
+                                        }
+                                        className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
+                                        disabled={isLoading}
+                                      />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+                                      {question.question_type === "rating"
+                                        ? "Estrellas"
+                                        : "Máximo"}
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={
+                                        question.validation_rules?.max ??
+                                        (question.question_type === "rating"
+                                          ? 5
+                                          : question.question_type === "scale"
+                                            ? 10
+                                            : 100)
+                                      }
+                                      onChange={(e) =>
+                                        updateQuestion(
+                                          qIndex,
+                                          "validation_rules",
+                                          {
+                                            ...question.validation_rules,
+                                            max: Number(e.target.value),
+                                          },
+                                        )
+                                      }
+                                      className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
+                                      disabled={isLoading}
+                                    />
+                                  </div>
+                                  {question.question_type === "slider" && (
+                                    <div>
+                                      <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+                                        Paso
+                                      </label>
+                                      <input
+                                        type="number"
+                                        value={
+                                          question.validation_rules?.step ?? 1
+                                        }
+                                        onChange={(e) =>
+                                          updateQuestion(
+                                            qIndex,
+                                            "validation_rules",
+                                            {
+                                              ...question.validation_rules,
+                                              step: Number(e.target.value),
+                                            },
+                                          )
+                                        }
+                                        className="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-900"
+                                        disabled={isLoading}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Options for choice questions */}
+                              {needsOptions && (
+                                <div className="space-y-2 mt-3">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                      Opciones
+                                    </label>
+                                    <button
+                                      type="button"
+                                      onClick={() => addOption(qIndex)}
+                                      className="text-xs text-primary-600 hover:text-primary-700"
+                                      disabled={isLoading}
+                                    >
+                                      + Agregar Opción
+                                    </button>
+                                  </div>
+
+                                  {question.options?.map((option, oIndex) => (
+                                    <div key={oIndex} className="flex gap-2">
+                                      <input
+                                        type="text"
+                                        value={option.option_text}
+                                        onChange={(e) =>
+                                          updateOption(
+                                            qIndex,
+                                            oIndex,
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 text-sm"
+                                        placeholder={`Opción ${oIndex + 1}`}
+                                        required
+                                        disabled={isLoading}
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          deleteOption(qIndex, oIndex)
+                                        }
+                                        className="text-red-500 hover:text-red-700 p-2"
+                                        disabled={isLoading}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                  {(!question.options ||
+                                    question.options.length === 0) && (
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                                      Agrega al menos una opción
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => deleteQuestion(qIndex)}
+                              className="text-red-500 hover:text-red-700 p-2 mt-1 flex-shrink-0"
                               disabled={isLoading}
                             >
-                              + Agregar Opción
+                              <Trash2 className="h-5 w-5" />
                             </button>
                           </div>
-
-                          {question.options?.map((option, oIndex) => (
-                            <div key={oIndex} className="flex gap-2">
-                              <input
-                                type="text"
-                                value={option.option_text}
-                                onChange={(e) =>
-                                  updateOption(qIndex, oIndex, e.target.value)
-                                }
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-900 text-sm"
-                                placeholder={`Opción ${oIndex + 1}`}
-                                required
-                                disabled={isLoading}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => deleteOption(qIndex, oIndex)}
-                                className="text-red-500 hover:text-red-700 p-2"
-                                disabled={isLoading}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ))}
-
-                          {(!question.options ||
-                            question.options.length === 0) && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 italic">
-                              Agrega al menos una opción
-                            </p>
-                          )}
                         </div>
                       )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => deleteQuestion(qIndex)}
-                      className="text-red-500 hover:text-red-700 p-2 mt-1 flex-shrink-0"
-                      disabled={isLoading}
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-                  )}
-                </SortableQuestionCard>
-              );
-            })}
+                    </SortableQuestionCard>
+                  );
+                })}
               </SortableContext>
             </DndContext>
           </div>

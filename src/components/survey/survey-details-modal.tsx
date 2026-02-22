@@ -52,7 +52,9 @@ export default function SurveyDetailsModal({
                 {survey.title}
               </h2>
               {survey.description && (
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{survey.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  {survey.description}
+                </p>
               )}
             </div>
             <button
@@ -73,7 +75,9 @@ export default function SurveyDetailsModal({
                     <FileText className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Estado</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Estado
+                    </p>
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {survey.is_active ? "Activa" : "Inactiva"}
                     </p>
@@ -94,7 +98,9 @@ export default function SurveyDetailsModal({
                     />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Publicación</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Publicación
+                    </p>
                     <p
                       className={`font-semibold ${publishedVersion ? "text-green-700" : "text-gray-500 dark:text-gray-400"}`}
                     >
@@ -113,7 +119,9 @@ export default function SurveyDetailsModal({
                     <CalendarRange className="h-5 w-5 text-orange-600" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Vigencia</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Vigencia
+                    </p>
                     {survey.starts_at || survey.ends_at ? (
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {survey.starts_at && (
@@ -140,7 +148,9 @@ export default function SurveyDetailsModal({
                         )}
                       </div>
                     ) : (
-                      <p className="font-semibold text-gray-400 dark:text-gray-500">Sin límite</p>
+                      <p className="font-semibold text-gray-400 dark:text-gray-500">
+                        Sin límite
+                      </p>
                     )}
                   </div>
                 </div>
@@ -153,7 +163,9 @@ export default function SurveyDetailsModal({
                     <User className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Creada</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Creada
+                    </p>
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {format(new Date(survey.created_at), "dd MMM yyyy", {
                         locale: es,
@@ -170,7 +182,9 @@ export default function SurveyDetailsModal({
                     <Clock className="h-5 w-5 text-teal-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Duración estimada</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Duración estimada
+                    </p>
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {survey.estimated_duration_minutes
                         ? `${survey.estimated_duration_minutes} min`
@@ -187,7 +201,9 @@ export default function SurveyDetailsModal({
                     <Users className="h-5 w-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Máx. respuestas</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Máx. respuestas
+                    </p>
                     <p className="font-semibold text-gray-900 dark:text-white">
                       {survey.max_responses
                         ? survey.max_responses.toLocaleString()
@@ -208,7 +224,9 @@ export default function SurveyDetailsModal({
                     />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Respuestas anónimas</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Respuestas anónimas
+                    </p>
                     <p
                       className={`font-semibold ${survey.allow_anonymous ? "text-yellow-700" : "text-gray-500 dark:text-gray-400"}`}
                     >

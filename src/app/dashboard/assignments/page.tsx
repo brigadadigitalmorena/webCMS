@@ -337,7 +337,9 @@ export default function AssignmentsPage() {
   ];
 
   const openModal = (surveyId?: number, surveyTitle?: string) => {
-    assignModal.open(surveyId ? { id: surveyId, title: surveyTitle! } : undefined);
+    assignModal.open(
+      surveyId ? { id: surveyId, title: surveyTitle! } : undefined,
+    );
   };
 
   const handleCreate = async (data: {

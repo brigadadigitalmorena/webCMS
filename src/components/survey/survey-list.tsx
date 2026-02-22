@@ -62,10 +62,7 @@ export default function SurveyList({
             latestVersion && !latestVersion.is_published && totalVersions > 1;
 
           return (
-            <div
-              key={survey.id}
-              className="p-4"
-            >
+            <div key={survey.id} className="p-4">
               {/* Title row */}
               <button
                 className="w-full text-left mb-2"
@@ -94,8 +91,8 @@ export default function SurveyList({
                 </span>
                 {publishedVersion ? (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                    <BadgeCheck className="h-3 w-3" />
-                    v{publishedVersion.version_number} publicada
+                    <BadgeCheck className="h-3 w-3" />v
+                    {publishedVersion.version_number} publicada
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700">
@@ -109,7 +106,8 @@ export default function SurveyList({
                 )}
                 <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                   <GitBranch className="h-3 w-3" />
-                  {totalVersions} {totalVersions === 1 ? "versión" : "versiones"}
+                  {totalVersions}{" "}
+                  {totalVersions === 1 ? "versión" : "versiones"}
                 </span>
               </div>
 

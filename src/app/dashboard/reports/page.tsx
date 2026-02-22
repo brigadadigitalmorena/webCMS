@@ -136,19 +136,16 @@ export default function ReportsPage() {
     isLoading,
     error,
     refetch: handleRefresh,
-  } = useAsync(
-    async () => {
-      const params: Record<string, string> = {};
-      if (dateFrom) params.date_from = dateFrom;
-      if (dateTo) params.date_to = dateTo;
-      const res = await apiClient.get<SurveySummary[]>(
-        "/admin/responses/summary",
-        { params },
-      );
-      return res.data;
-    },
-    [dateFrom, dateTo],
-  );
+  } = useAsync(async () => {
+    const params: Record<string, string> = {};
+    if (dateFrom) params.date_from = dateFrom;
+    if (dateTo) params.date_to = dateTo;
+    const res = await apiClient.get<SurveySummary[]>(
+      "/admin/responses/summary",
+      { params },
+    );
+    return res.data;
+  }, [dateFrom, dateTo]);
 
   // Detail modal
   const detailModal = useDisclosure<SurveySummary>();
@@ -328,7 +325,9 @@ export default function ReportsPage() {
             icon={ClipboardCheck}
             label="Encuestas con Respuestas"
             value={
-              isLoading ? "--" : `${surveysWithResponses} / ${(summaries ?? []).length}`
+              isLoading
+                ? "--"
+                : `${surveysWithResponses} / ${(summaries ?? []).length}`
             }
             color="text-emerald-600"
             bg="bg-emerald-50"

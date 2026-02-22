@@ -47,7 +47,10 @@ const ROLE_LABELS: Record<string, { label: string; className: string }> = {
     className: "bg-purple-100 text-purple-700",
   },
   encargado: { label: "Encargado", className: "bg-indigo-100 text-indigo-700" },
-  admin: { label: "Admin", className: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400" },
+  admin: {
+    label: "Admin",
+    className: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+  },
 };
 
 function RoleBadge({ role }: { role?: string }) {
@@ -172,7 +175,9 @@ export default function AssignmentList({
     return (
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
         <div className="animate-spin h-8 w-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-3" />
-        <p className="text-gray-500 dark:text-gray-400">Cargando asignaciones...</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          Cargando asignaciones...
+        </p>
       </div>
     );
   }
@@ -233,7 +238,9 @@ export default function AssignmentList({
                   {a.location}
                 </span>
               )}
-              <span>{format(new Date(a.created_at), "d MMM yyyy", { locale: es })}</span>
+              <span>
+                {format(new Date(a.created_at), "d MMM yyyy", { locale: es })}
+              </span>
             </div>
             {/* Notes */}
             {a.notes && (
@@ -244,7 +251,11 @@ export default function AssignmentList({
             )}
             {/* Actions */}
             <div className="flex justify-end pt-1">
-              <ActionsMenu assignment={a} onUpdateStatus={onUpdateStatus} onDelete={onDelete} />
+              <ActionsMenu
+                assignment={a}
+                onUpdateStatus={onUpdateStatus}
+                onDelete={onDelete}
+              />
             </div>
           </div>
         ))}
@@ -252,123 +263,132 @@ export default function AssignmentList({
 
       {/* ── Desktop table (hidden below sm) ── */}
       <div className="hidden sm:block overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-800/40">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Usuario asignado
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Encuesta
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Estado
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Zona
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Asignada por
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Fecha
-            </th>
-            <th className="relative px-6 py-3">
-              <span className="sr-only">Acciones</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-          {assignments.map((a) => (
-            <>
-              <tr key={a.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                {/* Usuario asignado */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm flex-shrink-0">
-                      {a.user?.full_name ? (
-                        a.user.full_name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .slice(0, 2)
-                          .join("")
-                          .toUpperCase()
-                      ) : (
-                        <User className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {a.user?.full_name ?? `Usuario #${a.user_id}`}
-                        </p>
-                        <RoleBadge role={a.user?.role} />
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800/40">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Usuario asignado
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Encuesta
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Estado
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Zona
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Asignada por
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Fecha
+              </th>
+              <th className="relative px-6 py-3">
+                <span className="sr-only">Acciones</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {assignments.map((a) => (
+              <>
+                <tr
+                  key={a.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                >
+                  {/* Usuario asignado */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                        {a.user?.full_name ? (
+                          a.user.full_name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join("")
+                            .toUpperCase()
+                        ) : (
+                          <User className="h-4 w-4" />
+                        )}
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{a.user?.email}</p>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {a.user?.full_name ?? `Usuario #${a.user_id}`}
+                          </p>
+                          <RoleBadge role={a.user?.role} />
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {a.user?.email}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {/* Encuesta */}
-                <td className="px-6 py-4">
-                  <p className="text-sm text-gray-900 dark:text-white font-medium">
-                    {a.survey?.title ?? `Encuesta #${a.survey_id}`}
-                  </p>
-                </td>
+                  {/* Encuesta */}
+                  <td className="px-6 py-4">
+                    <p className="text-sm text-gray-900 dark:text-white font-medium">
+                      {a.survey?.title ?? `Encuesta #${a.survey_id}`}
+                    </p>
+                  </td>
 
-                {/* Estado */}
-                <td className="px-6 py-4">
-                  <StatusBadge status={a.status} />
-                </td>
+                  {/* Estado */}
+                  <td className="px-6 py-4">
+                    <StatusBadge status={a.status} />
+                  </td>
 
-                {/* Zona */}
-                <td className="px-6 py-4">
-                  {a.location ? (
-                    <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
-                      <MapPin className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                      {a.location}
-                    </div>
-                  ) : (
-                    <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-                      Sin zona
-                    </span>
-                  )}
-                </td>
+                  {/* Zona */}
+                  <td className="px-6 py-4">
+                    {a.location ? (
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                        <MapPin className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                        {a.location}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                        Sin zona
+                      </span>
+                    )}
+                  </td>
 
-                {/* Asignada por */}
-                <td className="px-6 py-4">
-                  {a.assigned_by_user ? (
-                    <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        {a.assigned_by_user.full_name}
-                      </p>
-                      <RoleBadge role={a.assigned_by_user.role} />
-                    </div>
-                  ) : (
-                    <span className="text-xs text-gray-400 dark:text-gray-500 italic">—</span>
-                  )}
-                </td>
+                  {/* Asignada por */}
+                  <td className="px-6 py-4">
+                    {a.assigned_by_user ? (
+                      <div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          {a.assigned_by_user.full_name}
+                        </p>
+                        <RoleBadge role={a.assigned_by_user.role} />
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                        —
+                      </span>
+                    )}
+                  </td>
 
-                {/* Fecha */}
-                <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                  {format(new Date(a.created_at), "d MMM yyyy", { locale: es })}
-                </td>
+                  {/* Fecha */}
+                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    {format(new Date(a.created_at), "d MMM yyyy", {
+                      locale: es,
+                    })}
+                  </td>
 
-                {/* Acciones */}
-                <td className="px-6 py-4 text-right">
-                  <ActionsMenu
-                    assignment={a}
-                    onUpdateStatus={onUpdateStatus}
-                    onDelete={onDelete}
-                  />
-                </td>
-              </tr>
-              {/* Notes sub-row */}
-              {a.notes && <NotesRow key={`notes-${a.id}`} notes={a.notes} />}
-            </>
-          ))}
-        </tbody>
-      </table>
+                  {/* Acciones */}
+                  <td className="px-6 py-4 text-right">
+                    <ActionsMenu
+                      assignment={a}
+                      onUpdateStatus={onUpdateStatus}
+                      onDelete={onDelete}
+                    />
+                  </td>
+                </tr>
+                {/* Notes sub-row */}
+                {a.notes && <NotesRow key={`notes-${a.id}`} notes={a.notes} />}
+              </>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

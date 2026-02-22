@@ -24,7 +24,14 @@ import { Pagination } from "@/components/ui/pagination";
 import { CreateUserModal } from "@/components/users/create-user-modal";
 import { userService } from "@/lib/api/user.service";
 import type { User } from "@/types";
-import { Search, UserPlus, RefreshCw, Download, Pencil, Power } from "lucide-react";
+import {
+  Search,
+  UserPlus,
+  RefreshCw,
+  Download,
+  Pencil,
+  Power,
+} from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -91,8 +98,7 @@ export default function UsersPage() {
         page: currentPage,
         size: PAGE_SIZE,
         rol: roleFilter === "all" ? undefined : roleFilter,
-        activo:
-          statusFilter === "all" ? undefined : statusFilter === "active",
+        activo: statusFilter === "all" ? undefined : statusFilter === "active",
         search: debouncedSearch.trim() || undefined,
       }),
     [roleFilter, statusFilter, debouncedSearch, currentPage],
@@ -122,7 +128,12 @@ export default function UsersPage() {
       const updated = await userService.toggleUserStatus(user.id, !user.activo);
       setData((prev) =>
         prev
-          ? { ...prev, items: prev.items.map((item) => (item.id === updated.id ? updated : item)) }
+          ? {
+              ...prev,
+              items: prev.items.map((item) =>
+                item.id === updated.id ? updated : item,
+              ),
+            }
           : null,
       );
     } catch (err: any) {
@@ -272,7 +283,9 @@ export default function UsersPage() {
                   <TableHead>Usuario</TableHead>
                   <TableHead>Rol</TableHead>
                   <TableHead>Estado</TableHead>
-                  <TableHead className="hidden md:table-cell">Telefono</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Telefono
+                  </TableHead>
                   <TableHead className="hidden md:table-cell">Creado</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
@@ -327,7 +340,11 @@ export default function UsersPage() {
                       <TableCell className="text-right">
                         <div className="flex flex-wrap justify-end gap-1.5 sm:gap-2">
                           <Link href={`/dashboard/users/${user.id}`}>
-                            <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="px-2 sm:px-3"
+                            >
                               <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
                               <span className="hidden sm:inline">Editar</span>
                             </Button>
@@ -340,7 +357,9 @@ export default function UsersPage() {
                               title="No puedes desactivar tu propia cuenta"
                               className="px-2 sm:px-3"
                             >
-                              <span className="hidden sm:inline">Tu cuenta</span>
+                              <span className="hidden sm:inline">
+                                Tu cuenta
+                              </span>
                               <span className="sm:hidden text-xs">–</span>
                             </Button>
                           ) : (
@@ -351,7 +370,9 @@ export default function UsersPage() {
                               className="px-2 sm:px-3"
                             >
                               <Power className="h-3.5 w-3.5 sm:mr-1.5" />
-                              <span className="hidden sm:inline">{user.activo ? "Desactivar" : "Activar"}</span>
+                              <span className="hidden sm:inline">
+                                {user.activo ? "Desactivar" : "Activar"}
+                              </span>
                             </Button>
                           )}
                         </div>
