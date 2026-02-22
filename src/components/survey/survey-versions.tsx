@@ -80,7 +80,7 @@ export default function SurveyVersions({
               key={version.id}
               className={`border rounded-lg overflow-hidden transition-all ${
                 version.is_published
-                  ? "border-green-300 bg-green-50"
+                  ? "border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-900/20"
                   : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
               }`}
             >
@@ -100,7 +100,7 @@ export default function SurveyVersions({
                           Versión {version.version_number}
                         </h4>
                         {version.is_published && (
-                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400">
                             Publicada
                           </span>
                         )}

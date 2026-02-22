@@ -36,7 +36,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out",
+          "transition-[padding-left] duration-300 ease-in-out",
           isDesktopSidebarCollapsed ? "lg:pl-16" : "lg:pl-64",
         )}
       >
