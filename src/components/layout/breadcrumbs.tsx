@@ -43,7 +43,7 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav className="flex items-center space-x-1 text-sm min-w-0">
+    <nav className="hidden sm:flex items-center space-x-1 text-sm min-w-0">
       {/* Home link */}
       <Link
         href="/dashboard"
