@@ -192,9 +192,7 @@ export default function CreateSurveyModal({
   const [durationMinutes, setDurationMinutes] = useState<string>("");
   const [maxResponses, setMaxResponses] = useState<string>("");
   const [allowAnonymous, setAllowAnonymous] = useState(false);
-  const [questions, setQuestions] = useState<
-    Omit<Question, "id" | "version_id">[]
-  >([]);
+  const [questions, setQuestions] = useState<DraftQuestion[]>([]);
 
   useEffect(() => {
     if (initialData) {
