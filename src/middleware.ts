@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { USER_ROLE_COOKIE, isAdminRole } from "@/lib/auth/constants";
 
 /**
  * Next.js Middleware for route protection
  * Checks that the access_token cookie exists AND is not expired (JWT exp claim).
  *
- * Note: Role-based checks are handled client-side via useRole hook
+ * Admin-only access is enforced here before rendering any dashboard route.
  */
 
 function isTokenExpired(token: string): boolean {
@@ -27,12 +28,14 @@ function isTokenExpired(token: string): boolean {
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("access_token")?.value;
+  const userRole = request.cookies.get(USER_ROLE_COOKIE)?.value;
   const { pathname } = request.nextUrl;
 
   const isAuthPage = pathname.startsWith("/login");
   const isProtectedRoute = pathname.startsWith("/dashboard");
 
   const hasValidToken = token && !isTokenExpired(token);
+  const hasAdminRole = isAdminRole(userRole);
 
   // Block unauthenticated/expired users from protected routes
   if (!hasValidToken && isProtectedRoute) {
@@ -44,11 +47,29 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  if (hasValidToken && isProtectedRoute && !hasAdminRole) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("error", "admin_only");
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete("access_token");
+    response.cookies.delete("refresh_token");
+    response.cookies.delete(USER_ROLE_COOKIE);
+    return response;
+  }
+
   // Redirect authenticated users away from login page
-  if (hasValidToken && isAuthPage) {
+  if (hasValidToken && isAuthPage && hasAdminRole) {
     const redirect = request.nextUrl.searchParams.get("redirect");
     const targetUrl = redirect || "/dashboard";
     return NextResponse.redirect(new URL(targetUrl, request.url));
+  }
+
+  if (hasValidToken && isAuthPage && !hasAdminRole) {
+    const response = NextResponse.next();
+    response.cookies.delete("access_token");
+    response.cookies.delete("refresh_token");
+    response.cookies.delete(USER_ROLE_COOKIE);
+    return response;
   }
 
   return NextResponse.next();

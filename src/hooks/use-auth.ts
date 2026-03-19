@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/lib/api";
 import { resetApiSession } from "@/lib/api/client";
+import { isAdminRole } from "@/lib/auth/constants";
 
 /**
  * Hook to handle authentication state.
@@ -33,6 +34,13 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       const userProfile = await authService.login({ email, password });
+
+      if (!isAdminRole(userProfile.rol)) {
+        throw new Error(
+          "Este acceso esta disponible solo para administradores",
+        );
+      }
+
       resetApiSession(); // Clear dead-session flag so apiClient works again
       login(userProfile);
       router.push("/dashboard");
@@ -89,7 +97,8 @@ export function useAuth() {
  */
 export function useRequireAuth() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, hasHydrated, logout } = useAuthStore();
+  const { isAuthenticated, isLoading, hasHydrated, logout, user } =
+    useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
 
   // Safety net: if hasHydrated never fires within 4 seconds, redirect to login.
@@ -117,9 +126,16 @@ export function useRequireAuth() {
       return;
     }
 
+    if (!isAdminRole(user?.rol)) {
+      logout();
+      setIsChecking(false);
+      window.location.href = "/login?error=admin_only";
+      return;
+    }
+
     // Session looks good — unblock the UI immediately
     setIsChecking(false);
-  }, [hasHydrated, isAuthenticated, isLoading]);
+  }, [hasHydrated, isAuthenticated, isLoading, logout, user?.rol]);
 
   return { isChecking };
 }

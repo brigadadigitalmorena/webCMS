@@ -6,6 +6,11 @@
  * cookies so they never reach JavaScript.
  */
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ADMIN_ROLE,
+  USER_ROLE_COOKIE,
+  isAdminRole,
+} from "@/lib/auth/constants";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
@@ -37,6 +42,37 @@ export async function POST(request: NextRequest) {
     const data = await backendRes.json();
     // data = { access_token, refresh_token, token_type, user }
 
+    if (!isAdminRole(data.user?.rol ?? data.user?.role)) {
+      const response = NextResponse.json(
+        { detail: "Este acceso esta disponible solo para administradores" },
+        { status: 403 },
+      );
+
+      response.cookies.set("access_token", "", {
+        httpOnly: true,
+        secure: IS_PRODUCTION,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+      });
+      response.cookies.set("refresh_token", "", {
+        httpOnly: true,
+        secure: IS_PRODUCTION,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+      });
+      response.cookies.set(USER_ROLE_COOKIE, "", {
+        httpOnly: true,
+        secure: IS_PRODUCTION,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+      });
+
+      return response;
+    }
+
     // Return user info only — tokens stay in HttpOnly cookies
     const response = NextResponse.json({ user: data.user });
 
@@ -57,6 +93,14 @@ export async function POST(request: NextRequest) {
         maxAge: REFRESH_MAX_AGE,
       });
     }
+
+    response.cookies.set(USER_ROLE_COOKIE, ADMIN_ROLE, {
+      httpOnly: true,
+      secure: IS_PRODUCTION,
+      sameSite: "lax",
+      path: "/",
+      maxAge: REFRESH_MAX_AGE,
+    });
 
     return response;
   } catch (error) {

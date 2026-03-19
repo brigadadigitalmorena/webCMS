@@ -5,6 +5,7 @@
  * the backend /auth/logout, and clears both cookies.
  */
 import { NextRequest, NextResponse } from "next/server";
+import { USER_ROLE_COOKIE } from "@/lib/auth/constants";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -30,6 +31,13 @@ export async function POST(request: NextRequest) {
     maxAge: 0,
   });
   response.cookies.set("refresh_token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(USER_ROLE_COOKIE, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
