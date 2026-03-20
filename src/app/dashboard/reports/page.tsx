@@ -146,7 +146,7 @@ export default function ReportsPage() {
   if (isChecking) return null;
 
   return (
-    <AdminGuard>
+    <AdminGuard allowedRoles={["admin", "encargado"]}>
       <div className="space-y-6 p-6">
         {/* ── Page header ──────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
