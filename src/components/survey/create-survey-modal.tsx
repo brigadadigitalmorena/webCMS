@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { Question, QuestionType, AnswerOption } from "@/types";
 import {
@@ -185,6 +186,7 @@ export default function CreateSurveyModal({
   initialData,
   isLoading = false,
 }: CreateSurveyModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startsAt, setStartsAt] = useState("");
@@ -193,6 +195,11 @@ export default function CreateSurveyModal({
   const [maxResponses, setMaxResponses] = useState<string>("");
   const [allowAnonymous, setAllowAnonymous] = useState(false);
   const [questions, setQuestions] = useState<DraftQuestion[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   useEffect(() => {
     if (initialData) {
@@ -350,10 +357,10 @@ export default function CreateSurveyModal({
     });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-lg max-w-4xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b">
@@ -829,6 +836,7 @@ export default function CreateSurveyModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
