@@ -5,6 +5,7 @@ import { useAsync } from "@/hooks/use-async";
 import { useDisclosure } from "@/hooks/use-disclosure";
 import { AdminGuard } from "@/components/auth/admin-guard";
 import { useRequireAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/contexts/theme-context";
 import {
   BarChart3,
   FileDown,
@@ -40,8 +41,30 @@ import type { SurveySummary, ExportRow, TimelinePoint } from "./_lib/types";
 
 export default function ReportsPage() {
   const { isChecking } = useRequireAuth();
+  const { theme } = useTheme();
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+
+  const tooltipContentStyle =
+    theme === "dark"
+      ? {
+          backgroundColor: "#111827",
+          border: "1px solid #374151",
+          borderRadius: "8px",
+          color: "#f3f4f6",
+          fontSize: "12px",
+        }
+      : {
+          backgroundColor: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          color: "#111827",
+          fontSize: "12px",
+        };
+
+  const tooltipLabelStyle = { color: theme === "dark" ? "#f3f4f6" : "#111827" };
+
+  const tooltipItemStyle = { color: theme === "dark" ? "#e5e7eb" : "#374151" };
 
   const {
     data: summaries,
@@ -318,12 +341,9 @@ export default function ReportsPage() {
                   className="text-gray-600 dark:text-gray-400"
                 />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "var(--color-bg,#fff)",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                  }}
+                  contentStyle={tooltipContentStyle}
+                  labelStyle={tooltipLabelStyle}
+                  itemStyle={tooltipItemStyle}
                   formatter={(v: number | undefined) =>
                     [v ?? 0, "Respuestas"] as [number, string]
                   }

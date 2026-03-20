@@ -275,7 +275,7 @@ export default function HelpPage() {
             </form>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200">
+          <Card className="p-6 bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 dark:from-gray-800 dark:to-gray-900 dark:border-gray-700">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Información de contacto
             </h3>

@@ -14,6 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useTheme } from "@/contexts/theme-context";
 import { exportDetailedCSV, answerToString } from "../_lib/export";
 import type { SurveySummary, ExportRow, TimelinePoint } from "../_lib/types";
 
@@ -201,10 +202,36 @@ export function SurveyDetailModal({
   isLoading,
   onClose,
 }: Props) {
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<"analytics" | "responses">(
     "analytics",
   );
   const [expandedResponse, setExpandedResponse] = useState<number | null>(null);
+
+  const tooltipContentStyle =
+    theme === "dark"
+      ? {
+          backgroundColor: "#111827",
+          border: "1px solid #374151",
+          borderRadius: "8px",
+          color: "#f3f4f6",
+          fontSize: "12px",
+        }
+      : {
+          backgroundColor: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          color: "#111827",
+          fontSize: "12px",
+        };
+
+  const tooltipLabelStyle = {
+    color: theme === "dark" ? "#f3f4f6" : "#111827",
+  };
+
+  const tooltipItemStyle = {
+    color: theme === "dark" ? "#e5e7eb" : "#374151",
+  };
 
   const analytics = useMemo(() => buildAnalytics(exportRows), [exportRows]);
 
@@ -313,12 +340,9 @@ export function SurveyDetailModal({
                             ? format(parseISO(d), "dd/MM/yyyy", { locale: es })
                             : String(d)
                         }
-                        contentStyle={{
-                          backgroundColor: "var(--color-bg,#fff)",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                        }}
+                        contentStyle={tooltipContentStyle}
+                        labelStyle={tooltipLabelStyle}
+                        itemStyle={tooltipItemStyle}
                       />
                       <Legend wrapperStyle={{ fontSize: 12 }} />
                       <Line

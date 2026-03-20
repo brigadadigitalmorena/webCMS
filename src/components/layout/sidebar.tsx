@@ -157,7 +157,12 @@ export function Sidebar({
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-700 px-4">
+          <div
+            className={cn(
+              "relative flex items-center h-16 border-b border-gray-200 dark:border-gray-700",
+              isDesktopCollapsed ? "justify-center px-2" : "justify-between px-4",
+            )}
+          >
             {!isDesktopCollapsed && (
               <h1 className="text-xl font-bold text-primary-600 transition-opacity duration-200">
                 Brigada CMS
@@ -171,7 +176,10 @@ export function Sidebar({
             {/* Desktop collapse button */}
             <button
               onClick={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-              className="hidden lg:flex items-center justify-center p-2 hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
+              className={cn(
+                "hidden lg:flex items-center justify-center p-2 hover:bg-gradient-to-r hover:from-primary-50 hover:to-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm",
+                isDesktopCollapsed && "absolute right-2",
+              )}
               title={isDesktopCollapsed ? "Expandir" : "Contraer"}
             >
               {isDesktopCollapsed ? (

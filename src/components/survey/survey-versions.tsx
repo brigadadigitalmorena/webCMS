@@ -127,7 +127,7 @@ export default function SurveyVersions({
 
                       {version.change_summary && (
                         <p className="text-sm text-gray-700 dark:text-gray-300 italic">
-                          "{version.change_summary}"
+                          &quot;{version.change_summary}&quot;
                         </p>
                       )}
                     </div>

@@ -2,6 +2,7 @@
 
 import LoginForm from "@/components/auth/login-form";
 import { useTheme } from "@/contexts/theme-context";
+import { Suspense } from "react";
 import { Moon, Sun } from "lucide-react";
 
 export default function LoginPage() {
@@ -38,7 +39,9 @@ export default function LoginPage() {
               Panel Administrativo
             </p>
           </div>
-          <LoginForm />
+          <Suspense fallback={null}>
+            <LoginForm />
+          </Suspense>
         </div>
       </div>
     </div>
