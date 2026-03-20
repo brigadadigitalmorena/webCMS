@@ -15,7 +15,11 @@ export default function LoginForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleLogin(email, password, searchParams.get("redirect") ?? undefined);
+      await handleLogin(
+        email,
+        password,
+        searchParams.get("redirect") ?? undefined,
+      );
     } catch (err) {
       // Error is handled in useAuth hook
     }
