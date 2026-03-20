@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const { handleLogin, isLoading, error } = useAuth();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +15,7 @@ export default function LoginForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleLogin(email, password);
+      await handleLogin(email, password, searchParams.get("redirect") ?? undefined);
     } catch (err) {
       // Error is handled in useAuth hook
     }

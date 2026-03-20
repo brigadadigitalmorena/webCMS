@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/lib/api";
 import { resetApiSession } from "@/lib/api/client";
@@ -12,7 +11,6 @@ import { isAdminRole } from "@/lib/auth/constants";
  * only deals with user profile data stored in Zustand.
  */
 export function useAuth() {
-  const router = useRouter();
   const {
     user,
     isAuthenticated,
@@ -29,7 +27,11 @@ export function useAuth() {
    * The server-side proxy sets HttpOnly cookies — we only store the
    * user profile in Zustand.
    */
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (
+    email: string,
+    password: string,
+    redirectTo?: string,
+  ) => {
     try {
       setLoading(true);
       setError(null);
@@ -43,7 +45,10 @@ export function useAuth() {
 
       resetApiSession(); // Clear dead-session flag so apiClient works again
       login(userProfile);
-      router.push("/dashboard");
+
+      const target =
+        redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
+      window.location.assign(target);
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.detail || err.message || "Error al iniciar sesión";
@@ -96,7 +101,6 @@ export function useAuth() {
  * Hook to protect routes - requires authentication
  */
 export function useRequireAuth() {
-  const router = useRouter();
   const { isAuthenticated, isLoading, hasHydrated, logout, user } =
     useAuthStore();
   const [isChecking, setIsChecking] = useState(true);
