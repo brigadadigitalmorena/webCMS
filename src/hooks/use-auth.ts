@@ -57,7 +57,7 @@ export function useAuth() {
       const errorMessage =
         err.response?.data?.detail || err.message || "Error al iniciar sesión";
       setError(errorMessage);
-      throw err;
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

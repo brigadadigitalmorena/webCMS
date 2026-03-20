@@ -28,3 +28,26 @@ export interface TimelinePoint {
   date: string;
   count: number;
 }
+
+export interface ResponseAnswerDetail {
+  id: number;
+  question_id: number;
+  answer_value: unknown;
+  media_url: string | null;
+  answered_at: string;
+  answer_meta?: Record<string, unknown> | null;
+}
+
+export interface ResponseDetail {
+  id: number;
+  user_id: number;
+  version_id: number;
+  client_id: string;
+  location: Record<string, unknown> | null;
+  started_at: string | null;
+  completed_at: string;
+  synced_at: string;
+  device_info?: Record<string, unknown> | null;
+  capture_meta?: Record<string, unknown> | null;
+  answers: ResponseAnswerDetail[];
+}

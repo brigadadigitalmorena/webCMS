@@ -8,6 +8,44 @@ interface LoginCredentials {
   password: string;
 }
 
+function getAuthErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail;
+    const message = error.response?.data?.message;
+
+    if (typeof detail === "string" && detail.trim()) {
+      return detail;
+    }
+
+    if (Array.isArray(detail) && detail.length > 0) {
+      return detail
+        .map((item) => {
+          if (typeof item === "string") {
+            return item;
+          }
+
+          if (item && typeof item === "object" && "msg" in item) {
+            const msg = item.msg;
+            return typeof msg === "string" ? msg : JSON.stringify(item);
+          }
+
+          return JSON.stringify(item);
+        })
+        .join(". ");
+    }
+
+    if (typeof message === "string" && message.trim()) {
+      return message;
+    }
+  }
+
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  return "Error al iniciar sesión";
+}
+
 /**
  * Auth service.
  *
@@ -21,11 +59,15 @@ export const authService = {
    * Returns ONLY the user profile (no tokens in JS).
    */
   async login(credentials: LoginCredentials): Promise<User> {
-    const response = await axios.post<{ user: User }>(
-      "/api/auth/login",
-      credentials,
-    );
-    return response.data.user;
+    try {
+      const response = await axios.post<{ user: User }>(
+        "/api/auth/login",
+        credentials,
+      );
+      return response.data.user;
+    } catch (error) {
+      throw new Error(getAuthErrorMessage(error));
+    }
   },
 
   /**

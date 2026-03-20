@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { User } from "@/types";
 import { userService } from "@/lib/api/user.service";
 import { surveyService } from "@/lib/api/survey.service";
@@ -37,6 +38,8 @@ export default function AssignSurveyModal({
   preselectedSurvey,
 }: AssignSurveyModalProps) {
   const currentUser = useAuthStore((state) => state.user);
+  const isEncargadoUser = currentUser?.rol === "encargado";
+  const [mounted, setMounted] = useState(false);
   const [encargados, setEncargados] = useState<User[]>([]);
   const [brigadistas, setBrigadistas] = useState<User[]>([]);
   const [surveys, setSurveys] = useState<SurveyOption[]>([]);
@@ -45,39 +48,60 @@ export default function AssignSurveyModal({
   const [surveyId, setSurveyId] = useState<number | "">("");
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [roleTab, setRoleTab] = useState<"encargado" | "brigadista">(
-    "encargado",
+    isEncargadoUser ? "brigadista" : "encargado",
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
+  const [alreadyAssignedUserIds, setAlreadyAssignedUserIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen, mounted]);
 
   useEffect(() => {
     if (!isOpen) return;
     setSelectedUserIds([]);
+    setAlreadyAssignedUserIds([]);
     setSearchTerm("");
     setError("");
-    setRoleTab("encargado");
+    setRoleTab(isEncargadoUser ? "brigadista" : "encargado");
     setSurveyId(preselectedSurvey ? preselectedSurvey.id : "");
 
     const load = async () => {
       setLoadingData(true);
       try {
         const [enc, brig] = await Promise.all([
-          userService.getUsers({ rol: "encargado", activo: true }),
+          isEncargadoUser
+            ? Promise.resolve([] as User[])
+            : userService.getUsers({ rol: "encargado", activo: true }),
           userService.getUsers({ rol: "brigadista", activo: true }),
         ]);
 
         let surveyOptions: SurveyOption[] = [];
-        if (currentUser?.rol === "encargado" && currentUser.id) {
-          const myAssignments = await assignmentService.getAssignments({
-            status: "active",
-            limit: 500,
-          });
+        if (isEncargadoUser && currentUser?.id) {
+          const myAssignments = await assignmentService.getUserAssignments(
+            currentUser.id,
+            {
+              status: "active",
+              limit: 200,
+            },
+          );
           const surveyMap = new Map<number, SurveyOption>();
 
           myAssignments.forEach((assignment) => {
             if (
-              assignment.user_id === currentUser.id &&
-              assignment.user?.role === "encargado" &&
               assignment.survey
             ) {
               surveyMap.set(assignment.survey_id, {
@@ -107,9 +131,50 @@ export default function AssignSurveyModal({
       }
     };
     load();
-  }, [isOpen, preselectedSurvey, currentUser?.id, currentUser?.rol]);
+  }, [isOpen, preselectedSurvey, currentUser?.id, currentUser?.rol, isEncargadoUser]);
 
-  const activeUsers = roleTab === "encargado" ? encargados : brigadistas;
+  useEffect(() => {
+    if (!isOpen || !surveyId) {
+      setAlreadyAssignedUserIds([]);
+      setSelectedUserIds([]);
+      return;
+    }
+
+    const loadAssignedUsers = async () => {
+      try {
+        const assignments = await assignmentService.getSurveyAssignments(
+          Number(surveyId),
+          {
+            status: "active",
+            limit: 200,
+          },
+        );
+        setAlreadyAssignedUserIds(assignments.map((a) => a.user_id));
+        setSelectedUserIds([]);
+      } catch {
+        setAlreadyAssignedUserIds([]);
+      }
+    };
+
+    loadAssignedUsers();
+  }, [isOpen, surveyId]);
+
+  const roleUsers = useMemo(
+    () => (roleTab === "encargado" ? encargados : brigadistas),
+    [roleTab, encargados, brigadistas],
+  );
+
+  const roleUserIdSet = useMemo(
+    () => new Set(roleUsers.map((u) => u.id)),
+    [roleUsers],
+  );
+
+  const alreadyAssignedInRole = useMemo(
+    () => alreadyAssignedUserIds.filter((id) => roleUserIdSet.has(id)),
+    [alreadyAssignedUserIds, roleUserIdSet],
+  );
+
+  const activeUsers = roleUsers;
 
   const filteredUsers = searchTerm
     ? activeUsers.filter((u) =>
@@ -120,6 +185,7 @@ export default function AssignSurveyModal({
     : activeUsers;
 
   const toggleUser = (userId: number) => {
+    if (alreadyAssignedUserIds.includes(userId)) return;
     setSelectedUserIds((prev) =>
       prev.includes(userId)
         ? prev.filter((id) => id !== userId)
@@ -128,7 +194,12 @@ export default function AssignSurveyModal({
   };
 
   const selectAll = () => {
-    const ids = filteredUsers.map((u) => u.id);
+    const ids = filteredUsers
+      .map((u) => u.id)
+      .filter((id) => !alreadyAssignedUserIds.includes(id));
+
+    if (ids.length === 0) return;
+
     const allSelected = ids.every((id) => selectedUserIds.includes(id));
     if (allSelected) {
       setSelectedUserIds((prev) => prev.filter((id) => !ids.includes(id)));
@@ -158,11 +229,11 @@ export default function AssignSurveyModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full shadow-xl max-h-[90vh] flex flex-col">
+  return createPortal(
+    <div className="fixed inset-0 z-[80] bg-black/50 flex items-center justify-center overflow-y-auto p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full shadow-xl max-h-[min(100dvh-2rem,42rem)] flex flex-col">
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             Nueva asignación
@@ -241,23 +312,25 @@ export default function AssignSurveyModal({
                   </span>
                   ¿A quién asignas?
                 </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRoleTab("encargado");
-                      setSelectedUserIds([]);
-                      setSearchTerm("");
-                    }}
-                    className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
-                      roleTab === "encargado"
-                        ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                        : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    }`}
-                  >
-                    <UserCheck className="h-4 w-4" />
-                    Encargado
-                  </button>
+                <div className={`grid gap-2 ${isEncargadoUser ? "grid-cols-1" : "grid-cols-2"}`}>
+                  {!isEncargadoUser && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRoleTab("encargado");
+                        setSelectedUserIds([]);
+                        setSearchTerm("");
+                      }}
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
+                        roleTab === "encargado"
+                          ? "bg-indigo-50 border-indigo-300 text-indigo-700"
+                          : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      }`}
+                    >
+                      <UserCheck className="h-4 w-4" />
+                      Encargado
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
@@ -276,9 +349,11 @@ export default function AssignSurveyModal({
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
-                  {roleTab === "encargado"
-                    ? "El encargado supervisa y coordina esta encuesta."
-                    : "El brigadista la aplica en campo."}
+                  {isEncargadoUser
+                    ? "Solo puedes asignar brigadistas a las encuestas donde eres encargado."
+                    : roleTab === "encargado"
+                      ? "El encargado supervisa y coordina esta encuesta."
+                      : "El brigadista la aplica en campo."}
                 </p>
               </div>
 
@@ -298,6 +373,12 @@ export default function AssignSurveyModal({
                     </span>
                   )}
                 </label>
+                {alreadyAssignedInRole.length > 0 && (
+                  <p className="text-xs text-emerald-700 dark:text-emerald-400 mb-1.5">
+                    {alreadyAssignedInRole.length} ya asignado
+                    {alreadyAssignedInRole.length !== 1 ? "s" : ""} a esta encuesta.
+                  </p>
+                )}
 
                 {/* Search */}
                 {activeUsers.length > 5 && (
@@ -337,38 +418,50 @@ export default function AssignSurveyModal({
                   ) : (
                     filteredUsers.map((u) => {
                       const isSelected = selectedUserIds.includes(u.id);
+                      const isAlreadyAssigned = alreadyAssignedUserIds.includes(u.id);
+                      const isChecked = isSelected || isAlreadyAssigned;
                       return (
                         <label
                           key={u.id}
-                          className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0 ${
-                            isSelected
+                          className={`flex items-center gap-3 px-3 py-2.5 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-b-0 ${
+                            isChecked
                               ? "bg-primary-50/50 dark:bg-primary-900/10"
                               : ""
+                          } ${
+                            isAlreadyAssigned
+                              ? "cursor-not-allowed opacity-90"
+                              : "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
                           }`}
                         >
                           <div
                             className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                              isSelected
+                              isChecked
                                 ? "bg-primary-600 border-primary-600"
                                 : "border-gray-300 dark:border-gray-600"
                             }`}
                           >
-                            {isSelected && (
+                            {isChecked && (
                               <Check className="h-3 w-3 text-white" />
                             )}
                           </div>
                           <input
                             type="checkbox"
-                            checked={isSelected}
+                            checked={isChecked}
                             onChange={() => toggleUser(u.id)}
+                            disabled={isAlreadyAssigned}
                             className="sr-only"
                           />
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {u.nombre} {u.apellido}
                             </p>
-                            <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
-                              {u.email}
+                            <p className="text-xs text-gray-400 dark:text-gray-500 truncate flex items-center gap-2">
+                              <span>{u.email}</span>
+                              {isAlreadyAssigned && (
+                                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                                  Ya asignado
+                                </span>
+                              )}
                             </p>
                           </div>
                         </label>
@@ -406,6 +499,7 @@ export default function AssignSurveyModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

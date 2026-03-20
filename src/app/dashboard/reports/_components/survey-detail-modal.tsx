@@ -15,8 +15,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useTheme } from "@/contexts/theme-context";
+import apiClient from "@/lib/api/client";
 import { exportDetailedCSV, answerToString } from "../_lib/export";
-import type { SurveySummary, ExportRow, TimelinePoint } from "../_lib/types";
+import type {
+  SurveySummary,
+  ExportRow,
+  TimelinePoint,
+  ResponseDetail,
+} from "../_lib/types";
 
 // ── Answer analytics helpers ──────────────────────────────────────────────────
 
@@ -207,6 +213,12 @@ export function SurveyDetailModal({
     "analytics",
   );
   const [expandedResponse, setExpandedResponse] = useState<number | null>(null);
+  const [responseDetails, setResponseDetails] = useState<
+    Record<number, ResponseDetail | undefined>
+  >({});
+  const [loadingResponseId, setLoadingResponseId] = useState<number | null>(
+    null,
+  );
 
   const tooltipContentStyle =
     theme === "dark"
@@ -244,6 +256,65 @@ export function SurveyDetailModal({
     }
     return Array.from(map.entries());
   }, [exportRows]);
+
+  const formatMetaValue = (value: unknown): string => {
+    if (value === null || value === undefined) return "—";
+    if (typeof value === "string") return value;
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  };
+
+  const loadResponseDetail = async (responseId: number) => {
+    if (responseDetails[responseId]) return;
+    setLoadingResponseId(responseId);
+    try {
+      const res = await apiClient.get<ResponseDetail>(`/admin/responses/${responseId}`);
+      setResponseDetails((prev) => ({ ...prev, [responseId]: res.data }));
+    } catch {
+      setResponseDetails((prev) => ({ ...prev, [responseId]: undefined }));
+    } finally {
+      setLoadingResponseId((current) => (current === responseId ? null : current));
+    }
+  };
+
+  const renderMetaSection = (
+    title: string,
+    data: Record<string, unknown> | null | undefined,
+  ) => {
+    if (!data || Object.keys(data).length === 0) return null;
+
+    return (
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+          {title}
+        </h4>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {Object.entries(data).map(([key, value]) => (
+            <div key={key} className="rounded bg-gray-50 dark:bg-gray-800 px-2.5 py-2">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1 break-all">
+                {key}
+              </p>
+              {typeof value === "object" && value !== null ? (
+                <pre className="text-xs text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words font-mono">
+                  {formatMetaValue(value)}
+                </pre>
+              ) : (
+                <p className="text-xs text-gray-800 dark:text-gray-200 break-words">
+                  {formatMetaValue(value)}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
@@ -430,9 +501,14 @@ export function SurveyDetailModal({
                 return (
                   <div key={responseId}>
                     <button
-                      onClick={() =>
-                        setExpandedResponse(isExpanded ? null : responseId)
-                      }
+                      onClick={() => {
+                        if (isExpanded) {
+                          setExpandedResponse(null);
+                          return;
+                        }
+                        setExpandedResponse(responseId);
+                        void loadResponseDetail(responseId);
+                      }}
                       className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
                     >
                       <div className="flex items-center gap-3">
@@ -467,6 +543,27 @@ export function SurveyDetailModal({
                     </button>
                     {isExpanded && (
                       <div className="bg-gray-50 dark:bg-gray-800/40 px-4 pb-3">
+                        {loadingResponseId === responseId && !responseDetails[responseId] ? (
+                          <div className="py-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            Cargando metadatos...
+                          </div>
+                        ) : (
+                          <div className="grid gap-3 mt-3 mb-3">
+                            {renderMetaSection(
+                              "Metadatos de Captura",
+                              responseDetails[responseId]?.capture_meta,
+                            )}
+                            {renderMetaSection(
+                              "Ubicación",
+                              responseDetails[responseId]?.location,
+                            )}
+                            {renderMetaSection(
+                              "Dispositivo",
+                              responseDetails[responseId]?.device_info,
+                            )}
+                          </div>
+                        )}
                         <table className="w-full text-xs mt-2">
                           <thead>
                             <tr className="text-gray-500 dark:text-gray-400">
@@ -475,6 +572,9 @@ export function SurveyDetailModal({
                               </th>
                               <th className="text-left py-1 font-medium">
                                 Respuesta
+                              </th>
+                              <th className="text-left py-1 pl-4 font-medium w-1/3">
+                                Metadatos
                               </th>
                             </tr>
                           </thead>
@@ -490,6 +590,21 @@ export function SurveyDetailModal({
                                   </td>
                                   <td className="py-1.5 text-gray-900 dark:text-white align-top font-medium">
                                     {answerToString(r.answer_value) || "—"}
+                                  </td>
+                                  <td className="py-1.5 pl-4 align-top">
+                                    {responseDetails[responseId]?.answers?.find(
+                                      (answer) => answer.question_id === r.question_id,
+                                    )?.answer_meta ? (
+                                      <pre className="text-[11px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words font-mono rounded bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-2">
+                                        {formatMetaValue(
+                                          responseDetails[responseId]?.answers?.find(
+                                            (answer) => answer.question_id === r.question_id,
+                                          )?.answer_meta,
+                                        )}
+                                      </pre>
+                                    ) : (
+                                      <span className="text-gray-400 dark:text-gray-500">—</span>
+                                    )}
                                   </td>
                                 </tr>
                               ))}
