@@ -23,6 +23,7 @@ import {
 import { Pagination } from "@/components/ui/pagination";
 import { CreateUserModal } from "@/components/users/create-user-modal";
 import { userService } from "@/lib/api/user.service";
+import { useRole } from "@/hooks/use-role";
 import type { User } from "@/types";
 import {
   Search,
@@ -71,6 +72,7 @@ function exportUsersCSV(users: User[]) {
 
 export default function UsersPage() {
   const { isChecking } = useRequireAuth();
+  const { isAdmin, isEncargado } = useRole();
   const currentUser = useAuthStore((state) => state.user);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -120,6 +122,11 @@ export default function UsersPage() {
   };
 
   const handleToggleActive = async (user: User) => {
+    if (!isAdmin) {
+      toast.error("Solo administradores pueden cambiar estado de usuarios");
+      return;
+    }
+
     if (currentUser?.id === user.id && user.activo) {
       toast.error("No puedes desactivar tu propia cuenta");
       return;
@@ -154,7 +161,7 @@ export default function UsersPage() {
   }
 
   return (
-    <AdminGuard>
+    <AdminGuard allowedRoles={["admin", "encargado"]}>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -189,7 +196,7 @@ export default function UsersPage() {
               className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium"
             >
               <UserPlus className="h-5 w-5" />
-              Invitar usuario
+              {isEncargado ? "Invitar brigadista" : "Invitar usuario"}
             </button>
           </div>
         </div>
@@ -253,8 +260,8 @@ export default function UsersPage() {
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
                 <option value="all">Todos los roles</option>
-                <option value="admin">Admin</option>
-                <option value="encargado">Encargado</option>
+                {isAdmin && <option value="admin">Admin</option>}
+                {isAdmin && <option value="encargado">Encargado</option>}
                 <option value="brigadista">Brigadista</option>
               </Select>
               <Select
@@ -311,35 +318,39 @@ export default function UsersPage() {
                           {user.rol}
                         </span>
                         <div className="flex gap-1">
-                          <Link href={`/dashboard/users/${user.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="px-2"
-                              title="Editar"
-                            >
-                              <Pencil className="h-3.5 w-3.5" />
-                            </Button>
-                          </Link>
-                          {currentUser?.id === user.id ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled
-                              className="px-2 text-xs"
-                            >
-                              –
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleToggleActive(user)}
-                              className="px-2"
-                              title={user.activo ? "Desactivar" : "Activar"}
-                            >
-                              <Power className="h-3.5 w-3.5" />
-                            </Button>
+                          {isAdmin && (
+                            <>
+                              <Link href={`/dashboard/users/${user.id}`}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="px-2"
+                                  title="Editar"
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                              </Link>
+                              {currentUser?.id === user.id ? (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled
+                                  className="px-2 text-xs"
+                                >
+                                  –
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleToggleActive(user)}
+                                  className="px-2"
+                                  title={user.activo ? "Desactivar" : "Activar"}
+                                >
+                                  <Power className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -413,43 +424,49 @@ export default function UsersPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex flex-wrap justify-end gap-1.5">
-                              <Link href={`/dashboard/users/${user.id}`}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="px-2 sm:px-3"
-                                >
-                                  <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
-                                  <span className="hidden sm:inline">
-                                    Editar
-                                  </span>
-                                </Button>
-                              </Link>
-                              {currentUser?.id === user.id ? (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  disabled
-                                  title="No puedes desactivar tu propia cuenta"
-                                  className="px-2 sm:px-3"
-                                >
-                                  <span className="hidden sm:inline">
-                                    Tu cuenta
-                                  </span>
-                                  <span className="sm:hidden text-xs">–</span>
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleToggleActive(user)}
-                                  className="px-2 sm:px-3"
-                                >
-                                  <Power className="h-3.5 w-3.5 sm:mr-1.5" />
-                                  <span className="hidden sm:inline">
-                                    {user.activo ? "Desactivar" : "Activar"}
-                                  </span>
-                                </Button>
+                              {isAdmin && (
+                                <>
+                                  <Link href={`/dashboard/users/${user.id}`}>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="px-2 sm:px-3"
+                                    >
+                                      <Pencil className="h-3.5 w-3.5 sm:mr-1.5" />
+                                      <span className="hidden sm:inline">
+                                        Editar
+                                      </span>
+                                    </Button>
+                                  </Link>
+                                  {currentUser?.id === user.id ? (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      disabled
+                                      title="No puedes desactivar tu propia cuenta"
+                                      className="px-2 sm:px-3"
+                                    >
+                                      <span className="hidden sm:inline">
+                                        Tu cuenta
+                                      </span>
+                                      <span className="sm:hidden text-xs">
+                                        –
+                                      </span>
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => handleToggleActive(user)}
+                                      className="px-2 sm:px-3"
+                                    >
+                                      <Power className="h-3.5 w-3.5 sm:mr-1.5" />
+                                      <span className="hidden sm:inline">
+                                        {user.activo ? "Desactivar" : "Activar"}
+                                      </span>
+                                    </Button>
+                                  )}
+                                </>
                               )}
                             </div>
                           </TableCell>

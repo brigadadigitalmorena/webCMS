@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { whitelistService } from "@/lib/api/whitelist.service";
 import { activationCodeService } from "@/lib/api/activation-code.service";
+import { surveyService } from "@/lib/api/survey.service";
+import { useRole } from "@/hooks/use-role";
+import { Survey } from "@/types";
 import {
   Copy,
   Check,
@@ -30,6 +33,7 @@ interface InviteUserFormData {
   rol: "admin" | "encargado" | "brigadista";
   telefono?: string;
   notas?: string;
+  assigned_survey_id?: string;
 }
 
 const initialForm: InviteUserFormData = {
@@ -39,6 +43,7 @@ const initialForm: InviteUserFormData = {
   rol: "brigadista",
   telefono: "",
   notas: "",
+  assigned_survey_id: "",
 };
 
 export function CreateUserModal({
@@ -46,12 +51,36 @@ export function CreateUserModal({
   onClose,
   onCreated,
 }: CreateUserModalProps) {
+  const { isEncargado } = useRole();
   const [formData, setFormData] = useState<InviteUserFormData>(initialForm);
   const [errors, setErrors] = useState<Partial<InviteUserFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [activationCode, setActivationCode] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [surveyOptions, setSurveyOptions] = useState<Survey[]>([]);
+  const [loadingSurveys, setLoadingSurveys] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen || !isEncargado) {
+      setSurveyOptions([]);
+      return;
+    }
+
+    const loadSurveys = async () => {
+      setLoadingSurveys(true);
+      try {
+        const surveys = await surveyService.getSurveys({
+          is_active: true,
+          limit: 300,
+        });
+        setSurveyOptions(surveys.filter((survey) => survey.is_active));
+      } finally {
+        setLoadingSurveys(false);
+      }
+    };
+    loadSurveys();
+  }, [isOpen, isEncargado]);
 
   const updateField = (field: keyof InviteUserFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -68,6 +97,9 @@ export function CreateUserModal({
     if (!formData.nombre.trim()) nextErrors.nombre = "Nombre requerido";
     if (!formData.apellido.trim()) nextErrors.apellido = "Apellido requerido";
     if (!formData.email.trim()) nextErrors.email = "Email requerido";
+    if (isEncargado && !formData.assigned_survey_id) {
+      nextErrors.assigned_survey_id = "Selecciona una encuesta";
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -82,7 +114,11 @@ export function CreateUserModal({
         identifier: formData.email.trim(),
         identifier_type: "email",
         full_name: `${formData.nombre.trim()} ${formData.apellido.trim()}`,
-        assigned_role: formData.rol,
+        assigned_role: isEncargado ? "brigadista" : formData.rol,
+        assigned_survey_id:
+          isEncargado && formData.assigned_survey_id
+            ? Number(formData.assigned_survey_id)
+            : undefined,
         phone: formData.telefono?.trim() || undefined,
         notes: formData.notas?.trim() || undefined,
       });
@@ -184,11 +220,12 @@ export function CreateUserModal({
           <div className="grid gap-4 md:grid-cols-2">
             <Select
               label="Rol"
-              value={formData.rol}
+              value={isEncargado ? "brigadista" : formData.rol}
               onChange={(e) => updateField("rol", e.target.value)}
+              disabled={isEncargado}
             >
-              <option value="admin">Admin</option>
-              <option value="encargado">Encargado</option>
+              {!isEncargado && <option value="admin">Admin</option>}
+              {!isEncargado && <option value="encargado">Encargado</option>}
               <option value="brigadista">Brigadista</option>
             </Select>
             <Input
@@ -197,6 +234,25 @@ export function CreateUserModal({
               onChange={(e) => updateField("notas", e.target.value)}
             />
           </div>
+
+          {isEncargado && (
+            <Select
+              label="Encuesta a asignar"
+              value={formData.assigned_survey_id}
+              onChange={(e) =>
+                updateField("assigned_survey_id", e.target.value)
+              }
+              error={errors.assigned_survey_id}
+              disabled={loadingSurveys}
+            >
+              <option value="">Selecciona una encuesta...</option>
+              {surveyOptions.map((survey) => (
+                <option key={survey.id} value={survey.id}>
+                  {survey.title}
+                </option>
+              ))}
+            </Select>
+          )}
 
           <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
             <Info className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />

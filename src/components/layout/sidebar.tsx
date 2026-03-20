@@ -69,7 +69,7 @@ const navSections: NavSection[] = [
         href: "/dashboard/users",
         label: "Usuarios",
         icon: Users,
-        allowedRoles: ["admin"], // Admin only
+        allowedRoles: ["admin", "encargado"],
       },
       {
         href: "/dashboard/whitelist",

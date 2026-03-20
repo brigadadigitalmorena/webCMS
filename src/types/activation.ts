@@ -126,6 +126,7 @@ export interface CreateWhitelistRequest {
   full_name: string;
   assigned_role: UserRole;
   assigned_supervisor_id?: number;
+  assigned_survey_id?: number;
   phone?: string;
   notes?: string;
 }
