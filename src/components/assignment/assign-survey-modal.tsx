@@ -52,7 +52,9 @@ export default function AssignSurveyModal({
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
-  const [alreadyAssignedUserIds, setAlreadyAssignedUserIds] = useState<number[]>([]);
+  const [alreadyAssignedUserIds, setAlreadyAssignedUserIds] = useState<
+    number[]
+  >([]);
 
   useEffect(() => {
     setMounted(true);
@@ -101,9 +103,7 @@ export default function AssignSurveyModal({
           const surveyMap = new Map<number, SurveyOption>();
 
           myAssignments.forEach((assignment) => {
-            if (
-              assignment.survey
-            ) {
+            if (assignment.survey) {
               surveyMap.set(assignment.survey_id, {
                 id: assignment.survey.id,
                 title: assignment.survey.title,
@@ -131,7 +131,13 @@ export default function AssignSurveyModal({
       }
     };
     load();
-  }, [isOpen, preselectedSurvey, currentUser?.id, currentUser?.rol, isEncargadoUser]);
+  }, [
+    isOpen,
+    preselectedSurvey,
+    currentUser?.id,
+    currentUser?.rol,
+    isEncargadoUser,
+  ]);
 
   useEffect(() => {
     if (!isOpen || !surveyId) {
@@ -312,7 +318,9 @@ export default function AssignSurveyModal({
                   </span>
                   ¿A quién asignas?
                 </label>
-                <div className={`grid gap-2 ${isEncargadoUser ? "grid-cols-1" : "grid-cols-2"}`}>
+                <div
+                  className={`grid gap-2 ${isEncargadoUser ? "grid-cols-1" : "grid-cols-2"}`}
+                >
                   {!isEncargadoUser && (
                     <button
                       type="button"
@@ -376,7 +384,8 @@ export default function AssignSurveyModal({
                 {alreadyAssignedInRole.length > 0 && (
                   <p className="text-xs text-emerald-700 dark:text-emerald-400 mb-1.5">
                     {alreadyAssignedInRole.length} ya asignado
-                    {alreadyAssignedInRole.length !== 1 ? "s" : ""} a esta encuesta.
+                    {alreadyAssignedInRole.length !== 1 ? "s" : ""} a esta
+                    encuesta.
                   </p>
                 )}
 
@@ -418,7 +427,9 @@ export default function AssignSurveyModal({
                   ) : (
                     filteredUsers.map((u) => {
                       const isSelected = selectedUserIds.includes(u.id);
-                      const isAlreadyAssigned = alreadyAssignedUserIds.includes(u.id);
+                      const isAlreadyAssigned = alreadyAssignedUserIds.includes(
+                        u.id,
+                      );
                       const isChecked = isSelected || isAlreadyAssigned;
                       return (
                         <label

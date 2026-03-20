@@ -274,12 +274,16 @@ export function SurveyDetailModal({
     if (responseDetails[responseId]) return;
     setLoadingResponseId(responseId);
     try {
-      const res = await apiClient.get<ResponseDetail>(`/admin/responses/${responseId}`);
+      const res = await apiClient.get<ResponseDetail>(
+        `/admin/responses/${responseId}`,
+      );
       setResponseDetails((prev) => ({ ...prev, [responseId]: res.data }));
     } catch {
       setResponseDetails((prev) => ({ ...prev, [responseId]: undefined }));
     } finally {
-      setLoadingResponseId((current) => (current === responseId ? null : current));
+      setLoadingResponseId((current) =>
+        current === responseId ? null : current,
+      );
     }
   };
 
@@ -296,7 +300,10 @@ export function SurveyDetailModal({
         </h4>
         <div className="grid gap-2 sm:grid-cols-2">
           {Object.entries(data).map(([key, value]) => (
-            <div key={key} className="rounded bg-gray-50 dark:bg-gray-800 px-2.5 py-2">
+            <div
+              key={key}
+              className="rounded bg-gray-50 dark:bg-gray-800 px-2.5 py-2"
+            >
               <p className="text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1 break-all">
                 {key}
               </p>
@@ -543,7 +550,8 @@ export function SurveyDetailModal({
                     </button>
                     {isExpanded && (
                       <div className="bg-gray-50 dark:bg-gray-800/40 px-4 pb-3">
-                        {loadingResponseId === responseId && !responseDetails[responseId] ? (
+                        {loadingResponseId === responseId &&
+                        !responseDetails[responseId] ? (
                           <div className="py-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                             <RefreshCw className="w-4 h-4 animate-spin" />
                             Cargando metadatos...
@@ -593,17 +601,24 @@ export function SurveyDetailModal({
                                   </td>
                                   <td className="py-1.5 pl-4 align-top">
                                     {responseDetails[responseId]?.answers?.find(
-                                      (answer) => answer.question_id === r.question_id,
+                                      (answer) =>
+                                        answer.question_id === r.question_id,
                                     )?.answer_meta ? (
                                       <pre className="text-[11px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words font-mono rounded bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-2">
                                         {formatMetaValue(
-                                          responseDetails[responseId]?.answers?.find(
-                                            (answer) => answer.question_id === r.question_id,
+                                          responseDetails[
+                                            responseId
+                                          ]?.answers?.find(
+                                            (answer) =>
+                                              answer.question_id ===
+                                              r.question_id,
                                           )?.answer_meta,
                                         )}
                                       </pre>
                                     ) : (
-                                      <span className="text-gray-400 dark:text-gray-500">—</span>
+                                      <span className="text-gray-400 dark:text-gray-500">
+                                        —
+                                      </span>
                                     )}
                                   </td>
                                 </tr>
