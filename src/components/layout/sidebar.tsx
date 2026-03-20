@@ -160,7 +160,9 @@ export function Sidebar({
           <div
             className={cn(
               "relative flex items-center h-16 border-b border-gray-200 dark:border-gray-700",
-              isDesktopCollapsed ? "justify-center px-2" : "justify-between px-4",
+              isDesktopCollapsed
+                ? "justify-center px-2"
+                : "justify-between px-4",
             )}
           >
             {!isDesktopCollapsed && (
@@ -236,8 +238,7 @@ export function Sidebar({
                               <Icon
                                 className={cn(
                                   "w-5 h-5 flex-shrink-0",
-                                  isActive &&
-                                    "text-primary-600",
+                                  isActive && "text-primary-600",
                                 )}
                               />
                               {!isDesktopCollapsed && (

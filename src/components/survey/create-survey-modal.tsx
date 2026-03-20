@@ -532,8 +532,8 @@ export default function CreateSurveyModal({
             {questions.length === 0 && (
               <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
                 <p className="text-gray-500 dark:text-gray-400">
-                  No hay preguntas. Haz clic en &quot;Agregar Pregunta&quot; para
-                  comenzar.
+                  No hay preguntas. Haz clic en &quot;Agregar Pregunta&quot;
+                  para comenzar.
                 </p>
               </div>
             )}
