@@ -5,11 +5,7 @@
  * backend /auth/refresh, and updates both cookies with the new tokens.
  */
 import { NextRequest, NextResponse } from "next/server";
-import {
-  ADMIN_ROLE,
-  USER_ROLE_COOKIE,
-  isAdminRole,
-} from "@/lib/auth/constants";
+import { USER_ROLE_COOKIE, isCmsRole } from "@/lib/auth/constants";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
@@ -24,9 +20,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ detail: "No refresh token" }, { status: 401 });
   }
 
-  if (!isAdminRole(userRole)) {
+  if (!isCmsRole(userRole)) {
     const response = NextResponse.json(
-      { detail: "Este acceso esta disponible solo para administradores" },
+      {
+        detail:
+          "Este acceso esta disponible solo para administradores y encargados",
+      },
       { status: 403 },
     );
 
@@ -114,7 +113,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  response.cookies.set(USER_ROLE_COOKIE, ADMIN_ROLE, {
+  response.cookies.set(USER_ROLE_COOKIE, userRole ?? "", {
     httpOnly: true,
     secure: IS_PRODUCTION,
     sameSite: "lax",

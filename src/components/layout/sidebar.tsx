@@ -46,7 +46,7 @@ const navSections: NavSection[] = [
         href: "/dashboard",
         label: "Dashboard",
         icon: LayoutDashboard,
-        allowedRoles: ["admin", "encargado"], // Admins and supervisors
+        allowedRoles: ["admin"], // Dashboard principal solo para admin
       },
       {
         href: "/dashboard/surveys",

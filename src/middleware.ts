@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { USER_ROLE_COOKIE, isAdminRole } from "@/lib/auth/constants";
+import {
+  ENCARGADO_ROLE,
+  USER_ROLE_COOKIE,
+  isCmsRole,
+  normalizeUserRole,
+} from "@/lib/auth/constants";
 
 /**
  * Next.js Middleware for route protection
  * Checks that the access_token cookie exists AND is not expired (JWT exp claim).
  *
- * Admin-only access is enforced here before rendering any dashboard route.
+ * CMS roles (admin + encargado) are enforced here before rendering dashboard routes.
  */
 
 function isTokenExpired(token: string): boolean {
@@ -35,7 +40,8 @@ export function middleware(request: NextRequest) {
   const isProtectedRoute = pathname.startsWith("/dashboard");
 
   const hasValidToken = token && !isTokenExpired(token);
-  const hasAdminRole = isAdminRole(userRole);
+  const hasCmsRole = isCmsRole(userRole);
+  const normalizedRole = normalizeUserRole(userRole);
 
   // Block unauthenticated/expired users from protected routes
   if (!hasValidToken && isProtectedRoute) {
@@ -47,7 +53,7 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  if (hasValidToken && isProtectedRoute && !hasAdminRole) {
+  if (hasValidToken && isProtectedRoute && !hasCmsRole) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("error", "admin_only");
     const response = NextResponse.redirect(loginUrl);
@@ -57,14 +63,28 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  if (
+    hasValidToken &&
+    pathname === "/dashboard" &&
+    normalizedRole === ENCARGADO_ROLE
+  ) {
+    return NextResponse.redirect(
+      new URL("/dashboard/assignments", request.url),
+    );
+  }
+
   // Redirect authenticated users away from login page
-  if (hasValidToken && isAuthPage && hasAdminRole) {
+  if (hasValidToken && isAuthPage && hasCmsRole) {
     const redirect = request.nextUrl.searchParams.get("redirect");
-    const targetUrl = redirect || "/dashboard";
+    const targetUrl =
+      redirect ||
+      (normalizedRole === ENCARGADO_ROLE
+        ? "/dashboard/assignments"
+        : "/dashboard");
     return NextResponse.redirect(new URL(targetUrl, request.url));
   }
 
-  if (hasValidToken && isAuthPage && !hasAdminRole) {
+  if (hasValidToken && isAuthPage && !hasCmsRole) {
     const response = NextResponse.next();
     response.cookies.delete("access_token");
     response.cookies.delete("refresh_token");

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Survey } from "@/types";
+import { User } from "@/types";
 import { userService } from "@/lib/api/user.service";
 import { surveyService } from "@/lib/api/survey.service";
+import { assignmentService } from "@/lib/api/assignment.service";
+import { useAuthStore } from "@/store/auth-store";
 import {
   X,
   ClipboardList,
@@ -22,6 +24,11 @@ interface AssignSurveyModalProps {
   preselectedSurvey?: { id: number; title: string } | null;
 }
 
+interface SurveyOption {
+  id: number;
+  title: string;
+}
+
 export default function AssignSurveyModal({
   isOpen,
   onClose,
@@ -29,9 +36,10 @@ export default function AssignSurveyModal({
   isLoading = false,
   preselectedSurvey,
 }: AssignSurveyModalProps) {
+  const currentUser = useAuthStore((state) => state.user);
   const [encargados, setEncargados] = useState<User[]>([]);
   const [brigadistas, setBrigadistas] = useState<User[]>([]);
-  const [surveys, setSurveys] = useState<Survey[]>([]);
+  const [surveys, setSurveys] = useState<SurveyOption[]>([]);
   const [loadingData, setLoadingData] = useState(false);
 
   const [surveyId, setSurveyId] = useState<number | "">("");
@@ -53,14 +61,45 @@ export default function AssignSurveyModal({
     const load = async () => {
       setLoadingData(true);
       try {
-        const [enc, brig, surveyList] = await Promise.all([
+        const [enc, brig] = await Promise.all([
           userService.getUsers({ rol: "encargado", activo: true }),
           userService.getUsers({ rol: "brigadista", activo: true }),
-          surveyService.getSurveys({ limit: 200 }),
         ]);
+
+        let surveyOptions: SurveyOption[] = [];
+        if (currentUser?.rol === "encargado" && currentUser.id) {
+          const myAssignments = await assignmentService.getAssignments({
+            status: "active",
+            limit: 500,
+          });
+          const surveyMap = new Map<number, SurveyOption>();
+
+          myAssignments.forEach((assignment) => {
+            if (
+              assignment.user_id === currentUser.id &&
+              assignment.user?.role === "encargado" &&
+              assignment.survey
+            ) {
+              surveyMap.set(assignment.survey_id, {
+                id: assignment.survey.id,
+                title: assignment.survey.title,
+              });
+            }
+          });
+
+          surveyOptions = Array.from(surveyMap.values()).sort((a, b) =>
+            a.title.localeCompare(b.title),
+          );
+        } else {
+          const surveyList = await surveyService.getSurveys({ limit: 200 });
+          surveyOptions = surveyList
+            .filter((s) => s.is_active)
+            .map((s) => ({ id: s.id, title: s.title }));
+        }
+
         setEncargados(enc);
         setBrigadistas(brig);
-        setSurveys(surveyList.filter((s) => s.is_active));
+        setSurveys(surveyOptions);
       } catch {
         setError("Error al cargar datos.");
       } finally {
@@ -68,7 +107,7 @@ export default function AssignSurveyModal({
       }
     };
     load();
-  }, [isOpen, preselectedSurvey]);
+  }, [isOpen, preselectedSurvey, currentUser?.id, currentUser?.rol]);
 
   const activeUsers = roleTab === "encargado" ? encargados : brigadistas;
 

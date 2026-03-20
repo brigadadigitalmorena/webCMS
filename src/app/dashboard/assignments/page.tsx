@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAsync } from "@/hooks/use-async";
 import { useDisclosure } from "@/hooks/use-disclosure";
 import { toast } from "sonner";
 import { Assignment, AssignmentStatus } from "@/types";
 import { assignmentService } from "@/lib/api/assignment.service";
 import AssignSurveyModal from "@/components/assignment/assign-survey-modal";
+import { useAuthStore } from "@/store/auth-store";
 import {
   Plus,
   RefreshCw,
@@ -87,10 +88,12 @@ function AssignedUserCard({
   assignment,
   onDelete,
   onToggleStatus,
+  isSelfProtected,
 }: {
   assignment: Assignment;
   onDelete: (id: number) => void;
   onToggleStatus: (id: number, current: AssignmentStatus) => void;
+  isSelfProtected: boolean;
 }) {
   const user = assignment.user;
   const initials = user?.full_name
@@ -138,12 +141,23 @@ function AssignedUserCard({
         <StatusBadge status={assignment.status} />
         <button
           onClick={() => onToggleStatus(assignment.id, assignment.status)}
-          className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${
+          className={`p-1 rounded transition-all ${
+            isSelfProtected
+              ? "opacity-40 cursor-not-allowed text-gray-300 dark:text-gray-600"
+              : "opacity-0 group-hover:opacity-100"
+          } ${
             isActive
               ? "text-gray-300 dark:text-gray-600 hover:text-orange-500 hover:bg-orange-50"
               : "text-gray-300 dark:text-gray-600 hover:text-green-600 hover:bg-green-50"
           }`}
-          title={isActive ? "Desactivar asignacion" : "Reactivar asignacion"}
+          title={
+            isSelfProtected
+              ? "No puedes desactivarte de esta encuesta"
+              : isActive
+                ? "Desactivar asignacion"
+                : "Reactivar asignacion"
+          }
+          disabled={isSelfProtected}
         >
           {isActive ? (
             <ToggleLeft className="h-4 w-4" />
@@ -153,8 +167,17 @@ function AssignedUserCard({
         </button>
         <button
           onClick={() => onDelete(assignment.id)}
-          className="p-1 rounded text-gray-300 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
-          title="Eliminar asignacion"
+          className={`p-1 rounded transition-all ${
+            isSelfProtected
+              ? "opacity-40 cursor-not-allowed text-gray-300 dark:text-gray-600"
+              : "text-gray-300 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"
+          }`}
+          title={
+            isSelfProtected
+              ? "No puedes eliminarte de esta encuesta"
+              : "Eliminar asignacion"
+          }
+          disabled={isSelfProtected}
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
@@ -168,11 +191,15 @@ function SurveyCard({
   onDelete,
   onAddUser,
   onToggleStatus,
+  currentUserId,
+  currentUserRole,
 }: {
   group: SurveyGroup;
   onDelete: (id: number) => void;
   onAddUser: (surveyId: number, surveyTitle: string) => void;
   onToggleStatus: (id: number, current: AssignmentStatus) => void;
+  currentUserId?: number;
+  currentUserRole?: string;
 }) {
   const [open, setOpen] = useState(true);
   const all = [...group.encargados, ...group.brigadistas];
@@ -246,6 +273,10 @@ function SurveyCard({
                     assignment={a}
                     onDelete={onDelete}
                     onToggleStatus={onToggleStatus}
+                    isSelfProtected={
+                      currentUserRole === "encargado" &&
+                      currentUserId === a.user_id
+                    }
                   />
                 ))}
               </div>
@@ -270,6 +301,10 @@ function SurveyCard({
                     assignment={a}
                     onDelete={onDelete}
                     onToggleStatus={onToggleStatus}
+                    isSelfProtected={
+                      currentUserRole === "encargado" &&
+                      currentUserId === a.user_id
+                    }
                   />
                 ))}
               </div>
@@ -282,6 +317,7 @@ function SurveyCard({
 }
 
 export default function AssignmentsPage() {
+  const currentUser = useAuthStore((state) => state.user);
   const {
     data: assignments,
     isLoading,
@@ -292,8 +328,30 @@ export default function AssignmentsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const assignModal = useDisclosure<{ id: number; title: string }>();
 
+  const visibleAssignments = useMemo(() => {
+    const allAssignments = assignments ?? [];
+    if (currentUser?.rol !== "encargado" || !currentUser.id) {
+      return allAssignments;
+    }
+
+    const managedSurveyIds = new Set(
+      allAssignments
+        .filter(
+          (assignment) =>
+            assignment.user_id === currentUser.id &&
+            assignment.user?.role === "encargado" &&
+            assignment.status === "active",
+        )
+        .map((assignment) => assignment.survey_id),
+    );
+
+    return allAssignments.filter((assignment) =>
+      managedSurveyIds.has(assignment.survey_id),
+    );
+  }, [assignments, currentUser?.id, currentUser?.rol]);
+
   const groups: SurveyGroup[] = Object.values(
-    (assignments ?? []).reduce<Record<number, SurveyGroup>>((acc, a) => {
+    visibleAssignments.reduce<Record<number, SurveyGroup>>((acc, a) => {
       const sid = a.survey_id;
       if (!acc[sid]) {
         acc[sid] = {
@@ -309,7 +367,7 @@ export default function AssignmentsPage() {
     }, {}),
   ).sort((a, b) => a.surveyTitle.localeCompare(b.surveyTitle));
 
-  const totalResponses = (assignments ?? []).reduce(
+  const totalResponses = visibleAssignments.reduce(
     (s, a) => s + (a.response_count ?? 0),
     0,
   );
@@ -322,12 +380,12 @@ export default function AssignmentsPage() {
     },
     {
       label: "Personas asignadas",
-      value: (assignments ?? []).length,
+      value: visibleAssignments.length,
       color: "text-gray-700 dark:text-gray-300",
     },
     {
       label: "Activos",
-      value: (assignments ?? []).filter((a) => a.status === "active").length,
+      value: visibleAssignments.filter((a) => a.status === "active").length,
       color: "text-green-600",
     },
     {
@@ -514,6 +572,8 @@ export default function AssignmentsPage() {
               onDelete={handleDelete}
               onAddUser={openModal}
               onToggleStatus={handleToggleStatus}
+              currentUserId={currentUser?.id}
+              currentUserRole={currentUser?.rol}
             />
           ))}
         </div>

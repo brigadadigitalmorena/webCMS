@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Survey, SurveyVersion } from "@/types";
 import {
   X,
@@ -33,17 +34,29 @@ export default function SurveyDetailsModal({
   onPublish,
   isPublishing = false,
 }: SurveyDetailsModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [previewVersion, setPreviewVersion] = useState<SurveyVersion | null>(
     null,
   );
 
-  if (!isOpen || !survey) return null;
+  useEffect(() => {
+    if (!isOpen) {
+      setPreviewVersion(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!isOpen || !survey || !mounted) return null;
 
   const publishedVersion = survey.versions?.find((v) => v.is_published);
 
-  return (
+  return createPortal(
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div className="bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-lg max-w-4xl w-full max-h-[95dvh] sm:max-h-[90vh] overflow-hidden flex flex-col">
           {/* Header */}
           <div className="flex items-start justify-between p-4 sm:p-6 border-b">
@@ -307,6 +320,7 @@ export default function SurveyDetailsModal({
         surveyTitle={survey.title}
         surveyDescription={survey.description}
       />
-    </>
+    </>,
+    document.body,
   );
 }

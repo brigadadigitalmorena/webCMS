@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/lib/api";
 import { resetApiSession } from "@/lib/api/client";
-import { isAdminRole } from "@/lib/auth/constants";
+import { isCmsRole } from "@/lib/auth/constants";
 
 /**
  * Hook to handle authentication state.
@@ -37,9 +37,9 @@ export function useAuth() {
       setError(null);
       const userProfile = await authService.login({ email, password });
 
-      if (!isAdminRole(userProfile.rol)) {
+      if (!isCmsRole(userProfile.rol)) {
         throw new Error(
-          "Este acceso esta disponible solo para administradores",
+          "Este acceso esta disponible solo para administradores y encargados",
         );
       }
 
@@ -47,7 +47,11 @@ export function useAuth() {
       login(userProfile);
 
       const target =
-        redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard";
+        redirectTo && redirectTo.startsWith("/")
+          ? redirectTo
+          : userProfile.rol === "encargado"
+            ? "/dashboard/assignments"
+            : "/dashboard";
       window.location.assign(target);
     } catch (err: any) {
       const errorMessage =
@@ -130,7 +134,7 @@ export function useRequireAuth() {
       return;
     }
 
-    if (!isAdminRole(user?.rol)) {
+    if (!isCmsRole(user?.rol)) {
       logout();
       setIsChecking(false);
       window.location.href = "/login?error=admin_only";

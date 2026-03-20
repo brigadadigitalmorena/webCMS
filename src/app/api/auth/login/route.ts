@@ -7,9 +7,9 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import {
-  ADMIN_ROLE,
   USER_ROLE_COOKIE,
-  isAdminRole,
+  normalizeUserRole,
+  isCmsRole,
 } from "@/lib/auth/constants";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -42,9 +42,14 @@ export async function POST(request: NextRequest) {
     const data = await backendRes.json();
     // data = { access_token, refresh_token, token_type, user }
 
-    if (!isAdminRole(data.user?.rol ?? data.user?.role)) {
+    const userRole = normalizeUserRole(data.user?.rol ?? data.user?.role);
+
+    if (!isCmsRole(userRole)) {
       const response = NextResponse.json(
-        { detail: "Este acceso esta disponible solo para administradores" },
+        {
+          detail:
+            "Este acceso esta disponible solo para administradores y encargados",
+        },
         { status: 403 },
       );
 
@@ -94,7 +99,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    response.cookies.set(USER_ROLE_COOKIE, ADMIN_ROLE, {
+    response.cookies.set(USER_ROLE_COOKIE, userRole ?? "", {
       httpOnly: true,
       secure: IS_PRODUCTION,
       sameSite: "lax",
