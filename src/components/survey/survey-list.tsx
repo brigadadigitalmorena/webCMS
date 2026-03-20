@@ -23,6 +23,8 @@ interface SurveyListProps {
   onEdit: (survey: Survey) => void;
   onDelete: (survey: Survey) => void;
   onToggleStatus: (survey: Survey) => void;
+  canEdit?: boolean;
+  canAdminActions?: boolean;
 }
 
 export default function SurveyList({
@@ -31,6 +33,8 @@ export default function SurveyList({
   onEdit,
   onDelete,
   onToggleStatus,
+  canEdit = true,
+  canAdminActions = true,
 }: SurveyListProps) {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
@@ -120,27 +124,33 @@ export default function SurveyList({
                   <Eye className="h-3.5 w-3.5" />
                   Ver
                 </button>
-                <button
-                  onClick={() => onEdit(survey)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                  Editar
-                </button>
-                <button
-                  onClick={() => onToggleStatus(survey)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
-                >
-                  <Power className="h-3.5 w-3.5" />
-                  {survey.is_active ? "Desactivar" : "Activar"}
-                </button>
-                <button
-                  onClick={() => onDelete(survey)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Eliminar
-                </button>
+                {canEdit && (
+                  <button
+                    onClick={() => onEdit(survey)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Editar
+                  </button>
+                )}
+                {canAdminActions && (
+                  <>
+                    <button
+                      onClick={() => onToggleStatus(survey)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-colors"
+                    >
+                      <Power className="h-3.5 w-3.5" />
+                      {survey.is_active ? "Desactivar" : "Activar"}
+                    </button>
+                    <button
+                      onClick={() => onDelete(survey)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Eliminar
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           );
@@ -345,45 +355,51 @@ export default function SurveyList({
                               <Eye className="h-4 w-4" />
                               Ver versiones
                             </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit(survey);
-                                setOpenMenuId(null);
-                              }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                            >
-                              <Pencil className="h-4 w-4" />
-                              <span>
-                                Editar
-                                <span className="block text-xs text-gray-400 dark:text-gray-500 leading-none mt-0.5">
-                                  (crea nueva versión)
+                            {canEdit && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEdit(survey);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                              >
+                                <Pencil className="h-4 w-4" />
+                                <span>
+                                  Editar
+                                  <span className="block text-xs text-gray-400 dark:text-gray-500 leading-none mt-0.5">
+                                    (crea nueva versión)
+                                  </span>
                                 </span>
-                              </span>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onToggleStatus(survey);
-                                setOpenMenuId(null);
-                              }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                            >
-                              <Power className="h-4 w-4" />
-                              {survey.is_active ? "Desactivar" : "Activar"}
-                            </button>
-                            <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(survey);
-                                setOpenMenuId(null);
-                              }}
-                              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              Eliminar
-                            </button>
+                              </button>
+                            )}
+                            {canAdminActions && (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onToggleStatus(survey);
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                                >
+                                  <Power className="h-4 w-4" />
+                                  {survey.is_active ? "Desactivar" : "Activar"}
+                                </button>
+                                <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete(survey);
+                                    setOpenMenuId(null);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  Eliminar
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       )}

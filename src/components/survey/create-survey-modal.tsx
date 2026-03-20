@@ -343,11 +343,19 @@ export default function CreateSurveyModal({
       toast.warning("Debes agregar un título y al menos una pregunta");
       return;
     }
+
+    const startDateTime = startsAt
+      ? new Date(`${startsAt}T00:00:00`).toISOString()
+      : null;
+    const endDateTime = endsAt
+      ? new Date(`${endsAt}T23:59:59`).toISOString()
+      : null;
+
     onSubmit({
       title,
       description,
-      starts_at: startsAt || null,
-      ends_at: endsAt || null,
+      starts_at: startDateTime,
+      ends_at: endDateTime,
       estimated_duration_minutes: durationMinutes
         ? parseInt(durationMinutes)
         : null,

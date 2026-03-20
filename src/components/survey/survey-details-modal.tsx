@@ -25,6 +25,7 @@ interface SurveyDetailsModalProps {
   survey: Survey | null;
   onPublish: (versionId: number) => void;
   isPublishing?: boolean;
+  canPublish?: boolean;
 }
 
 export default function SurveyDetailsModal({
@@ -33,6 +34,7 @@ export default function SurveyDetailsModal({
   survey,
   onPublish,
   isPublishing = false,
+  canPublish = true,
 }: SurveyDetailsModalProps) {
   const [mounted, setMounted] = useState(false);
   const [previewVersion, setPreviewVersion] = useState<SurveyVersion | null>(
@@ -297,6 +299,7 @@ export default function SurveyDetailsModal({
               onPublish={onPublish}
               onPreview={setPreviewVersion}
               isPublishing={isPublishing}
+              canPublish={canPublish}
             />
           </div>
 

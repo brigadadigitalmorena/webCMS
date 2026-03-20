@@ -18,6 +18,7 @@ interface SurveyVersionsProps {
   onPublish: (versionId: number) => void;
   onPreview: (version: SurveyVersion) => void;
   isPublishing?: boolean;
+  canPublish?: boolean;
 }
 
 export default function SurveyVersions({
@@ -25,6 +26,7 @@ export default function SurveyVersions({
   onPublish,
   onPreview,
   isPublishing = false,
+  canPublish = true,
 }: SurveyVersionsProps) {
   const [expandedVersions, setExpandedVersions] = useState<Set<number>>(
     new Set(),
@@ -143,7 +145,7 @@ export default function SurveyVersions({
                       <Eye className="h-5 w-5" />
                     </button>
 
-                    {!version.is_published && (
+                    {canPublish && !version.is_published && (
                       <button
                         onClick={() => onPublish(version.id)}
                         disabled={isPublishing}

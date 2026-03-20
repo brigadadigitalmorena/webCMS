@@ -10,8 +10,12 @@ import SurveyDetailsModal from "@/components/survey/survey-details-modal";
 import { Plus, Search, Filter, RefreshCw } from "lucide-react";
 import { useAsync } from "@/hooks/use-async";
 import { useDisclosure } from "@/hooks/use-disclosure";
+import { useRole } from "@/hooks/use-role";
 
 export default function SurveysPage() {
+  const { isAdmin, isEncargado } = useRole();
+  const canEditSurvey = isAdmin || isEncargado;
+  const canPublishSurvey = isAdmin || isEncargado;
   const [searchTerm, setSearchTerm] = useState("");
   const [filterActive, setFilterActive] = useState<boolean | undefined>(
     undefined,
@@ -48,6 +52,11 @@ export default function SurveysPage() {
       await surveyService.createSurvey(data);
       editModal.close();
       await loadSurveys();
+      toast.success(
+        isAdmin
+          ? "Encuesta creada correctamente"
+          : "Encuesta creada y asignada automaticamente a ti como encargado",
+      );
     } catch (error: any) {
       console.error("Error creating survey:", error);
       toast.error(error.response?.data?.detail || "Error al crear la encuesta");
@@ -66,6 +75,11 @@ export default function SurveysPage() {
     allow_anonymous?: boolean;
     questions: Omit<Question, "id" | "version_id">[];
   }) => {
+    if (!canEditSurvey) {
+      toast.error("No tienes permisos para editar encuestas.");
+      return;
+    }
+
     if (!editModal.data) return;
 
     try {
@@ -87,6 +101,11 @@ export default function SurveysPage() {
   };
 
   const handleDeleteSurvey = async (survey: Survey) => {
+    if (!isAdmin) {
+      toast.error("Solo administradores pueden eliminar encuestas.");
+      return;
+    }
+
     if (
       !confirm(
         `¿Estás seguro de eliminar la encuesta "${survey.title}"? Esta acción no se puede deshacer.`,
@@ -105,6 +124,11 @@ export default function SurveysPage() {
   };
 
   const handleToggleStatus = async (survey: Survey) => {
+    if (!isAdmin) {
+      toast.error("Solo administradores pueden cambiar el estado.");
+      return;
+    }
+
     try {
       await surveyService.updateSurvey(survey.id, {
         is_active: !survey.is_active,
@@ -127,6 +151,11 @@ export default function SurveysPage() {
   };
 
   const handlePublishVersion = async (versionId: number) => {
+    if (!canPublishSurvey) {
+      toast.error("No tienes permisos para publicar versiones.");
+      return;
+    }
+
     if (!detailsModal.data) return;
 
     if (
@@ -268,6 +297,8 @@ export default function SurveysPage() {
           onEdit={handleEdit}
           onDelete={handleDeleteSurvey}
           onToggleStatus={handleToggleStatus}
+          canEdit={canEditSurvey}
+          canAdminActions={isAdmin}
         />
       )}
 
@@ -301,6 +332,7 @@ export default function SurveysPage() {
         survey={detailsModal.data ?? null}
         onPublish={handlePublishVersion}
         isPublishing={isPublishing}
+        canPublish={canPublishSurvey}
       />
     </div>
   );
