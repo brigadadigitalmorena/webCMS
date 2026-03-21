@@ -42,6 +42,24 @@ interface QuestionAnalytics {
   samples?: string[];
 }
 
+interface UserPerformance {
+  user_id: number;
+  user_name: string;
+  responses: number;
+  avg_answered_questions: number;
+  completion_rate_pct: number;
+  avg_duration_min: number | null;
+  score: number;
+}
+
+interface UserRisk {
+  user_id: number;
+  user_name: string;
+  level: "low" | "medium" | "high";
+  risk_score: number;
+  reasons: string[];
+}
+
 const CHOICE_TYPES = new Set([
   "multiple_choice",
   "radio",
@@ -108,6 +126,186 @@ function buildAnalytics(rows: ExportRow[]): QuestionAnalytics[] {
       return { ...base, samples };
     })
     .sort((a, b) => a.question_order - b.question_order);
+}
+
+function toMinutes(
+  startedAt: string | null,
+  completedAt: string | null,
+): number | null {
+  if (!startedAt || !completedAt) return null;
+  const start = parseISO(startedAt);
+  const end = parseISO(completedAt);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return null;
+  }
+  const minutes = (end.getTime() - start.getTime()) / 60000;
+  return minutes >= 0 ? minutes : null;
+}
+
+function buildUserPerformance(rows: ExportRow[]): UserPerformance[] {
+  if (rows.length === 0) return [];
+
+  const totalQuestions = new Set(rows.map((r) => r.question_id)).size || 1;
+  const responsesById = new Map<
+    number,
+    {
+      user_id: number;
+      user_name: string;
+      started_at: string | null;
+      completed_at: string | null;
+      answered_questions: Set<number>;
+    }
+  >();
+
+  for (const row of rows) {
+    if (!responsesById.has(row.response_id)) {
+      responsesById.set(row.response_id, {
+        user_id: row.user_id,
+        user_name:
+          row.user_name?.trim() ||
+          row.user_email?.trim() ||
+          `Usuario ${row.user_id}`,
+        started_at: row.started_at,
+        completed_at: row.completed_at,
+        answered_questions: new Set<number>(),
+      });
+    }
+
+    const response = responsesById.get(row.response_id)!;
+    response.answered_questions.add(row.question_id);
+    if (!response.started_at && row.started_at)
+      response.started_at = row.started_at;
+    if (!response.completed_at && row.completed_at)
+      response.completed_at = row.completed_at;
+  }
+
+  const byUser = new Map<
+    number,
+    {
+      user_name: string;
+      responses: number;
+      answered_questions_total: number;
+      completion_rate_total: number;
+      duration_samples: number[];
+    }
+  >();
+
+  for (const response of Array.from(responsesById.values())) {
+    const answeredCount = response.answered_questions.size;
+    const completionPct = (answeredCount / totalQuestions) * 100;
+    const durationMin = toMinutes(response.started_at, response.completed_at);
+
+    if (!byUser.has(response.user_id)) {
+      byUser.set(response.user_id, {
+        user_name: response.user_name,
+        responses: 0,
+        answered_questions_total: 0,
+        completion_rate_total: 0,
+        duration_samples: [],
+      });
+    }
+
+    const user = byUser.get(response.user_id)!;
+    user.responses += 1;
+    user.answered_questions_total += answeredCount;
+    user.completion_rate_total += completionPct;
+    if (durationMin !== null) user.duration_samples.push(durationMin);
+  }
+
+  const preliminary = Array.from(byUser.entries()).map(([userId, data]) => {
+    const avgDuration =
+      data.duration_samples.length > 0
+        ? data.duration_samples.reduce((a, b) => a + b, 0) /
+          data.duration_samples.length
+        : null;
+
+    return {
+      user_id: userId,
+      user_name: data.user_name,
+      responses: data.responses,
+      avg_answered_questions: data.answered_questions_total / data.responses,
+      completion_rate_pct: data.completion_rate_total / data.responses,
+      avg_duration_min: avgDuration,
+    };
+  });
+
+  const minAvgDuration = preliminary
+    .map((u) => u.avg_duration_min)
+    .filter((n): n is number => n !== null)
+    .reduce((min, n) => Math.min(min, n), Number.POSITIVE_INFINITY);
+
+  return preliminary
+    .map((u) => {
+      const durationScore =
+        u.avg_duration_min !== null && Number.isFinite(minAvgDuration)
+          ? Math.max(
+              35,
+              Math.min(100, (minAvgDuration / u.avg_duration_min) * 100),
+            )
+          : 60;
+      const volumeScore = Math.min(100, 40 + u.responses * 10);
+      const qualityScore = Math.min(100, u.completion_rate_pct);
+      const score =
+        qualityScore * 0.5 + durationScore * 0.3 + volumeScore * 0.2;
+
+      return {
+        ...u,
+        score,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
+}
+
+function formatDuration(minutes: number | null): string {
+  if (minutes === null) return "—";
+  if (minutes < 1) return "< 1 min";
+  if (minutes < 60) return `${minutes.toFixed(1)} min`;
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return `${hours}h ${mins}m`;
+}
+
+function buildUserRisk(performance: UserPerformance[]): UserRisk[] {
+  return performance
+    .map((u) => {
+      let risk = 0;
+      const reasons: string[] = [];
+
+      if (u.completion_rate_pct < 70) {
+        risk += 35;
+        reasons.push("Completitud baja (<70%)");
+      } else if (u.completion_rate_pct < 85) {
+        risk += 15;
+        reasons.push("Completitud media (<85%)");
+      }
+
+      if (u.avg_duration_min !== null && u.avg_duration_min < 1.5) {
+        risk += 30;
+        reasons.push("Tiempo promedio inusualmente rápido");
+      }
+
+      if (u.responses >= 3 && u.score < 60) {
+        risk += 20;
+        reasons.push("Score de desempeño bajo");
+      }
+
+      if (u.responses === 1) {
+        risk += 10;
+        reasons.push("Muestra limitada (1 respuesta)");
+      }
+
+      const level: UserRisk["level"] =
+        risk >= 60 ? "high" : risk >= 30 ? "medium" : "low";
+
+      return {
+        user_id: u.user_id,
+        user_name: u.user_name,
+        level,
+        risk_score: Math.min(100, risk),
+        reasons,
+      };
+    })
+    .sort((a, b) => b.risk_score - a.risk_score);
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -246,6 +444,14 @@ export function SurveyDetailModal({
   };
 
   const analytics = useMemo(() => buildAnalytics(exportRows), [exportRows]);
+  const performanceByUser = useMemo(
+    () => buildUserPerformance(exportRows),
+    [exportRows],
+  );
+  const riskByUser = useMemo(
+    () => buildUserRisk(performanceByUser),
+    [performanceByUser],
+  );
 
   // Group rows by response_id for the raw-responses tab
   const responseMap = useMemo(() => {
@@ -494,6 +700,149 @@ export function SurveyDetailModal({
                   </div>
                 </div>
               )}
+
+              {/* User performance analytics */}
+              {performanceByUser.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+                    Performance por Usuario
+                  </h3>
+
+                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <table className="w-full text-xs sm:text-sm">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400">
+                          <th className="text-left px-3 py-2 font-medium">
+                            Usuario
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium">
+                            Respuestas
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium hidden sm:table-cell">
+                            Prom. preguntas
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium">
+                            Completitud
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium hidden md:table-cell">
+                            Tiempo prom.
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium">
+                            Score
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                        {performanceByUser.map((user, idx) => (
+                          <tr
+                            key={user.user_id}
+                            className="text-gray-700 dark:text-gray-300"
+                          >
+                            <td className="px-3 py-2 font-medium">
+                              {user.user_name}
+                              {idx < 3 && (
+                                <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 uppercase tracking-wide">
+                                  Top {idx + 1}
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              {user.responses}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums hidden sm:table-cell">
+                              {user.avg_answered_questions.toFixed(1)}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              {user.completion_rate_pct.toFixed(0)}%
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums hidden md:table-cell">
+                              {formatDuration(user.avg_duration_min)}
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              <span className="inline-flex items-center justify-end min-w-[3.5rem] px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold tabular-nums">
+                                {user.score.toFixed(0)}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* User risk analytics */}
+              {riskByUser.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+                    Riesgo por Usuario
+                  </h3>
+
+                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <table className="w-full text-xs sm:text-sm">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400">
+                          <th className="text-left px-3 py-2 font-medium">
+                            Usuario
+                          </th>
+                          <th className="text-center px-3 py-2 font-medium">
+                            Nivel
+                          </th>
+                          <th className="text-right px-3 py-2 font-medium">
+                            Riesgo
+                          </th>
+                          <th className="text-left px-3 py-2 font-medium hidden md:table-cell">
+                            Motivos
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                        {riskByUser.map((u) => {
+                          const badgeClass =
+                            u.level === "high"
+                              ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                              : u.level === "medium"
+                                ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
+                                : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
+
+                          const levelLabel =
+                            u.level === "high"
+                              ? "Alto"
+                              : u.level === "medium"
+                                ? "Medio"
+                                : "Bajo";
+
+                          return (
+                            <tr
+                              key={u.user_id}
+                              className="text-gray-700 dark:text-gray-300"
+                            >
+                              <td className="px-3 py-2 font-medium">
+                                {u.user_name}
+                              </td>
+                              <td className="px-3 py-2 text-center">
+                                <span
+                                  className={`inline-flex px-2 py-0.5 rounded text-xs font-semibold ${badgeClass}`}
+                                >
+                                  {levelLabel}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-right tabular-nums font-semibold">
+                                {u.risk_score}
+                              </td>
+                              <td className="px-3 py-2 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">
+                                {u.reasons.length > 0
+                                  ? u.reasons.join("; ")
+                                  : "Sin alertas relevantes"}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </>
           ) : /* Raw responses tab */
           responseMap.length === 0 ? (
@@ -523,7 +872,9 @@ export function SurveyDetailModal({
                           #{responseId}
                         </span>
                         <span className="text-sm text-gray-700 dark:text-gray-300">
-                          Usuario {first.user_id}
+                          {first.user_name?.trim() ||
+                            first.user_email?.trim() ||
+                            `Usuario ${first.user_id}`}
                         </span>
                         <span className="text-xs text-gray-400 dark:text-gray-500">
                           {rows.length} preg.

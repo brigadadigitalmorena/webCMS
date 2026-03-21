@@ -6,11 +6,22 @@ export interface SurveySummary {
   last_response_at: string | null;
 }
 
+export interface SurveyRiskSummary {
+  survey_id: number;
+  high_risk_users: number;
+  medium_risk_users: number;
+  low_risk_users: number;
+  at_risk_users: number;
+  max_risk_score: number;
+}
+
 export interface ExportRow {
   survey_id: number;
   survey_title: string;
   response_id: number;
   user_id: number;
+  user_name?: string | null;
+  user_email?: string | null;
   client_id: string;
   completed_at: string | null;
   started_at: string | null;

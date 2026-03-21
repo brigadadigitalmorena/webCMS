@@ -37,7 +37,12 @@ import {
 import { KpiCard } from "./_components/kpi-card";
 import { SurveyDetailModal } from "./_components/survey-detail-modal";
 import { exportSummaryCSV } from "./_lib/export";
-import type { SurveySummary, ExportRow, TimelinePoint } from "./_lib/types";
+import type {
+  SurveySummary,
+  SurveyRiskSummary,
+  ExportRow,
+  TimelinePoint,
+} from "./_lib/types";
 
 export default function ReportsPage() {
   const { isChecking } = useRequireAuth();
@@ -67,7 +72,7 @@ export default function ReportsPage() {
   const tooltipItemStyle = { color: theme === "dark" ? "#e5e7eb" : "#374151" };
 
   const {
-    data: summaries,
+    data: reportsData,
     isLoading,
     error,
     refetch: handleRefresh,
@@ -75,11 +80,21 @@ export default function ReportsPage() {
     const params: Record<string, string> = {};
     if (dateFrom) params.date_from = dateFrom;
     if (dateTo) params.date_to = dateTo;
-    const res = await apiClient.get<SurveySummary[]>(
-      "/admin/responses/summary",
-      { params },
-    );
-    return res.data;
+    const [summaryRes, riskRes] = await Promise.all([
+      apiClient.get<SurveySummary[]>("/admin/responses/summary", {
+        params,
+      }),
+      apiClient.get<SurveyRiskSummary[]>("/admin/responses/risk-summary", {
+        params,
+      }),
+    ]);
+
+    return {
+      summaries: summaryRes.data,
+      riskBySurvey: new Map<number, SurveyRiskSummary>(
+        riskRes.data.map((item) => [item.survey_id, item]),
+      ),
+    };
   }, [dateFrom, dateTo]);
 
   // Detail modal state
@@ -113,7 +128,9 @@ export default function ReportsPage() {
   };
 
   // ── Derived strategic metrics ──────────────────────────────────────────────
-  const all = summaries ?? [];
+  const all = reportsData?.summaries ?? [];
+  const riskBySurvey =
+    reportsData?.riskBySurvey ?? new Map<number, SurveyRiskSummary>();
   const totalResponses = all.reduce((s, r) => s + r.total_responses, 0);
   const totalSurveys = all.length;
   const surveysWithResponses = all.filter((s) => s.total_responses > 0).length;
@@ -129,6 +146,11 @@ export default function ReportsPage() {
     all.length > 0
       ? all.reduce((a, b) => (a.total_responses > b.total_responses ? a : b))
       : null;
+
+  const surveysAtRisk = all.filter((s) => {
+    const risk = riskBySurvey.get(s.survey_id);
+    return (risk?.at_risk_users ?? 0) > 0;
+  }).length;
 
   // ── Bar chart ──────────────────────────────────────────────────────────────
   const chartData = all
@@ -218,7 +240,7 @@ export default function ReportsPage() {
         )}
 
         {/* ── KPI Row 1: volume ─────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <KpiCard
             icon={TrendingUp}
             label="Total de Respuestas"
@@ -283,6 +305,19 @@ export default function ReportsPage() {
                 : "bg-gray-50 dark:bg-gray-800"
             }
             trend={surveysNoActivity > 0 ? "down" : "neutral"}
+          />
+          <KpiCard
+            icon={AlertCircle}
+            label="Encuestas en Riesgo"
+            value={isLoading ? "—" : surveysAtRisk.toString()}
+            sub="con usuarios en riesgo"
+            color={surveysAtRisk > 0 ? "text-red-600" : "text-emerald-600"}
+            bg={
+              surveysAtRisk > 0
+                ? "bg-red-50 dark:bg-red-900/20"
+                : "bg-emerald-50 dark:bg-emerald-900/20"
+            }
+            trend={surveysAtRisk > 0 ? "down" : "up"}
           />
         </div>
 
@@ -403,12 +438,33 @@ export default function ReportsPage() {
                       Última Resp.
                     </th>
                     <th className="text-center px-4 py-3 font-medium text-gray-600 dark:text-gray-400">
+                      Riesgo
+                    </th>
+                    <th className="text-center px-4 py-3 font-medium text-gray-600 dark:text-gray-400">
                       Análisis
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {all.map((s) => (
+                  {all.map((s) => {
+                    const risk = riskBySurvey.get(s.survey_id);
+                    const atRisk = risk?.at_risk_users ?? 0;
+                    const high = risk?.high_risk_users ?? 0;
+                    const level = high > 0 ? "high" : atRisk > 0 ? "medium" : "low";
+                    const riskBadgeClass =
+                      level === "high"
+                        ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                        : level === "medium"
+                          ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
+                          : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
+                    const riskLabel =
+                      level === "high"
+                        ? "Alto"
+                        : level === "medium"
+                          ? "Medio"
+                          : "Bajo";
+
+                    return (
                     <tr
                       key={s.survey_id}
                       className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -448,6 +504,15 @@ export default function ReportsPage() {
                           : "—"}
                       </td>
                       <td className="px-4 py-4 text-center">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${riskBadgeClass}`}
+                          title={`Usuarios en riesgo: ${atRisk}`}
+                        >
+                          {riskLabel}
+                          {atRisk > 0 && <span className="ml-1">({atRisk})</span>}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-center">
                         <button
                           onClick={() => handleOpenSurvey(s)}
                           disabled={s.total_responses === 0}
@@ -462,7 +527,8 @@ export default function ReportsPage() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
