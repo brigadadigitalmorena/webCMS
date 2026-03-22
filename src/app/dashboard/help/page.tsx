@@ -145,7 +145,7 @@ export default function HelpPage() {
             },
             {
               q: "¿Cuál es la diferencia entre roles?",
-              a: "Admin: Control total del sistema. Encargado: Puede crear encuestas y asignaciones. Brigadista: Solo puede responder encuestas y ver sus asignaciones.",
+              a: "Admin: Control total del sistema. Encargado: Puede crear encuestas y asignaciones. Auditor: Solo lectura para monitoreo (dashboard, usuarios, encuestas y reportes). Brigadista: Solo puede responder encuestas y ver sus asignaciones.",
             },
             {
               q: "¿Cómo restablezco mis cambios no guardados?",

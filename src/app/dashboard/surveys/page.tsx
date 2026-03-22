@@ -13,9 +13,10 @@ import { useDisclosure } from "@/hooks/use-disclosure";
 import { useRole } from "@/hooks/use-role";
 
 export default function SurveysPage() {
-  const { isAdmin, isEncargado } = useRole();
+  const { isAdmin, isEncargado, isAuditor } = useRole();
   const canEditSurvey = isAdmin || isEncargado;
   const canPublishSurvey = isAdmin || isEncargado;
+  const canCreateSurvey = isAdmin || isEncargado;
   const [searchTerm, setSearchTerm] = useState("");
   const [filterActive, setFilterActive] = useState<boolean | undefined>(
     undefined,
@@ -47,6 +48,11 @@ export default function SurveysPage() {
     allow_anonymous?: boolean;
     questions: Omit<Question, "id" | "version_id">[];
   }) => {
+    if (!canCreateSurvey) {
+      toast.error("No tienes permisos para crear encuestas.");
+      return;
+    }
+
     try {
       setIsSaving(true);
       await surveyService.createSurvey(data);
@@ -218,15 +224,25 @@ export default function SurveysPage() {
             Gestiona las encuestas para recopilar información
           </p>
         </div>
-        <button
-          onClick={() => editModal.open()}
-          className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-          disabled={isLoading}
-        >
-          <Plus className="h-5 w-5" />
-          Nueva Encuesta
-        </button>
+        {canCreateSurvey && (
+          <button
+            onClick={() => editModal.open()}
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            disabled={isLoading}
+          >
+            <Plus className="h-5 w-5" />
+            Nueva Encuesta
+          </button>
+        )}
       </div>
+
+      {isAuditor && (
+        <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 px-4 py-3">
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            Modo auditor: solo lectura. Puedes ver encuestas y versiones, pero no crear ni editar.
+          </p>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4">
@@ -303,27 +319,29 @@ export default function SurveysPage() {
       )}
 
       {/* Create/Edit Modal */}
-      <CreateSurveyModal
-        isOpen={editModal.isOpen}
-        onClose={editModal.close}
-        onSubmit={editModal.data ? handleEditSurvey : handleCreateSurvey}
-        initialData={
-          editModal.data
-            ? {
-                title: editModal.data.title,
-                description: editModal.data.description,
-                starts_at: editModal.data.starts_at,
-                ends_at: editModal.data.ends_at,
-                estimated_duration_minutes:
-                  editModal.data.estimated_duration_minutes,
-                max_responses: editModal.data.max_responses,
-                allow_anonymous: editModal.data.allow_anonymous,
-                questions: editModal.data.versions?.[0]?.questions || [],
-              }
-            : undefined
-        }
-        isLoading={isSaving}
-      />
+      {canEditSurvey && (
+        <CreateSurveyModal
+          isOpen={editModal.isOpen}
+          onClose={editModal.close}
+          onSubmit={editModal.data ? handleEditSurvey : handleCreateSurvey}
+          initialData={
+            editModal.data
+              ? {
+                  title: editModal.data.title,
+                  description: editModal.data.description,
+                  starts_at: editModal.data.starts_at,
+                  ends_at: editModal.data.ends_at,
+                  estimated_duration_minutes:
+                    editModal.data.estimated_duration_minutes,
+                  max_responses: editModal.data.max_responses,
+                  allow_anonymous: editModal.data.allow_anonymous,
+                  questions: editModal.data.versions?.[0]?.questions || [],
+                }
+              : undefined
+          }
+          isLoading={isSaving}
+        />
+      )}
 
       {/* Details Modal */}
       <SurveyDetailsModal

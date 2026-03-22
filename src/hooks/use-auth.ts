@@ -39,7 +39,7 @@ export function useAuth() {
 
       if (!isCmsRole(userProfile.rol)) {
         throw new Error(
-          "Este acceso esta disponible solo para administradores y encargados",
+          "Este acceso esta disponible solo para administradores, encargados y auditores",
         );
       }
 
@@ -51,6 +51,8 @@ export function useAuth() {
           ? redirectTo
           : userProfile.rol === "encargado"
             ? "/dashboard/assignments"
+            : userProfile.rol === "auditor"
+              ? "/dashboard/reports"
             : "/dashboard";
       window.location.assign(target);
     } catch (err: any) {

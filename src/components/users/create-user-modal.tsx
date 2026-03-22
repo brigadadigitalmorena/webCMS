@@ -30,7 +30,7 @@ interface InviteUserFormData {
   nombre: string;
   apellido: string;
   email: string;
-  rol: "admin" | "encargado" | "brigadista";
+  rol: "admin" | "encargado" | "brigadista" | "auditor";
   telefono?: string;
   notas?: string;
   assigned_survey_id?: string;
@@ -226,6 +226,7 @@ export function CreateUserModal({
             >
               {!isEncargado && <option value="admin">Admin</option>}
               {!isEncargado && <option value="encargado">Encargado</option>}
+              {!isEncargado && <option value="auditor">Auditor</option>}
               <option value="brigadista">Brigadista</option>
             </Select>
             <Input

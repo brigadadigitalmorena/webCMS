@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         detail:
-          "Este acceso esta disponible solo para administradores y encargados",
+          "Este acceso esta disponible solo para administradores, encargados y auditores",
       },
       { status: 403 },
     );

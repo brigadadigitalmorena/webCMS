@@ -1,5 +1,6 @@
 export const ADMIN_ROLE = "admin";
 export const ENCARGADO_ROLE = "encargado";
+export const AUDITOR_ROLE = "auditor";
 export const USER_ROLE_COOKIE = "user_role";
 
 export function normalizeUserRole(role: unknown): string | null {
@@ -12,5 +13,13 @@ export function isAdminRole(role: unknown): boolean {
 
 export function isCmsRole(role: unknown): boolean {
   const normalized = normalizeUserRole(role);
-  return normalized === ADMIN_ROLE || normalized === ENCARGADO_ROLE;
+  return (
+    normalized === ADMIN_ROLE ||
+    normalized === ENCARGADO_ROLE ||
+    normalized === AUDITOR_ROLE
+  );
+}
+
+export function isReadOnlyCmsRole(role: unknown): boolean {
+  return normalizeUserRole(role) === AUDITOR_ROLE;
 }

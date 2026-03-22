@@ -3,7 +3,14 @@
 import { useState, useMemo } from "react";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
-import { Download, X, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Download,
+  X,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Info,
+} from "lucide-react";
 import {
   LineChart,
   Line,
@@ -444,6 +451,7 @@ export function SurveyDetailModal({
   const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(
     null,
   );
+  const [showScoreGuide, setShowScoreGuide] = useState(false);
   const [expandedResponse, setExpandedResponse] = useState<number | null>(null);
   const [responseDetails, setResponseDetails] = useState<
     Record<number, ResponseDetail | undefined>
@@ -486,6 +494,107 @@ export function SurveyDetailModal({
     () => buildUserRisk(performanceByUser),
     [performanceByUser],
   );
+
+  const surveyMetadata = useMemo(() => {
+    if (exportRows.length === 0) return null;
+
+    const responses = new Map<number, ExportRow[]>();
+    const questionIds = new Set<number>();
+    const userIds = new Set<number>();
+    const typeCounts = new Map<string, number>();
+    const durations: number[] = [];
+    const completedDates: Date[] = [];
+    let responsesWithLocation = 0;
+
+    for (const row of exportRows) {
+      if (!responses.has(row.response_id)) responses.set(row.response_id, []);
+      responses.get(row.response_id)!.push(row);
+
+      questionIds.add(row.question_id);
+      userIds.add(row.user_id);
+
+      const normalizedType = getQuestionTypeLabel(row.question_type);
+      typeCounts.set(normalizedType, (typeCounts.get(normalizedType) ?? 0) + 1);
+    }
+
+    for (const rows of Array.from(responses.values())) {
+      const first = rows[0];
+
+      if (first.location && Object.keys(first.location).length > 0) {
+        responsesWithLocation += 1;
+      }
+
+      if (first.started_at && first.completed_at) {
+        const start = parseISO(first.started_at);
+        const end = parseISO(first.completed_at);
+        if (!Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())) {
+          const mins = (end.getTime() - start.getTime()) / 60000;
+          if (mins >= 0) durations.push(mins);
+        }
+      }
+
+      if (first.completed_at) {
+        const completed = parseISO(first.completed_at);
+        if (!Number.isNaN(completed.getTime())) completedDates.push(completed);
+      }
+    }
+
+    const totalResponses = responses.size;
+    const avgDuration =
+      durations.length > 0
+        ? durations.reduce((a, b) => a + b, 0) / durations.length
+        : null;
+
+    const topTypeEntry = Array.from(typeCounts.entries()).sort(
+      (a, b) => b[1] - a[1],
+    )[0];
+
+    const firstResponseAt =
+      completedDates.length > 0
+        ? new Date(Math.min(...completedDates.map((d) => d.getTime())))
+        : null;
+    const lastResponseAt =
+      completedDates.length > 0
+        ? new Date(Math.max(...completedDates.map((d) => d.getTime())))
+        : null;
+
+    const locationCoveragePct =
+      totalResponses > 0
+        ? Math.round((responsesWithLocation / totalResponses) * 100)
+        : 0;
+    const completionCoveragePct =
+      totalResponses > 0 ? Math.round((durations.length / totalResponses) * 100) : 0;
+
+    const insights: string[] = [];
+    if (locationCoveragePct >= 80) {
+      insights.push("Cobertura geográfica alta: la mayoría de respuestas incluyen ubicación.");
+    } else if (locationCoveragePct < 40) {
+      insights.push("Cobertura geográfica baja: conviene reforzar captura de ubicación en campo.");
+    }
+
+    if (avgDuration !== null && avgDuration < 2) {
+      insights.push("Tiempo promedio de respuesta muy bajo: revisar calidad o respuestas automáticas.");
+    } else if (avgDuration !== null && avgDuration > 20) {
+      insights.push("Tiempo promedio alto: revisar si la encuesta tiene fricción o demasiadas preguntas.");
+    }
+
+    if (userIds.size > 0 && totalResponses / userIds.size > 2) {
+      insights.push("Alta recurrencia por usuario: existen múltiples envíos por participante.");
+    }
+
+    return {
+      totalResponses,
+      uniqueUsers: userIds.size,
+      totalQuestions: questionIds.size,
+      topQuestionType: topTypeEntry?.[0] ?? "N/D",
+      avgDurationMin: avgDuration,
+      locationCoveragePct,
+      completionCoveragePct,
+      firstResponseAt,
+      lastResponseAt,
+      insights,
+    };
+  }, [exportRows]);
 
   // Group rows by response_id for the raw-responses tab
   const responseMap = useMemo(() => {
@@ -533,6 +642,36 @@ export function SurveyDetailModal({
   ) => {
     if (!data || Object.keys(data).length === 0) return null;
 
+    const friendlyMetaKeys: Record<string, string> = {
+      user_id: "Usuario",
+      response_id: "Respuesta",
+      client_id: "Cliente",
+      started_at: "Inicio",
+      completed_at: "Completado",
+      synced_at: "Sincronizado",
+      device_id: "ID de dispositivo",
+      device_model: "Modelo de dispositivo",
+      os: "Sistema operativo",
+      os_version: "Version del sistema",
+      app_version: "Version de app",
+      latitude: "Latitud",
+      longitude: "Longitud",
+      accuracy: "Precision",
+      speed: "Velocidad",
+      altitude: "Altitud",
+      timezone: "Zona horaria",
+      network_type: "Tipo de red",
+      battery_level: "Bateria",
+      created_at: "Creado",
+      updated_at: "Actualizado",
+    };
+
+    const toFriendlyKey = (key: string): string => {
+      if (friendlyMetaKeys[key]) return friendlyMetaKeys[key];
+      const normalized = key.replace(/_/g, " ");
+      return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    };
+
     return (
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
         <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
@@ -545,7 +684,7 @@ export function SurveyDetailModal({
               className="rounded bg-gray-50 dark:bg-gray-800 px-2.5 py-2"
             >
               <p className="text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1 break-all">
-                {key}
+                {toFriendlyKey(key)}
               </p>
               {typeof value === "object" && value !== null ? (
                 <pre className="text-xs text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words font-mono">
@@ -674,13 +813,120 @@ export function SurveyDetailModal({
                 </div>
               )}
 
+              {surveyMetadata && (
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Metadatos de la Encuesta
+                    </h3>
+                    <span
+                      className="text-gray-400 dark:text-gray-500"
+                      title="Calculado desde respuestas unicas: usuarios, preguntas, duracion, ubicacion y ventana de actividad."
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3">
+                      <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Usuarios únicos
+                      </p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {surveyMetadata.uniqueUsers}
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3">
+                      <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Preguntas totales
+                      </p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {surveyMetadata.totalQuestions}
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3">
+                      <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Tiempo prom.
+                      </p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {formatDuration(surveyMetadata.avgDurationMin)}
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3">
+                      <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        Tipo dominante
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        {surveyMetadata.topQuestionType}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-3 mb-4">
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Cobertura de ubicación
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {surveyMetadata.locationCoveragePct}%
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Respuestas con tiempo medible
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {surveyMetadata.completionCoveragePct}%
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50 dark:bg-indigo-900/20 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700 dark:text-indigo-300 mb-2">
+                      Análisis derivado de metadatos
+                    </p>
+                    {surveyMetadata.insights.length > 0 ? (
+                      <ul className="space-y-1.5 text-xs text-indigo-900 dark:text-indigo-200">
+                        {surveyMetadata.insights.map((insight) => (
+                          <li key={insight}>• {insight}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-xs text-indigo-900 dark:text-indigo-200">
+                        No hay señales fuertes en los metadatos con la muestra actual.
+                      </p>
+                    )}
+
+                    {(surveyMetadata.firstResponseAt || surveyMetadata.lastResponseAt) && (
+                      <p className="text-[11px] text-indigo-700 dark:text-indigo-300 mt-2">
+                        Ventana de actividad: {surveyMetadata.firstResponseAt
+                          ? format(surveyMetadata.firstResponseAt, "dd MMM yyyy", { locale: es })
+                          : "N/D"}
+                        {" "}→{" "}
+                        {surveyMetadata.lastResponseAt
+                          ? format(surveyMetadata.lastResponseAt, "dd MMM yyyy", { locale: es })
+                          : "N/D"}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Per-question analytics */}
               {analytics.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      Análisis por Pregunta
-                    </h3>
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        Análisis por Pregunta
+                      </h3>
+                      <span
+                        className="text-gray-400 dark:text-gray-500"
+                        title="Seleccion y opciones: frecuencias y porcentajes. Numericas: promedio/min/max. Texto: respuestas registradas."
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
                     {selectedQuestionId !== null && (
                       <button
                         onClick={() => setSelectedQuestionId(null)}
@@ -706,7 +952,8 @@ export function SurveyDetailModal({
                                 {q.question_text}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                {getQuestionTypeLabel(q.question_type)} • {q.total} respuesta
+                                {getQuestionTypeLabel(q.question_type)} •{" "}
+                                {q.total} respuesta
                                 {q.total !== 1 ? "s" : ""}
                               </p>
                             </div>
@@ -825,11 +1072,80 @@ export function SurveyDetailModal({
               )}
 
               {/* User performance analytics */}
+              {(performanceByUser.length > 0 || riskByUser.length > 0) && (
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        Guia ampliada: Score, Nivel y Riesgo
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Explicacion detallada de como se calcula cada indicador.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowScoreGuide((prev) => !prev)}
+                      className="text-xs px-2.5 py-1 rounded border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                    >
+                      {showScoreGuide ? "Ocultar detalle" : "Ver detalle"}
+                    </button>
+                  </div>
+
+                  {showScoreGuide && (
+                    <div className="grid gap-3 md:grid-cols-2 mt-4">
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200 mb-2">
+                          Score de usuario
+                        </p>
+                        <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
+                          <li>• Score final = 50% calidad + 30% duracion + 20% volumen.</li>
+                          <li>• Calidad = completitud promedio del usuario (tope 100).</li>
+                          <li>• Duracion = comparacion contra el mejor tiempo promedio del grupo.</li>
+                          <li>• Volumen = base 40 + 10 por respuesta, con tope en 100.</li>
+                        </ul>
+                      </div>
+
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200 mb-2">
+                          Nivel de usuario
+                        </p>
+                        <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
+                          <li>• El ranking mostrado (Top 1, Top 2, Top 3) sale del score ordenado de mayor a menor.</li>
+                          <li>• No es un nivel fijo por umbral, sino posicion relativa frente al resto de usuarios.</li>
+                        </ul>
+                      </div>
+
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 md:col-span-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-200 mb-2">
+                          Riesgo por usuario
+                        </p>
+                        <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
+                          <li>• Completitud &lt; 70%: +35 puntos.</li>
+                          <li>• Completitud entre 70% y 84.99%: +15 puntos.</li>
+                          <li>• Tiempo promedio &lt; 1.5 min: +30 puntos.</li>
+                          <li>• Si tiene 3+ respuestas y score &lt; 60: +20 puntos.</li>
+                          <li>• Si solo tiene 1 respuesta: +10 puntos.</li>
+                          <li>• Nivel final: Alto si riesgo ≥ 60, Medio si riesgo ≥ 30, Bajo en otro caso (tope 100).</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {performanceByUser.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                    Performance por Usuario
-                  </h3>
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Performance por Usuario
+                    </h3>
+                    <span
+                      className="text-gray-400 dark:text-gray-500"
+                      title="Score = 50% completitud + 30% duracion relativa + 20% volumen de respuestas."
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
 
                   <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <table className="w-full text-xs sm:text-sm">
@@ -841,16 +1157,28 @@ export function SurveyDetailModal({
                           <th className="text-right px-3 py-2 font-medium">
                             Respuestas
                           </th>
-                          <th className="text-right px-3 py-2 font-medium hidden sm:table-cell">
+                          <th
+                            className="text-right px-3 py-2 font-medium hidden sm:table-cell"
+                            title="Promedio de preguntas contestadas por respuesta del usuario"
+                          >
                             Prom. preguntas
                           </th>
-                          <th className="text-right px-3 py-2 font-medium">
+                          <th
+                            className="text-right px-3 py-2 font-medium"
+                            title="(preguntas respondidas / preguntas totales) x 100"
+                          >
                             Completitud
                           </th>
-                          <th className="text-right px-3 py-2 font-medium hidden md:table-cell">
+                          <th
+                            className="text-right px-3 py-2 font-medium hidden md:table-cell"
+                            title="Tiempo promedio entre inicio y envío de respuesta"
+                          >
                             Tiempo prom.
                           </th>
-                          <th className="text-right px-3 py-2 font-medium">
+                          <th
+                            className="text-right px-3 py-2 font-medium"
+                            title="Score compuesto: 50% completitud + 30% duración + 20% volumen"
+                          >
                             Score
                           </th>
                         </tr>
@@ -897,9 +1225,17 @@ export function SurveyDetailModal({
               {/* User risk analytics */}
               {riskByUser.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                    Riesgo por Usuario
-                  </h3>
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Riesgo por Usuario
+                    </h3>
+                    <span
+                      className="text-gray-400 dark:text-gray-500"
+                      title="Riesgo por reglas: completitud baja, tiempo inusual, score bajo y muestra limitada."
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
 
                   <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <table className="w-full text-xs sm:text-sm">
@@ -911,7 +1247,10 @@ export function SurveyDetailModal({
                           <th className="text-center px-3 py-2 font-medium">
                             Nivel
                           </th>
-                          <th className="text-right px-3 py-2 font-medium">
+                          <th
+                            className="text-right px-3 py-2 font-medium"
+                            title="Suma ponderada de señales de riesgo detectadas"
+                          >
                             Riesgo
                           </th>
                           <th className="text-left px-3 py-2 font-medium hidden md:table-cell">

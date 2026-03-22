@@ -6,7 +6,7 @@ interface CreateUserData {
   password: string;
   nombre: string;
   apellido: string;
-  rol: "admin" | "encargado" | "brigadista";
+  rol: "admin" | "encargado" | "brigadista" | "auditor";
   telefono?: string;
 }
 
@@ -14,7 +14,7 @@ interface UpdateUserData {
   email?: string;
   nombre?: string;
   apellido?: string;
-  rol?: "admin" | "encargado" | "brigadista";
+  rol?: "admin" | "encargado" | "brigadista" | "auditor";
   telefono?: string;
   avatar_url?: string;
   activo?: boolean;

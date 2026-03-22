@@ -168,7 +168,7 @@ export default function ReportsPage() {
   if (isChecking) return null;
 
   return (
-    <AdminGuard allowedRoles={["admin", "encargado"]}>
+    <AdminGuard allowedRoles={["admin", "encargado", "auditor"]}>
       <div className="space-y-6 p-6">
         {/* ── Page header ──────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
@@ -245,6 +245,7 @@ export default function ReportsPage() {
             icon={TrendingUp}
             label="Total de Respuestas"
             value={isLoading ? "—" : totalResponses.toLocaleString()}
+            helpText="Suma de total_responses en todas las encuestas del período filtrado."
             color="text-blue-600"
             bg="bg-blue-50 dark:bg-blue-900/20"
           />
@@ -255,6 +256,7 @@ export default function ReportsPage() {
               isLoading ? "—" : `${surveysWithResponses} / ${totalSurveys}`
             }
             sub="encuestas respondidas"
+            helpText="Numerador: encuestas con al menos 1 respuesta. Denominador: total de encuestas listadas."
             color="text-emerald-600"
             bg="bg-emerald-50 dark:bg-emerald-900/20"
           />
@@ -263,6 +265,7 @@ export default function ReportsPage() {
             label="Encuestas Activas"
             value={isLoading ? "—" : activeSurveys.toString()}
             sub={`de ${totalSurveys} en total`}
+            helpText="Conteo de encuestas con is_active=true dentro del período consultado."
             color="text-purple-600"
             bg="bg-purple-50 dark:bg-purple-900/20"
           />
@@ -275,6 +278,7 @@ export default function ReportsPage() {
             label="Tasa de Participación"
             value={isLoading ? "—" : `${completionRate}%`}
             sub="encuestas con ≥1 respuesta"
+            helpText="(Encuestas con datos / Total de encuestas) × 100, redondeado al entero más cercano."
             color="text-indigo-600"
             bg="bg-indigo-50 dark:bg-indigo-900/20"
             trend={
@@ -290,6 +294,7 @@ export default function ReportsPage() {
             label="Prom. por Enc. Activa"
             value={isLoading ? "—" : String(avgPerActive)}
             sub="respuestas promedio"
+            helpText="Total de respuestas dividido entre encuestas activas."
             color="text-cyan-600"
             bg="bg-cyan-50 dark:bg-cyan-900/20"
           />
@@ -298,6 +303,7 @@ export default function ReportsPage() {
             label="Sin Actividad"
             value={isLoading ? "—" : surveysNoActivity.toString()}
             sub="encuestas sin respuestas"
+            helpText="Total de encuestas menos encuestas con datos (total_responses=0)."
             color={surveysNoActivity > 0 ? "text-amber-600" : "text-gray-400"}
             bg={
               surveysNoActivity > 0
@@ -311,6 +317,7 @@ export default function ReportsPage() {
             label="Encuestas en Riesgo"
             value={isLoading ? "—" : surveysAtRisk.toString()}
             sub="con usuarios en riesgo"
+            helpText="Encuestas donde el riesgo agregado reporta at_risk_users > 0."
             color={surveysAtRisk > 0 ? "text-red-600" : "text-emerald-600"}
             bg={
               surveysAtRisk > 0

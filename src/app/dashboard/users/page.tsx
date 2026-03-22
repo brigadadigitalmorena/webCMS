@@ -72,7 +72,8 @@ function exportUsersCSV(users: User[]) {
 
 export default function UsersPage() {
   const { isChecking } = useRequireAuth();
-  const { isAdmin, isEncargado } = useRole();
+  const { isAdmin, isEncargado, isAuditor } = useRole();
+  const canInviteUsers = isAdmin || isEncargado;
   const currentUser = useAuthStore((state) => state.user);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -161,7 +162,7 @@ export default function UsersPage() {
   }
 
   return (
-    <AdminGuard allowedRoles={["admin", "encargado"]}>
+    <AdminGuard allowedRoles={["admin", "encargado", "auditor"]}>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -191,15 +192,25 @@ export default function UsersPage() {
             >
               <Download className="h-4 w-4" />
             </button>
-            <button
-              onClick={() => setIsCreateOpen(true)}
-              className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium"
-            >
-              <UserPlus className="h-5 w-5" />
-              {isEncargado ? "Invitar brigadista" : "Invitar usuario"}
-            </button>
+            {canInviteUsers && (
+              <button
+                onClick={() => setIsCreateOpen(true)}
+                className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors font-medium"
+              >
+                <UserPlus className="h-5 w-5" />
+                {isEncargado ? "Invitar brigadista" : "Invitar usuario"}
+              </button>
+            )}
           </div>
         </div>
+
+        {isAuditor && (
+          <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 px-4 py-3">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              Modo auditor: solo lectura. No puedes crear ni modificar usuarios.
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
@@ -262,6 +273,7 @@ export default function UsersPage() {
                 <option value="all">Todos los roles</option>
                 {isAdmin && <option value="admin">Admin</option>}
                 {isAdmin && <option value="encargado">Encargado</option>}
+                {isAdmin && <option value="auditor">Auditor</option>}
                 <option value="brigadista">Brigadista</option>
               </Select>
               <Select
@@ -490,14 +502,16 @@ export default function UsersPage() {
           )}
         </div>
 
-        <CreateUserModal
-          isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
-          onCreated={() => {
-            loadUsers();
-            setIsCreateOpen(false);
-          }}
-        />
+        {canInviteUsers && (
+          <CreateUserModal
+            isOpen={isCreateOpen}
+            onClose={() => setIsCreateOpen(false)}
+            onCreated={() => {
+              loadUsers();
+              setIsCreateOpen(false);
+            }}
+          />
+        )}
       </div>
     </AdminGuard>
   );

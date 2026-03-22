@@ -1,3 +1,4 @@
+import { Info } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface KpiCardProps {
@@ -7,6 +8,7 @@ interface KpiCardProps {
   sub?: string;
   color: string;
   bg: string;
+  helpText?: string;
   /** Optional trend indicator: positive = green up, negative = red down */
   trend?: "up" | "down" | "neutral";
 }
@@ -18,6 +20,7 @@ export function KpiCard({
   sub,
   color,
   bg,
+  helpText,
   trend,
 }: KpiCardProps) {
   return (
@@ -39,9 +42,19 @@ export function KpiCard({
         )}
       </div>
       <div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">
-          {label}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">
+            {label}
+          </p>
+          {helpText && (
+            <span
+              className="inline-flex items-center text-gray-400 dark:text-gray-500"
+              title={helpText}
+            >
+              <Info className="w-3.5 h-3.5" />
+            </span>
+          )}
+        </div>
         <p className="text-2xl font-bold text-gray-900 dark:text-white mt-0.5 leading-none">
           {value}
         </p>

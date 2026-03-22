@@ -1,5 +1,5 @@
 // User roles
-export type UserRole = "admin" | "encargado" | "brigadista";
+export type UserRole = "admin" | "encargado" | "brigadista" | "auditor";
 
 // Notification types
 export type NotificationType =

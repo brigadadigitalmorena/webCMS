@@ -8,6 +8,7 @@ interface UseRoleReturn {
   isAdmin: boolean;
   isEncargado: boolean;
   isBrigadista: boolean;
+  isAuditor: boolean;
 }
 
 /**
@@ -40,5 +41,6 @@ export function useRole(allowedRoles?: UserRole[]): UseRoleReturn {
     isAdmin: role === "admin",
     isEncargado: role === "encargado",
     isBrigadista: role === "brigadista",
+    isAuditor: role === "auditor",
   };
 }

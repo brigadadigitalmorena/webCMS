@@ -46,13 +46,13 @@ const navSections: NavSection[] = [
         href: "/dashboard",
         label: "Dashboard",
         icon: LayoutDashboard,
-        allowedRoles: ["admin"], // Dashboard principal solo para admin
+        allowedRoles: ["admin", "auditor"],
       },
       {
         href: "/dashboard/surveys",
         label: "Encuestas",
         icon: FileText,
-        allowedRoles: ["admin", "encargado"],
+        allowedRoles: ["admin", "encargado", "auditor"],
       },
       {
         href: "/dashboard/assignments",
@@ -69,7 +69,7 @@ const navSections: NavSection[] = [
         href: "/dashboard/users",
         label: "Usuarios",
         icon: Users,
-        allowedRoles: ["admin", "encargado"],
+        allowedRoles: ["admin", "encargado", "auditor"],
       },
       {
         href: "/dashboard/whitelist",
@@ -86,7 +86,7 @@ const navSections: NavSection[] = [
         href: "/dashboard/reports",
         label: "Reportes",
         icon: BarChart3,
-        allowedRoles: ["admin", "encargado"],
+        allowedRoles: ["admin", "encargado", "auditor"],
       },
       {
         href: "/dashboard/notifications",
