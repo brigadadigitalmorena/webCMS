@@ -24,6 +24,38 @@ import type {
   ResponseDetail,
 } from "../_lib/types";
 
+// ── Question type labels ──────────────────────────────────────────────────────
+
+const QUESTION_TYPE_LABELS: Record<string, string> = {
+  text: "Texto corto",
+  textarea: "Texto largo",
+  email: "Correo electrónico",
+  phone: "Teléfono",
+  number: "Número",
+  select: "Selección única",
+  multi_select: "Selección múltiple",
+  radio: "Opción múltiple (radio)",
+  checkbox: "Casillas de verificación",
+  date: "Fecha",
+  time: "Hora",
+  datetime: "Fecha y hora",
+  rating: "Calificación",
+  slider: "Rango deslizable",
+  scale: "Escala numérica",
+  location: "Ubicación GPS",
+  photo: "Fotografía",
+  signature: "Firma digital",
+  file: "Archivo/Documento",
+  yes_no: "Sí/No",
+  ine_ocr: "Captura INE (OCR)",
+  single_choice: "Selección única",
+  multiple_choice: "Selección múltiple",
+};
+
+function getQuestionTypeLabel(type: string): string {
+  return QUESTION_TYPE_LABELS[type?.toLowerCase()] || type || "Desconocido";
+}
+
 // ── Answer analytics helpers ──────────────────────────────────────────────────
 
 interface QuestionAnalytics {
@@ -118,10 +150,9 @@ function buildAnalytics(rows: ExportRow[]): QuestionAnalytics[] {
         }
       }
 
-      // Text / fallback — show up to 5 sample answers
+      // Text / fallback — include all captured answers
       const samples = qRows
         .filter((r) => answerToString(r.answer_value).trim().length > 0)
-        .slice(0, 5)
         .map((r) => answerToString(r.answer_value));
       return { ...base, samples };
     })
@@ -410,6 +441,9 @@ export function SurveyDetailModal({
   const [activeTab, setActiveTab] = useState<"analytics" | "responses">(
     "analytics",
   );
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(
+    null,
+  );
   const [expandedResponse, setExpandedResponse] = useState<number | null>(null);
   const [responseDetails, setResponseDetails] = useState<
     Record<number, ResponseDetail | undefined>
@@ -616,9 +650,6 @@ export function SurveyDetailModal({
                         className="text-gray-500 dark:text-gray-400"
                       />
                       <Tooltip
-                        formatter={(v: number | undefined) =>
-                          [v ?? 0, "Respuestas"] as [number, string]
-                        }
                         labelFormatter={(d: unknown) =>
                           typeof d === "string"
                             ? format(parseISO(d), "dd/MM/yyyy", { locale: es })
@@ -646,58 +677,150 @@ export function SurveyDetailModal({
               {/* Per-question analytics */}
               {analytics.length > 0 && (
                 <div>
-                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                    Análisis por Pregunta
-                  </h3>
-                  <div className="space-y-3">
-                    {analytics.map((q) => (
-                      <div
-                        key={q.question_id}
-                        className="bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-100 dark:border-gray-700"
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Análisis por Pregunta
+                    </h3>
+                    {selectedQuestionId !== null && (
+                      <button
+                        onClick={() => setSelectedQuestionId(null)}
+                        className="text-xs px-2.5 py-1 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
                       >
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                            {q.question_text}
-                          </p>
-                          <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded font-mono">
-                            {q.question_type}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
-                          {q.total} respuesta{q.total !== 1 ? "s" : ""}
-                        </p>
-
-                        {q.frequencies && (
-                          <FrequencyBars
-                            frequencies={q.frequencies}
-                            total={q.total}
-                          />
-                        )}
-                        {q.avg !== undefined &&
-                          q.min !== undefined &&
-                          q.max !== undefined && (
-                            <RatingStats avg={q.avg} min={q.min} max={q.max} />
-                          )}
-                        {q.samples && q.samples.length > 0 && (
-                          <ul className="mt-2 space-y-1">
-                            {q.samples.map((s, i) => (
-                              <li
-                                key={i}
-                                className="text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 rounded px-2 py-1 border border-gray-100 dark:border-gray-700 truncate"
-                              >
-                                {s}
-                              </li>
-                            ))}
-                            {q.total > q.samples.length && (
-                              <li className="text-xs text-gray-400 dark:text-gray-500 px-2">
-                                + {q.total - q.samples.length} más…
-                              </li>
-                            )}
-                          </ul>
-                        )}
-                      </div>
-                    ))}
+                        Limpiar filtro ✕
+                      </button>
+                    )}
                   </div>
+
+                  {selectedQuestionId === null ? (
+                    // Show all questions with selector
+                    <div className="space-y-3">
+                      {analytics.map((q) => (
+                        <div
+                          key={q.question_id}
+                          className="bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-100 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors cursor-pointer"
+                          onClick={() => setSelectedQuestionId(q.question_id)}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                {q.question_text}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {getQuestionTypeLabel(q.question_type)} • {q.total} respuesta
+                                {q.total !== 1 ? "s" : ""}
+                              </p>
+                            </div>
+                            <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium shrink-0 whitespace-nowrap">
+                              Ver detalle
+                            </span>
+                          </div>
+
+                          {/* Quick preview */}
+                          {q.frequencies && (
+                            <div className="mt-2 text-xs">
+                              <div className="flex flex-wrap gap-1">
+                                {Array.from(q.frequencies.entries())
+                                  .sort((a, b) => b[1] - a[1])
+                                  .slice(0, 3)
+                                  .map(([label, count]) => {
+                                    const pct = Math.round(
+                                      (count / q.total) * 100,
+                                    );
+                                    return (
+                                      <span
+                                        key={label}
+                                        className="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 truncate"
+                                      >
+                                        {label} ({pct}%)
+                                      </span>
+                                    );
+                                  })}
+                              </div>
+                            </div>
+                          )}
+
+                          {q.avg !== undefined && (
+                            <p className="mt-2 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                              Promedio: {q.avg}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Show selected question with detailed analysis
+                    (() => {
+                      const selectedQ = analytics.find(
+                        (q) => q.question_id === selectedQuestionId,
+                      );
+                      return selectedQ ? (
+                        <div className="bg-white dark:bg-gray-900 rounded-lg p-5 border border-indigo-200 dark:border-indigo-800 space-y-4">
+                          <div>
+                            <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-1">
+                              {selectedQ.question_text}
+                            </h4>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium">
+                                {getQuestionTypeLabel(selectedQ.question_type)}
+                              </span>
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {selectedQ.total} respuesta
+                                {selectedQ.total !== 1 ? "s" : ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          {selectedQ.frequencies && (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase">
+                                Distribución de Respuestas
+                              </p>
+                              <FrequencyBars
+                                frequencies={selectedQ.frequencies}
+                                total={selectedQ.total}
+                              />
+                            </div>
+                          )}
+
+                          {selectedQ.avg !== undefined &&
+                            selectedQ.min !== undefined &&
+                            selectedQ.max !== undefined && (
+                              <div>
+                                <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase">
+                                  Estadísticas
+                                </p>
+                                <RatingStats
+                                  avg={selectedQ.avg}
+                                  min={selectedQ.min}
+                                  max={selectedQ.max}
+                                />
+                              </div>
+                            )}
+
+                          {selectedQ.samples &&
+                            selectedQ.samples.length > 0 && (
+                              <div>
+                                <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase">
+                                  Respuestas Registradas
+                                </p>
+                                <div className="max-h-72 overflow-y-auto pr-1">
+                                  <ul className="space-y-1.5">
+                                    {selectedQ.samples.map((s, i) => (
+                                      <li
+                                        key={i}
+                                        className="text-xs text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50 rounded px-2.5 py-1.5 border border-gray-200 dark:border-gray-700"
+                                      >
+                                        &quot;{s}&quot;
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )}
+                        </div>
+                      ) : null;
+                    })()
+                  )}
                 </div>
               )}
 

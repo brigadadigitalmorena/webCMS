@@ -379,9 +379,6 @@ export default function ReportsPage() {
                   contentStyle={tooltipContentStyle}
                   labelStyle={tooltipLabelStyle}
                   itemStyle={tooltipItemStyle}
-                  formatter={(v: number | undefined) =>
-                    [v ?? 0, "Respuestas"] as [number, string]
-                  }
                 />
                 <Bar
                   dataKey="respuestas"
@@ -416,7 +413,7 @@ export default function ReportsPage() {
             </div>
           ) : all.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-              {summaries === undefined
+              {reportsData?.summaries === undefined
                 ? "No hay encuestas registradas"
                 : "Sin resultados para el período seleccionado"}
             </div>
@@ -450,7 +447,8 @@ export default function ReportsPage() {
                     const risk = riskBySurvey.get(s.survey_id);
                     const atRisk = risk?.at_risk_users ?? 0;
                     const high = risk?.high_risk_users ?? 0;
-                    const level = high > 0 ? "high" : atRisk > 0 ? "medium" : "low";
+                    const level =
+                      high > 0 ? "high" : atRisk > 0 ? "medium" : "low";
                     const riskBadgeClass =
                       level === "high"
                         ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
@@ -465,68 +463,70 @@ export default function ReportsPage() {
                           : "Bajo";
 
                     return (
-                    <tr
-                      key={s.survey_id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                    >
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-xs truncate">
-                        {s.survey_title}
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        {s.is_active ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
-                            <CheckCircle2 className="w-3 h-3" /> Activa
+                      <tr
+                        key={s.survey_id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                      >
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-xs truncate">
+                          {s.survey_title}
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          {s.is_active ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
+                              <CheckCircle2 className="w-3 h-3" /> Activa
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500">
+                              <XCircle className="w-3 h-3" /> Inactiva
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-4 text-right font-semibold tabular-nums text-gray-900 dark:text-white">
+                          {s.total_responses > 0 ? (
+                            s.total_responses.toLocaleString()
+                          ) : (
+                            <span className="text-gray-400 dark:text-gray-500 font-normal">
+                              —
+                            </span>
+                          )}
+                        </td>
+                        <td className="hidden sm:table-cell px-4 py-4 text-right text-gray-400 dark:text-gray-500 text-xs">
+                          {s.last_response_at
+                            ? format(
+                                parseISO(s.last_response_at),
+                                "dd MMM yyyy",
+                                {
+                                  locale: es,
+                                },
+                              )
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${riskBadgeClass}`}
+                            title={`Usuarios en riesgo: ${atRisk}`}
+                          >
+                            {riskLabel}
+                            {atRisk > 0 && (
+                              <span className="ml-1">({atRisk})</span>
+                            )}
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500">
-                            <XCircle className="w-3 h-3" /> Inactiva
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-4 text-right font-semibold tabular-nums text-gray-900 dark:text-white">
-                        {s.total_responses > 0 ? (
-                          s.total_responses.toLocaleString()
-                        ) : (
-                          <span className="text-gray-400 dark:text-gray-500 font-normal">
-                            —
-                          </span>
-                        )}
-                      </td>
-                      <td className="hidden sm:table-cell px-4 py-4 text-right text-gray-400 dark:text-gray-500 text-xs">
-                        {s.last_response_at
-                          ? format(
-                              parseISO(s.last_response_at),
-                              "dd MMM yyyy",
-                              {
-                                locale: es,
-                              },
-                            )
-                          : "—"}
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${riskBadgeClass}`}
-                          title={`Usuarios en riesgo: ${atRisk}`}
-                        >
-                          {riskLabel}
-                          {atRisk > 0 && <span className="ml-1">({atRisk})</span>}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        <button
-                          onClick={() => handleOpenSurvey(s)}
-                          disabled={s.total_responses === 0}
-                          title={
-                            s.total_responses === 0
-                              ? "Sin respuestas"
-                              : "Ver análisis"
-                          }
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <button
+                            onClick={() => handleOpenSurvey(s)}
+                            disabled={s.total_responses === 0}
+                            title={
+                              s.total_responses === 0
+                                ? "Sin respuestas"
+                                : "Ver análisis"
+                            }
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>
